@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>设计模式-工厂模式 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="设计模式-工厂模式 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="设计模式-工厂模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/designpartten-factory/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>设计模式-工厂模式</h1>
+    <span class="meta">
+      Posted on
+      2020-07-09，7 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="定义">定义</h1>
+<ul>
+<li>定义：Define an interface for creating an object,but let subclasses decide which class to instance.Factory Method lets a class defer instantiation to subclasses.（定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到子类）</li>
+</ul>
+<h1 id="优点">优点</h1>
+<ul>
+<li>良好的封装性，代码结构清晰。（不需要知道创建对象的过程，只需要知道产品的类名或约束字符串就可以完成对象的创建。降低模块之间的耦合）</li>
+<li>工厂模式方法的扩展性优秀。（在增加产品类的情况下，只要适当地修改具体的工厂类，或扩展一个工厂类，就可以完成”拥抱变化”）</li>
+<li>屏蔽产品类。（产品类的实现如何变化，调用者都不用关心，它只关系产品的接口，只要接口保持不变，系统中的上层模块就不要发生变化）。</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<ul>
+<li>需要灵活的，可扩展的框架时。（要慎重考虑是否使用工厂类管理，会增加代码的复杂性）
+<ul>
+<li>举例：
+<ol>
+<li>连接邮件服务器的框架，有三种网络协议可以选择：POP3、IMAP、HTTP。可以把这三种连接方法作为产品类</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="分类">分类</h1>
+<h2 id="通用类图">通用类图</h2>
+<p>工厂方法模式通用类图</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0ku65atpj30nk0dfdi9.jpg" alt="工厂方法模式通用类图" loading="lazy"></figure>
+<p>延迟加载的工厂模式通用类图</p>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0kx4jpafj315l0dtaes.jpg" alt="延迟初始化工厂模式通用类图" loading="lazy"></figure>
+<h2 id="工厂模式模板">工厂模式（模板）</h2>
+<h3 id="简介">简介</h3>
+<ul>
+<li>工厂模式的变种比较多，以下是一个比较通用的工厂模式模板</li>
+</ul>
+<h3 id="类图">类图</h3>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ggklbya511j30go07j3yu.jpg" alt="模板类图" loading="lazy"></figure>
+<h3 id="代码">代码</h3>
+<p>抽象产品类</p>
+<pre><code class="language-JAVA">package com.pattern.factory.products;
+
+public abstract class Product {
+    public Product(){}
+    public void method1(){
+        // 产品类公共方法
+        System.out.println(&quot;执行了产品类共有方法&quot;);
+    }
+    // 产品类抽象方法
+    public abstract void method2();
+}
+</code></pre>
+<p>具体产品类（继承自<strong>抽象产品类</strong>）</p>
+<pre><code class="language-JAVA">package com.pattern.factory.products;
+
+public class Product1 extends Product {
+    public Product1(){
+        super();
+    }
+    @Override
+    public void method2() {
+        // 业务逻辑
+        System.out.println(&quot;执行了产品1的方法&quot;);
+    }
+}
+
+package com.pattern.factory.products;
+
+public class Product2 extends Product {
+    public Product2(){
+        super();
+    }
+    @Override
+    public void method2() {
+        // 业务逻辑
+        System.out.println(&quot;执行了产品2的方法&quot;);
+    }
+    
+}
+</code></pre>
+<p>抽象工厂类</p>
+<pre><code class="language-JAVA">package com.pattern.factory.template;
+
+import com.pattern.factory.products.Product;
+
+public abstract class AbstractFactory {
+    public AbstractFactory(){};
+    /**
+     * 抽象工厂方法，对参数做了两层限制
+     * 1.产品必须继承于Product
+     * 2.入参必须是Class
+     */
+    public abstract &lt;T extends Product&gt; T createProduct(Class&lt;T&gt; c);
+}
+</code></pre>
+<p>具体工厂类（继承自<strong>抽象工厂类</strong>）</p>
+<pre><code class="language-JAVA">package com.pattern.factory.template;
+
+import com.pattern.factory.products.Product;
+
+public class ConcreteFactory extends AbstractFactory {
+    public ConcreteFactory(){
+        super();
+    }
+    @Override
+    public &lt;T extends Product&gt; T createProduct(Class&lt;T&gt; c) {
+        Product product = null;
+        try{
+            // 反射创建产品
+            product = (Product)Class.forName(c.getName()).newInstance();
+        } catch (Exception e){
+            // 异常处理
+        }
+        return (T) product;
+    }
+}
+</code></pre>
+<p>测试方法</p>
+<pre><code class="language-JAVA">    @Test
+    // 通用工厂类模板测试
+    public void FactoryTemplateTest(){
+        AbstractFactory factory = new ConcreteFactory();
+        // 工厂创建产品1
+        Product product = factory.createProduct(Product1.class);
+        product.method1();
+        product.method2();
+    }
+</code></pre>
+<h3 id="测试结果">测试结果</h3>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ggklu8spmyj30ar02jdfr.jpg" alt="工厂模式模板测试结果" loading="lazy"></figure>
+<h2 id="静态工厂模式">静态工厂模式</h2>
+<h3 id="简介-2">简介</h3>
+<ul>
+<li>工厂模式的一种弱化，称为简单工厂模式或静态工厂模式，实际项目中使用的比较多</li>
+<li>缺点
+<ul>
+<li>扩展困难，不符合开闭原则</li>
+</ul>
+</li>
+</ul>
+<h3 id="类图-2">类图</h3>
+<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ggkljz0rbmj30gb06xaa5.jpg" alt="静态工厂" loading="lazy"></figure>
+<h3 id="代码-2">代码</h3>
+<p>静态工厂类</p>
+<pre><code class="language-JAVA">package com.pattern.factory.extend.staticfactory;
+
+import com.pattern.factory.products.Product;
+
+public class Factory {
+    /**
+     * 静态工厂方法，对参数做了两层限制 
+     * 1.产品必须继承于Product 
+     * 2.入参必须是Class
+     */
+    public static &lt;T extends Product&gt; T createProduct(Class&lt;T&gt; c){
+        Product product = null;
+        try{
+            // 反射创建产品
+            product = (Product)Class.forName(c.getName()).newInstance();
+        } catch (Exception e){
+            // 异常处理
+        }
+        return (T) product;
+    };
+}
+</code></pre>
+<p>产品类</p>
+<ul>
+<li>同上</li>
+</ul>
+<p>测试方法</p>
+<pre><code class="language-JAVA">    @Test
+    // 静态工厂测试
+    public void StaticFactoryTest(){
+        // 工厂创建产品
+        Product product = Factory.createProduct(Product1.class);
+        product.method1();
+        product.method2();
+    }
+</code></pre>
+<h3 id="测试结果-2">测试结果</h3>
+<figure data-type="image" tabindex="6"><img src="https://tva2.sinaimg.cn/large/006ZFECEgy1ggklu8spmyj30ar02jdfr.jpg" alt="静态工厂测试结果" loading="lazy"></figure>
+<h2 id="多工厂模式">多工厂模式</h2>
+<h3 id="简介-3">简介</h3>
+<ul>
+<li>为每一个产品定义一个工厂，由调用者去选择与那个工厂方法关联</li>
+<li>每个工厂都独立负责创建对应的产品对象，符合单一职责原则</li>
+<li>复杂应用一般使用多工厂的方法，然后增加一个协调类，用于封装子工厂类，对高层模块提供统一的访问接口</li>
+<li>缺点
+<ul>
+<li>扩展困难（每增加一个产品类就需要建立一个相应的工厂类，同时维护时还需要考虑两个对象之间的关系）</li>
+</ul>
+</li>
+</ul>
+<h3 id="类图-3">类图</h3>
+<figure data-type="image" tabindex="7"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ggklp657j0j30h009w74m.jpg" alt="多工厂模式" loading="lazy"></figure>
+<h3 id="代码-3">代码</h3>
+<p>抽象多工厂类</p>
+<pre><code class="language-JAVA">package com.pattern.factory.extend.multifactory;
+
+import com.pattern.factory.products.Product;
+
+public abstract class AbstractMultiFactory {
+    public AbstractMultiFactory(){}
+    // 此处已经不需要泛型以及参数了，因为每个具体的工厂已经明确了自己的职责，复制生产产品
+    public abstract Product createProduct();
+}
+</code></pre>
+<p>产品1生产工厂类（继承自<strong>抽象多工厂类</strong>）</p>
+<pre><code class="language-JAVA">package com.pattern.factory.extend.multifactory;
+
+import com.pattern.factory.products.Product;
+import com.pattern.factory.products.Product1;
+
+public class Product1Factory extends AbstractMultiFactory {
+    public Product1Factory(){
+        super();
+    }
+    @Override
+    public Product createProduct() {
+        return new Product1();
+    }
+}
+</code></pre>
+<p>产品2生产工厂类（继承自<strong>抽象多工厂类</strong>）</p>
+<pre><code class="language-JAVA">package com.pattern.factory.extend.multifactory;
+
+import com.pattern.factory.products.Product;
+import com.pattern.factory.products.Product2;
+
+public class Product2Factory extends AbstractMultiFactory {
+    public Product2Factory(){
+        super();
+    }
+    @Override
+    public Product createProduct() {
+        return new Product2();
+    }
+}
+</code></pre>
+<p>产品类</p>
+<ul>
+<li>同上</li>
+</ul>
+<p>测试代码</p>
+<pre><code class="language-JAVA">    @Test
+    // 多工厂测试
+    public void MultiFactoryTest(){
+        AbstractMultiFactory factory = new Product1Factory();
+        Product product = factory.createProduct();
+        product.method1();
+        product.method2();
+    }
+</code></pre>
+<h3 id="测试结果-3">测试结果</h3>
+<figure data-type="image" tabindex="8"><img src="https://tva2.sinaimg.cn/large/006ZFECEgy1ggklu8spmyj30ar02jdfr.jpg" alt="多工厂测试结果" loading="lazy"></figure>
+<h2 id="单例工厂模式">单例工厂模式</h2>
+<h3 id="简介-4">简介</h3>
+<ul>
+<li>通过工厂模式反射来生成单例对象</li>
+<li>在一个项目中可以产生一个单例构造器，所有需要产生单例的类都遵循一定的规则（构造方法是private），然后通过扩展该框架，只需要输入一个类型就可以获得唯一的一个实例</li>
+</ul>
+<h3 id="类图-4">类图</h3>
+<figure data-type="image" tabindex="9"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ggklyldpf8j309407gglo.jpg" alt="单例工厂类图" loading="lazy"></figure>
+<h3 id="代码-4">代码</h3>
+<p>单例工厂类</p>
+<pre><code class="language-JAVA">package com.pattern.factory.extend.singletonfactory;
+
+import java.lang.reflect.Constructor;
+
+import com.pattern.factory.products.SingletonProduct;
+
+public class SingletonFactory {
+    private static SingletonProduct singletonProduct;
+    // 静态代码块初始化单例对象s
+    static{
+        try{
+            Class cl = Class.forName(SingletonProduct.class.getName());
+            // 获取无参构造方法
+            Constructor constructor = cl.getDeclaredConstructor();
+            // 设置无参构造方法可访问
+            constructor.setAccessible(true);
+            // 产生一个对象
+            singletonProduct = (SingletonProduct) constructor.newInstance();
+        } catch(Exception e){
+            // 处理异常
+        }
+    }
+    public static SingletonProduct getInstance(){
+        return singletonProduct;
+    }
+}
+</code></pre>
+<p>单例产品类</p>
+<pre><code class="language-JAVA">package com.pattern.factory.products;
+
+public class SingletonProduct {
+    // 构造私有化
+    private SingletonProduct(){}
+    public void method(){
+        // 业务逻辑
+        System.out.println(&quot;生产的单例产品&quot;);
+    }
+}
+</code></pre>
+<p>测试代码</p>
+<pre><code class="language-JAVA">    @Test
+    // 单例工厂测试
+    public void SingletonFactoryTest(){
+        SingletonProduct product = SingletonFactory.getInstance();
+        product.method();
+    }
+</code></pre>
+<h3 id="测试结果-4">测试结果</h3>
+<figure data-type="image" tabindex="10"><img src="https://tva3.sinaimg.cn/large/006ZFECEgy1ggkm079pkwj3099029jr9.jpg" alt="单例工厂测试结果" loading="lazy"></figure>
+<h1 id="注意">注意</h1>
+<ul>
+<li>工厂模式是典型的<strong>解耦框架</strong>，符合下列原则
+<ul>
+<li>迪米特法则：高层模块只需要知道产品的抽象类，其他的实现类都不用关心。我不需要的就不要去交流。</li>
+<li>依赖倒置原则：只依赖产品类的抽象。</li>
+<li>里氏替换原则：可以使用产品子类替换产品父类。</li>
+</ul>
+</li>
+<li>此处使用的是抽象类而非接口，实际上根据工厂模式的定义，使用两者都可以，选择的关键就在于对于产品类而言，是否有共有的构造或者方法。</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
+<li><a href="#%E5%88%86%E7%B1%BB">分类</a>
+<ul>
+<li><a href="#%E9%80%9A%E7%94%A8%E7%B1%BB%E5%9B%BE">通用类图</a></li>
+<li><a href="#%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E6%A8%A1%E6%9D%BF">工厂模式（模板）</a>
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B">简介</a></li>
+<li><a href="#%E7%B1%BB%E5%9B%BE">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C">测试结果</a></li>
+</ul>
+</li>
+<li><a href="#%E9%9D%99%E6%80%81%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F">静态工厂模式</a>
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B-2">简介</a></li>
+<li><a href="#%E7%B1%BB%E5%9B%BE-2">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C-2">测试结果</a></li>
+</ul>
+</li>
+<li><a href="#%E5%A4%9A%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F">多工厂模式</a>
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B-3">简介</a></li>
+<li><a href="#%E7%B1%BB%E5%9B%BE-3">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-3">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C-3">测试结果</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8D%95%E4%BE%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F">单例工厂模式</a>
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B-4">简介</a></li>
+<li><a href="#%E7%B1%BB%E5%9B%BE-4">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-4">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C-4">测试结果</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/designpartten-singleton/">
+              <span class="post-title">
+                设计模式-单例设计模式&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/designpartten-factory/" class="leancloud_visitors"
+              data-flag-title="设计模式-工厂模式">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

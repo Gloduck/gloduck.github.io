@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>设计模式-抽象工厂模式 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="设计模式-抽象工厂模式 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="设计模式-抽象工厂模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/designpartten-abstractfactory/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+    </span>
+    <h1>设计模式-抽象工厂模式</h1>
+    <span class="meta">
+      Posted on
+      2020-08-06，8 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="定义">定义</h1>
+<ul>
+<li>Provide an interface for creating families of related or dependent objects without specifying their concrete classes.（为创建一组相关或相互依赖的对象提供一个接口，而且无需指定他们的具体类）</li>
+</ul>
+<h1 id="优点">优点</h1>
+<ul>
+<li>封装性：每个产品的实现类不是高层模块要关心的，高层模块只关心接口，抽象。对象由谁创建由工厂类负责。只要知道工厂类是谁就能够创建出一个需要的对象。</li>
+<li>产品族内的约束为非公开状态：生产过程对调用工厂类的高层模块是透明的，具体产品族的约束是在工厂内实现的。</li>
+</ul>
+<h1 id="缺点">缺点</h1>
+<ul>
+<li>产品族的扩展十分困难。如果要增加一个新的产品族。会违背开闭原则。</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<ul>
+<li>一个对象族（或是一组没有任何关系的对象）都有着相同的契约。
+<ul>
+<li>举例：
+<ul>
+<li>一组应用（文件编辑器、浏览器、图片编辑器等）在三个不同的平台发布。如：Linux，Unix，Windows。则Linux，Unix，Windows就是三个不同的产品族。而各个应用就是不同的产品等级</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="举例">举例</h1>
+<p><strong>便于理解，此处举例使用上面的场景。为了减少代码量，我们规定应用为图片编辑器，和浏览器（完全无关联），两个应用都发布在Linux，Windows平台。</strong></p>
+<h2 id="代码">代码</h2>
+<h3 id="工厂部分">工厂部分</h3>
+<p>抽象工厂（<strong>接口或抽象</strong>）</p>
+<pre><code class="language-Java">package com.pattern.abstractfactory;
+
+import com.pattern.abstractfactory.products.LinuxSoftware;
+import com.pattern.abstractfactory.products.WindowsSoftware;
+
+public abstract class AbstractFactory {
+    /**
+     * 用于创建Window系统的应用
+     * @return 
+     */
+    public abstract WindowsSoftware createWindowsSoftware();
+    /**
+     * 用于创建Linux系统的应用
+     * @return
+     */
+    public abstract LinuxSoftware createLinuxSoftware();
+}
+</code></pre>
+<p>工厂实例：浏览器创建工厂（<strong>继承自抽象工厂</strong>）</p>
+<pre><code class="language-Java">package com.pattern.abstractfactory.impl;
+
+import com.pattern.abstractfactory.AbstractFactory;
+import com.pattern.abstractfactory.products.LinuxSoftware;
+import com.pattern.abstractfactory.products.WindowsSoftware;
+import com.pattern.abstractfactory.products.impl.LinuxBrowser;
+import com.pattern.abstractfactory.products.impl.WindowsBrowser;
+
+/**
+ * 浏览器的工厂，用于创建浏览器
+ */
+public class BrowserFactory extends AbstractFactory {
+
+    @Override
+    public WindowsSoftware createWindowsSoftware() {
+        return new WindowsBrowser();
+    }
+
+    @Override
+    public LinuxSoftware createLinuxSoftware() {
+        return new LinuxBrowser();
+    }
+    
+}
+</code></pre>
+<p>工厂实例：编辑器创建工厂（<strong>继承自抽象工厂</strong>）</p>
+<pre><code class="language-Java">package com.pattern.abstractfactory.impl;
+
+import com.pattern.abstractfactory.AbstractFactory;
+import com.pattern.abstractfactory.products.LinuxSoftware;
+import com.pattern.abstractfactory.products.WindowsSoftware;
+import com.pattern.abstractfactory.products.impl.LinuxEditor;
+import com.pattern.abstractfactory.products.impl.WindowsEditor;
+
+/**
+ * 文本编辑器的工厂，用于创建文本编辑器
+ */
+public class EditorFactory extends AbstractFactory {
+
+    @Override
+    public WindowsSoftware createWindowsSoftware() {
+        return new WindowsEditor();
+    }
+
+    @Override
+    public LinuxSoftware createLinuxSoftware() {
+        return new LinuxEditor();
+    }
+    
+}
+</code></pre>
+<h3 id="产品1部分">产品1部分</h3>
+<p>产品族1抽象：Linux系统软件（<strong>接口或抽象</strong>）</p>
+<pre><code class="language-Java">package com.pattern.abstractfactory.products;
+
+public abstract class LinuxSoftware {
+    public void showPlatform(){
+        System.out.println(&quot;当前的环境为Linux&quot;);
+    }
+    public abstract void showSoftware();
+    public  void linuxMethod(){
+        System.out.println(&quot;这是Linux系统的独有方法&quot;);
+    }
+}
+
+</code></pre>
+<p>产品1实例1：Linux文本编辑器（<strong>继承自产品族1抽象</strong>）</p>
+<pre><code class="language-Java">package com.pattern.abstractfactory.products.impl;
+
+import com.pattern.abstractfactory.products.LinuxSoftware;
+
+public class LinuxEditor extends LinuxSoftware{
+
+    @Override
+    public void showSoftware() {
+        System.out.println(&quot;这是一个Linux的文本编辑器&quot;);
+    }
+    
+}
+</code></pre>
+<p>产品1实例2：Linux浏览器（<strong>继承自产品族1抽象</strong>）</p>
+<pre><code class="language-Java">package com.pattern.abstractfactory.products.impl;
+
+import com.pattern.abstractfactory.products.LinuxSoftware;
+
+public class LinuxEditor extends LinuxSoftware{
+
+    @Override
+    public void showSoftware() {
+        System.out.println(&quot;这是一个Linux的文本编辑器&quot;);
+    }
+    
+}
+</code></pre>
+<h3 id="产品2部分">产品2部分</h3>
+<p>产品族2抽象：Windows系统软件（<strong>接口或抽象</strong>）</p>
+<pre><code class="language-Java">package com.pattern.abstractfactory.products;
+
+public abstract class WindowsSoftware {
+    public void showPlatform(){
+        System.out.println(&quot;当前的环境为Windows&quot;);
+    }
+    public abstract void showSoftware();
+    public void windowsMethod(){
+        System.out.println(&quot;这是Windows系统的独有方法&quot;);
+    }
+}
+</code></pre>
+<p>产品2实例1：Windows文本编辑器（<strong>继承自产品族2抽象</strong>）</p>
+<pre><code class="language-Java">package com.pattern.abstractfactory.products.impl;
+
+import com.pattern.abstractfactory.products.WindowsSoftware;
+
+public class WindowsEditor extends WindowsSoftware {
+
+    @Override
+    public void showSoftware() {
+        System.out.println(&quot;这是一个Windows的文本编辑器&quot;);
+    }
+}
+</code></pre>
+<p>产品2实例2：Windows浏览器（<strong>继承自产品族2抽象</strong>）</p>
+<pre><code class="language-Java">package com.pattern.abstractfactory.products.impl;
+
+import com.pattern.abstractfactory.products.WindowsSoftware;
+
+public class WindowsBrowser extends WindowsSoftware{
+
+    @Override
+    public void showSoftware() {
+        System.out.println(&quot;这是一个Windows的浏览器&quot;);
+    }
+    
+}
+</code></pre>
+<h3 id="测试代码">测试代码</h3>
+<pre><code class="language-Java">package com.pattern;
+
+import com.pattern.abstractfactory.AbstractFactory;
+import com.pattern.abstractfactory.impl.BrowserFactory;
+import com.pattern.abstractfactory.impl.EditorFactory;
+import com.pattern.abstractfactory.products.LinuxSoftware;
+import com.pattern.abstractfactory.products.WindowsSoftware;
+import com.pattern.abstractfactory.products.impl.WindowsBrowser;
+import com.pattern.abstractfactory.products.impl.WindowsEditor;
+
+import org.junit.Test;
+
+public class AbstractFactoryTest {
+    @Test
+    public void FactoryTest(){
+        // 创建一个文本编辑器的工厂，用于创建文本编辑器
+        AbstractFactory editorFactory = new EditorFactory();
+        // 创建一个浏览器的工厂，用于创建浏览器
+        AbstractFactory browserFactory = new BrowserFactory();
+        // 开始使用浏览器和文本编辑器
+        System.out.println(&quot;--------------------&quot;);
+        System.out.println(&quot;当前软件的运行环境为Windows&quot;);
+        // 当前在Windows环境下运行应用，应用要使用浏览器和文本编辑器
+        WindowsSoftware windowsBrowser = browserFactory.createWindowsSoftware();
+        WindowsSoftware windowsEditor = editorFactory.createWindowsSoftware();
+        windowsBrowser.showPlatform();
+        windowsBrowser.showSoftware();
+        windowsBrowser.windowsMethod();
+        windowsEditor.showPlatform();
+        windowsEditor.showSoftware();
+        windowsEditor.windowsMethod();
+        System.out.println(&quot;--------------------&quot;);
+        System.out.println(&quot;软件重新部署了，使用环境为Linux&quot;);
+        LinuxSoftware linuxBrowser = browserFactory.createLinuxSoftware();
+        LinuxSoftware linuxEditor = editorFactory.createLinuxSoftware();
+        linuxBrowser.showPlatform();
+        linuxBrowser.showSoftware();
+        linuxBrowser.linuxMethod();
+        linuxEditor.showPlatform();
+        linuxEditor.showSoftware();
+        linuxEditor.linuxMethod();
+
+    }
+}
+</code></pre>
+<h2 id="类图">类图</h2>
+<p><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ghh5pahidzj30y40bqaaz.jpg" alt="类图" loading="lazy"><br>
+Idea自动生成的类图优点抽象，附上一个直观一点的<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ghh5rc2fgij30bm0cs75l.jpg" alt="抽象工厂类图" loading="lazy"></p>
+<h2 id="运行结果">运行结果</h2>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ghh56aqegrj30d908b3zb.jpg" alt="运行结果" loading="lazy"></figure>
+<h2 id="扩展">扩展</h2>
+<p>下面我们来讨论扩展，分为产品族的扩展和产品等级的扩展。</p>
+<h3 id="产品族扩展">产品族扩展</h3>
+<p>产品族的扩展是非常困难的，严重违反了开闭原则，拿上面例子来说就是扩展了一个新的软件平台，如Unix，下面是扩展需要的步骤。</p>
+<ul>
+<li>定义一个新的接口或抽象，作为一个新的产品族。</li>
+<li>为这个接口或抽象提供实例。</li>
+<li><font color=red>修改抽象工厂</font>，为该工厂添加新产品族相关的方法</li>
+<li><font color=red>修改抽象工厂的每一个实现类</font>，来生产产品</li>
+<li>修改高层代码<br>
+从上面两处加红的地方已经严重违反的开闭原则了，抽象类和接口是一个契约，改变契约，所有与契约有关的代码都要修改！！！</li>
+</ul>
+<h3 id="产品等级扩展">产品等级扩展</h3>
+<p>产品等级的扩展很容易，符合开闭原则，拿上面的例子来说就是扩展了一个新的产品，如图片查看器，下面是扩展需要的步骤。</p>
+<ul>
+<li>添加一个抽象工厂的实现类，用于创建新的产品等级（即新添加的产品）。</li>
+<li>为不同的产品族加上该产品等级。即为每个产品族新增加一个实现类。<br>
+产品等级的扩展只需要两步，而且是完完全全通过扩展实现的，并没有对原来的代码造成侵入。</li>
+</ul>
+<h1 id="注意">注意</h1>
+<ul>
+<li>有N个产品族，在抽象工厂类中就应该有N个创建方法。</li>
+<li>有M个产品等级就应该有M个实现工厂类，在每个实现工厂中，实现不同产品族的生产任务。</li>
+<li>扩展困难是指产品族扩展困难，而产品等级扩展则很容易。符合开闭原则。</li>
+<li>此处使用的是抽象类而非接口，实际上根据抽象工厂模式的定义，使用两者都可以，选择的关键就在于对于产品族而言，是否有共有的构造或者方法。</li>
+<li>抽象工厂模式是工厂方法模式的升级版本，在有多个业务品种、业务分类时，通过抽象工厂模式产生需要的对象是一种非常好的解决方式</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
+<li><a href="#%E7%BC%BA%E7%82%B9">缺点</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
+<li><a href="#%E4%B8%BE%E4%BE%8B">举例</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
+<ul>
+<li><a href="#%E5%B7%A5%E5%8E%82%E9%83%A8%E5%88%86">工厂部分</a></li>
+<li><a href="#%E4%BA%A7%E5%93%811%E9%83%A8%E5%88%86">产品1部分</a></li>
+<li><a href="#%E4%BA%A7%E5%93%812%E9%83%A8%E5%88%86">产品2部分</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+</ul>
+</li>
+<li><a href="#%E7%B1%BB%E5%9B%BE">类图</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C">运行结果</a></li>
+<li><a href="#%E6%89%A9%E5%B1%95">扩展</a>
+<ul>
+<li><a href="#%E4%BA%A7%E5%93%81%E6%97%8F%E6%89%A9%E5%B1%95">产品族扩展</a></li>
+<li><a href="#%E4%BA%A7%E5%93%81%E7%AD%89%E7%BA%A7%E6%89%A9%E5%B1%95">产品等级扩展</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/useful-code/">
+              <span class="post-title">
+                记录一些常用的代码&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/designpartten-abstractfactory/" class="leancloud_visitors"
+              data-flag-title="设计模式-抽象工厂模式">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

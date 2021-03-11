@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>爬虫-有道翻译 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="爬虫-有道翻译 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="爬虫-有道翻译" />
+  <meta property="og:url" content="https://mxecy.cn/post/spider-youdan-translation/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>爬虫-有道翻译</h1>
+    <span class="meta">
+      Posted on
+      2020-06-15，4 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p>记录一次Python的有道翻译爬虫。</p>
+<h1 id="抓包">抓包</h1>
+<p>首先进入<a href="http://fanyi.youdao.com/">有道的网址</a>，打开F12调试工具。<br>
+然后随便输入一个词获取翻译。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gftdadvzbwj31hb0o6te0.jpg" alt="" loading="lazy"><br>
+请求的网址是：http://fanyi.youdao.com/translate_o?smartresult=dict&amp;smartresult=rule<br>
+并且携带了一下参数。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gftdcdeqgej30a80bijrz.jpg" alt="" loading="lazy"><br>
+其中关注的参数有如下：</p>
+<ul>
+<li>i：要翻译的词</li>
+<li>salt：时间戳</li>
+<li>sign：签名</li>
+</ul>
+<p>由于sign是MD5加密过的，使用要找到他的加密信息。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gftdet815jj30k60kyjso.jpg" alt="" loading="lazy"><br>
+通过全文本搜索，发现sign相关的加密方法位于<a href="http://shared.ydstatic.com/fanyi/newweb/v1.0.27/scripts/newweb/fanyi.min.js">fanyi.min.js</a>中。<br>
+所幸，这段js没有加密，我们可以格式化一下js然后查找它的方法，获取到加密的方法。<br>
+<img src="https://tva4.sinaimg.cn/large/006ZFECEgy1gftdhlzzqdj30ll0760te.jpg" alt="" loading="lazy"><br>
+我们可以发现，他加密的字段一共有四个，其中两个是常量，以及两个变量。<br>
+<img src="https://tvax2.sinaimg.cn/large/006ZFECEgy1gftdjo0ykvj30an01ogli.jpg" alt="" loading="lazy"><br>
+从这段代码我们可以看出，参数i是当前的时间戳加上一个随机数生成的。<br>
+然后参数e也就是我们要翻译的词。<br>
+左边的那段常量是一个固定的，右边的那段常量应该是为了防止伪造请求而添加的一段随机字符串。<br>
+我查询过以前其他作者的文章，发现他们的博文中的这串字符串不一样，所以应该这东西是会变化的。<br>
+所幸我们可以通过获取js的内容并通过正则表达式获取到这一段内容。<br>
+最后将这些拼接起来作为sign参数Post上去，就能获取到对应的翻译了。</p>
+<h1 id="代码">代码</h1>
+<p>注意一下Python的缩进</p>
+<pre><code class="language-python">import requests
+import json
+import time
+import random
+import hashlib
+import re
+url = &quot;http://fanyi.youdao.com/translate_o?smartresult=dict&amp;smartresult=rule&quot;
+# 从js中提取md5加密字符串
+jsurl = &quot;http://shared.ydstatic.com/fanyi/newweb/v1.0.27/scripts/newweb/fanyi.min.js&quot;
+jsContent = str(requests.post(url=jsurl).content,&quot;utf8&quot;)
+# 替换+
+jsContent = jsContent.replace(&quot;+&quot;,&quot;&quot;)
+password = re.findall(r'&quot;fanyideskweb&quot;ei&quot;(.*?)&quot;',jsContent)
+word = input(&quot;输入翻译词：&quot;)
+while(word != &quot;#&quot;):
+    # 获取时间戳 + 0-10随机数
+    timestamp = str(int(time.time()*1000) + random.randint(0,10))
+    # MD5加密sign
+    sign = &quot;fanyideskweb&quot; + word +  timestamp + password[0]
+    md5 = hashlib.md5()
+    md5.update(sign.encode(&quot;utf8&quot;))
+    signMd5 = md5.hexdigest()
+    # 构造请求body
+    formatData = {
+        &quot;i&quot;: word,
+        &quot;from&quot;: &quot;AUTO&quot;,
+        &quot;to&quot;: &quot;AUTO&quot;,
+        &quot;smartresult&quot;: &quot;dict&quot;,
+        &quot;client&quot;: &quot;fanyideskweb&quot;,
+        &quot;salt&quot;: str(timestamp),
+        &quot;sign&quot;: signMd5,
+        &quot;doctype&quot;: &quot;json&quot;,
+        &quot;version&quot;: &quot;2.1&quot;,
+        &quot;keyfrom&quot;: &quot;fanyi.web&quot;,
+        &quot;action&quot;: &quot;FY_BY_REALTlME&quot;,
+    }
+    # 构造请求头
+    headers = {
+    # 必要信息：Cookie，Host，Origin，Referer，User-Agent
+        &quot;Cookie&quot;: &quot;OUTFOX_SEARCH_USER_ID=1354776506@10.108.160.101; JSESSIONID=aaaVuQquabmk44VgVY3kx; OUTFOX_SEARCH_USER_ID_NCOO=1742625287.947354; ___rl__test__cookies=1592221619433&quot;,
+        &quot;Host&quot;: &quot;fanyi.youdao.com&quot;,
+        &quot;Origin&quot;:&quot;http://fanyi.youdao.com&quot;,
+        &quot;Referer&quot;:&quot;http://fanyi.youdao.com/&quot;,
+        &quot;User-Agent&quot;: &quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36&quot;
+        }
+    response = requests.post(url=url,data=formatData,headers=headers)
+    # 解析JSON
+    result = json.loads(str(response.content,&quot;utf8&quot;))
+    print(&quot;输入的字符为：{}&quot;.format(result['translateResult'][0][0]['src']))
+    print(&quot;结果为：{}&quot;.format(result['translateResult'][0][0]['tgt']))
+    print(&quot;------------&quot;)
+    word = input(&quot;输入翻译词：&quot;)
+
+</code></pre>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E6%8A%93%E5%8C%85">抓包</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/redis-install/">
+              <span class="post-title">
+                Redis安装&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/spider-youdan-translation/" class="leancloud_visitors"
+              data-flag-title="爬虫-有道翻译">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>某N1盒子调教笔记 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="某N1盒子调教笔记 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="某N1盒子调教笔记" />
+  <meta property="og:url" content="https://mxecy.cn/post/n1box/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/KkAHc_aHW/" class="tag">Other</a>
+      
+    </span>
+    <h1>某N1盒子调教笔记</h1>
+    <span class="meta">
+      Posted on
+      2019-03-10，7 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p>声明:此文章参考恩山论坛，只是将其整合成一个可行方案。本文所有的内容都是基于armbian Ubuntu mate桌面环境进行编写。<a href="https://www.right.com.cn/forum/thread-343482-1-3.html">原文地址</a></p>
+<p>请尽量按照本教程进行调教，原教程有出错的风险。</p>
+<h1 id="前言">前言:</h1>
+<p>对于想要学习Linux系统的朋友，Ubuntu是一个不错的选择。但是鉴于开虚拟机或者装双系统每次开机比较麻烦，所以可以选择其他的代替方案。如树莓派，但是考虑到树莓派的价格加上我们主要是使用系统，用不上gpio。所以N1或者T1也就成了折腾的最好选择。拿N1来说，其配置方面为晶科S905的CPU+2gddr3运存+8gemmc内存。也就成了代替树莓派的最好选择。并且在深水鱼上的售价仅为80。可以说是树莓派的很好的一个替代品了。加上其CPU架构和树莓派的相同，所以说使用的软件源可以直接使用树莓派的。</p>
+<h1 id="准备">准备:</h1>
+<p>为完成调教，你需要准备如下的东西:</p>
+<p>硬件：</p>
+<p>N1盒子本体，电源适配器，网线，8GU盘，USB鼠标，双公USB数据线，HDMI线以及一个HDMI显示器</p>
+<p>软件：</p>
+<p>斐讯T1、N1官方系统降级工具、platform-tools_r28.0.1-windows（adb工具）、install.sh.xz、Armbian_5.44_S9xxx_Ubuntu_bionic_3.14.29_mate_20180601.img ,<br>
+、 usbit、winscp556</p>
+<p>工具下载地址:https://pan.baidu.com/s/1ond8ptJpSEIyLiryzWK2Kw 提取码：myf0</p>
+<p>固件下载地:https://pan.baidu.com/s/1ux7zAF2QYoLWwTTB0Ah5ug 密码：axov</p>
+<h1 id="开始">开始:</h1>
+<p>注：方便起见，以下内容大部分搬砖恩山论坛，少部分加以修改。</p>
+<p>1.N1 系统版本号大于 V2.22 的都需要降级，否则不能刷机。<br>
+首先接通电源、显示屏、鼠标网线和双公数据线，进行降级操作</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twtokhagj30c805ydkg.jpg" alt="" loading="lazy"></figure>
+<p>开机后快速连续点击固件版本一栏四下打开 adb。</p>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twu2zdidj30ln0ardkj.jpg" alt="" loading="lazy"></figure>
+<p>进入斐讯T1、N1官方系统降级工具中的onekey文件夹，打开run.bat。</p>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twugu3nij30wp0e9gp2.jpg" alt="" loading="lazy"></figure>
+<p>选择2，输入自己盒子的IP地址，如果没有开启adb，现象如左边所示，正常开启是右边的现象</p>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twurb38pj30qi0fdjsu.jpg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twv8iyeuj30r10d6myi.jpg" alt="" loading="lazy"></figure>
+<p>按任意键可以关闭了</p>
+<figure data-type="image" tabindex="6"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twvkgywfj30i80e8abi.jpg" alt="" loading="lazy"></figure>
+<p>降级完成后开机显示的固件版本依然显示的是和之前的一样的，不过不用担心，这里的降级是降级引导等关键分区，所以系统版本那里是不会变的。</p>
+<p>移步到     \斐讯T1、N1官方系统降级工具\onekey\data</p>
+<figure data-type="image" tabindex="7"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twvv83l2j30px0extbl.jpg" alt="" loading="lazy"></figure>
+<p>按住shift键，鼠标右击出现“此处打开PowerShell窗口”，当然会用cmd的也可以用cmd继续，都一样</p>
+<figure data-type="image" tabindex="8"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1tww72o23j308w0hdjs5.jpg" alt="" loading="lazy"></figure>
+<p>接下来还是要知道斐讯N1的IP地址，可以通过显示屏，也可以通过路由器查看。</p>
+<p>然后键入一下命令:</p>
+<pre><code class="language-shell"> .\adb.exe connect 192.168.2.34
+</code></pre>
+<pre><code class="language-shell">.\adb.exe shell reboot update`
+</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twwk0r4wj30hr036glx.jpg" alt="" loading="lazy"><br>
+之后斐讯N1会重启，使用ssh连接工具连接，也可以使用cmd命令连接，连接前还是要知道斐讯N1的IP，注意，这个时候IP已经变化了，可以通过路由器查看或者使用ScanPort，也可以直接登陆，登陆账号是root，密码默认1234，登陆后系统会提示进行修改<br>
+<strong>至此，盒子方面就解决完成了。每次想要重装系统的话从此切入。</strong></p>
+<h1 id="制作启动u盘">制作启动U盘：</h1>
+<p>将U盘插入自己的电脑，打开工具包的usbit文件夹中的USB Image Tool.exe，插入U盘<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twwwziikj30gv0bbq4b.jpg" alt="" loading="lazy"><br>
+点击Restore<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twx77qlfj30930cy3zd.jpg" alt="" loading="lazy"><br>
+选中工具包的Armbian_5.44_S9xxx_Ubuntu_bionic_3.14.29_server_20180729.img，如后缀为.xz，请自行解压。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twxg5h2gj30og0e8402.jpg" alt="" loading="lazy"><br>
+然后等待刷入完成。</p>
+<h1 id="开机">开机：</h1>
+<p>以上步骤完成后基本上就完成一大半了。鉴于恩山论坛原帖上有些不足之处，所以接下来大部分是自己调教的。由于本人的N1已经出售，所以接下来的图片会很少。<br>
+首先，先把该插的东西全部给他插上去。包括U盘<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twgqrbc1j33401k0npe.jpg" alt="" loading="lazy"><br>
+默认的，N1会进入U盘上的系统，如果没有进入的话大部分原因是你U盘的原因，请更换U盘。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twise1hwj30ee063t97.jpg" alt="" loading="lazy"><br>
+输入密码进入系统后会提示你修改root用户组的密码，进行修改就行了。注意：第一次输入原密码，后面两次是你修改后的密码（记忆中是这样）<br>
+然后，创建用户，根据提示一步步的来。<br>
+创建好用户后会自动重启，如果没有重启的话直接输入reboot进行重启。<br>
+接下来要把系统写入emmc，刷掉原来的系统，<br>
+电脑打开cmd,输入</p>
+<pre><code class="language-shell">ssh -p 22 root@192.168.2.132
+</code></pre>
+<p>(此处IP为你盒子的IP)<br>
+输入密码连接到盒子。<br>
+电脑打开winscp或者其他FTP工具，连接<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1two1onqqj30h60770ss.jpg" alt="" loading="lazy"><br>
+进入/root目录<br>
+将下载好的工具包里的 install.sh 替换掉 /root/install.sh<br>
+然后在cmd中输入一下命令：</p>
+<pre><code class="language-shell">mkfs.ext4 /dev/data
+</code></pre>
+<pre><code class="language-shell">chmod +x install.sh
+</code></pre>
+<pre><code class="language-shell">nand-sata-install
+</code></pre>
+<p>中途会提示确认，直接输入Y就行了<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1twqt2dnnj30a5022gld.jpg" alt="" loading="lazy"><br>
+看到如下字符就证明已经成功了。<br>
+格式化 /dev/system 分区。注：此步可以跳过<br>
+输入命令：</p>
+<pre><code class="language-shell">mkfs.ext4 /dev/system
+</code></pre>
+<p>至此，系统已经刷入emmc内了。接下来是关机然后进行系统的调教了。注意把硬关机，还有把U盘给拔下来。</p>
+<h1 id="调教篇">调教篇：</h1>
+<p>正常来说开机过后就会直接进入图形化系统了。接下来就可以输入密码登录了。注：进去后为英文，图片为我已经调教好的N1<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1tx063gjhj33401k0b2a.jpg" alt="" loading="lazy"><br>
+进入系统后，首先先切换源，否则接下来的操作会很慢。由于基本上步骤一样，一下截图为在VPS上操作的截图。<br>
+使用vim编辑器编辑源文件，输入一下命令：</p>
+<pre><code class="language-shell">vim /etc/apt/sources.list
+</code></pre>
+<p>按下i进入插入操作。定位到链接地址，然后将所有链接删除，切换为一下内容(只删除链接，不要把链接后面的东西删除了)：</p>
+<pre><code class="language-shell">http://mirrors.ustc.edu.cn/ubuntu-ports/
+</code></pre>
+<p>此处切换为中科大的源，因为个人觉得最稳定。<br>
+然后点击ESC推出编辑模式，输入!wq 保存后退出。<br>
+接下来，输入：</p>
+<pre><code class="language-shell">apt-get update
+</code></pre>
+<p>更新源内容。<br>
+接着是切换中文教程。<br>
+打开Control Center - Language Support, 点击 Install / Remove Languages<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1tx18sopvj30e70d6gmq.jpg" alt="" loading="lazy"><br>
+选中Chinese(simplified), 然后点Apply，等待系统安装中文语言包。<br>
+将输入框架修改为fcitx：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1txankhgxj30e90d4ta1.jpg" alt="" loading="lazy"><br>
+默认下载的中文输入法是Ubuntu的默认输入法。<br>
+接下来中文也就调教好了。<br>
+接下来是WIFI，由于默认是不开启WIFI的，使用要在开机项中加入一条开启WIFI的选项。<br>
+输入以下命令:</p>
+<pre><code class="language-shell">vim /etc/rc.local
+</code></pre>
+<p>按照如上操作，在 exit 0上一行添加 modprobe dhd</p>
+<p>然后!wq保存退出。</p>
+<p>输入sudo reboot重新启动。</p>
+<p>基本上，重启后就调教完毕了。</p>
+<p>进入后也是中文页面。</p>
+<p>接下来是主题方面，下面为我自己使用的主题:</p>
+<figure data-type="image" tabindex="9"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1txenkgcuj33401k04qs.jpg" alt="" loading="lazy"></figure>
+<p>为几个主题的混搭，链接将在文章的末尾给出。</p>
+<p>接下来就是下载方面的问题，由于arm64架构的可用软件源很少，所以在此推荐：xware和baidupcs</p>
+<p>xware在百度上寻找：Xware1.0.31_armel_v5te_android.zip</p>
+<p>然后baidupcs在github上寻找：https://github.com/liuzhuoling2011/baidupcs-web</p>
+<p>此处由于盒子不在暂时不提供安装教程，请按照百度教程安装，日后可能会更新。</p>
+<p>至此，系统的调教也结束了。接下来就可以使用了。</p>
+<h1 id="杂图">杂图：</h1>
+<figure data-type="image" tabindex="10"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1txm95hwgj31k03407wi.jpg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="11"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1txma0pc0j33401k0qv6.jpg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="12"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g1txmaqsblj33401k0qv7.jpg" alt="" loading="lazy"></figure>
+<h1 id="附件">附件：</h1>
+<p><a href="https://www.lanzous.com/i3dazde">主题打包</a></p>
+<p><a href="https://pan.baidu.com/s/1ond8ptJpSEIyLiryzWK2Kw">工具下载地址 提取码：myf0</a></p>
+<p><a href="https://pan.baidu.com/s/1ux7zAF2QYoLWwTTB0Ah5ug">固件下载地 密码：axov</a></p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言:</a></li>
+<li><a href="#%E5%87%86%E5%A4%87">准备:</a></li>
+<li><a href="#%E5%BC%80%E5%A7%8B">开始:</a></li>
+<li><a href="#%E5%88%B6%E4%BD%9C%E5%90%AF%E5%8A%A8u%E7%9B%98">制作启动U盘：</a></li>
+<li><a href="#%E5%BC%80%E6%9C%BA">开机：</a></li>
+<li><a href="#%E8%B0%83%E6%95%99%E7%AF%87">调教篇：</a></li>
+<li><a href="#%E6%9D%82%E5%9B%BE">杂图：</a></li>
+<li><a href="#%E9%99%84%E4%BB%B6">附件：</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/esp8266/">
+              <span class="post-title">
+                ESP8266模块&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/n1box/" class="leancloud_visitors"
+              data-flag-title="某N1盒子调教笔记">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>设计模式-模板方法设计模式 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="设计模式-模板方法设计模式 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="设计模式-模板方法设计模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/designpartten-template/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>设计模式-模板方法设计模式</h1>
+    <span class="meta">
+      Posted on
+      2020-08-24，7 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="定义">定义</h1>
+<ul>
+<li>Define the skeleton of an algorithm in an operation,deferring some steps to subclasses.Template Method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure（定义一个操作中的算法的框架，而将一些步骤延迟到子类中。使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤）</li>
+</ul>
+<h1 id="优点">优点</h1>
+<ul>
+<li>封装不变部分，扩展可变部分</li>
+<li>提取公共部分代码，便于维护</li>
+<li>行为由父类控制，子类实现</li>
+</ul>
+<h1 id="缺点">缺点</h1>
+<ul>
+<li>按照一般设计习惯，抽象类负责声明最抽象、最一般的事务属性和方法，实现类完成具体的事务属性和方法。但是模板方法模式却颠倒了，抽象类定义了部分抽象方法，由子类实现，子类执行的结果影响了父类的结果，也就是子类对父类产生了影响，在复杂的项目中，会带来代码阅读的难度</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<ul>
+<li>场景：
+<ul>
+<li>多个子类有公有的方法，并且逻辑基本相同时。</li>
+<li>重要、复杂的算法，可以把核心算法设计为模板方法，周边的相关细节功能则由各个子类实现</li>
+<li>重构时使用，把相同的代码抽取到父类中，然后通过钩子函数约束其行为（参考模板方法模式的扩展）。</li>
+</ul>
+</li>
+<li>模板方法模式在开源框架中运用广泛，提供一个抽象类，然后提供了一堆子类。如果需要扩展功能，可以继承这个抽象类，然后复写protected方法，然后在调用一个类是execute方法，就能完成扩展开发。</li>
+</ul>
+<h1 id="代码">代码</h1>
+<p><strong>模板方法模式可能是最常用的设计模式之一了，因为它只需要依靠Java或者其他语言的扩展机制就能实现。并且由于它太基本了，可能使你并没有意识到自己使用的是模板方法模式</strong></p>
+<h2 id="通用类图">通用类图</h2>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0l5rfmoxj30t80jo43e.jpg" alt="模板方法模式通用类图" loading="lazy"></figure>
+<h2 id="基本的模板方法模式">基本的模板方法模式</h2>
+<h3 id="类图">类图</h3>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gi1vxebydbj30cy091mx8.jpg" alt="模板方法模式基本类图" loading="lazy"></figure>
+<h3 id="代码-2">代码</h3>
+<p>模板父类（<strong>抽象类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.templatemethod.template;
+public abstract class AbstractClass {
+    // 具体的方法，由子类去实现，尽量使用protected修饰
+    protected abstract void step1();
+    protected abstract void step2();
+    protected abstract void step3();
+    // 模板方法，抽取子类的共有代码。同时使用为了防止子类复写模板方法使用final修饰
+    public final void start(){
+        // 具体的模板方法，子类共有的代码
+        this.step1();
+        this.step2();
+        this.step3();
+    }
+}
+</code></pre>
+<p>具体子类1（<strong>继承自模板父类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.templatemethod.template;
+
+public class ConcreteClass1 extends AbstractClass{
+
+    @Override
+    protected void step1() {
+        System.out.println(&quot;ConcreteClass1步骤1&quot;);
+    }
+
+    @Override
+    protected void step2() {
+        System.out.println(&quot;ConcreteClass1步骤2&quot;);
+    }
+
+    @Override
+    protected void step3() {
+        System.out.println(&quot;ConcreteClass1步骤3&quot;);
+    }
+    
+}
+</code></pre>
+<p>具体子类2（<strong>继承自模板父类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.templatemethod.template;
+
+public class ConcreteClass2 extends AbstractClass{
+
+    @Override
+    protected void step1() {
+        System.out.println(&quot;ConcreteClass2步骤1&quot;);
+    }
+
+    @Override
+    protected void step2() {
+        System.out.println(&quot;ConcreteClass2步骤2&quot;);
+    }
+
+    @Override
+    protected void step3() {
+        System.out.println(&quot;ConcreteClass2步骤3&quot;);
+    }
+    
+}
+</code></pre>
+<h3 id="测试代码">测试代码</h3>
+<pre><code class="language-Java">package com.pattern;
+
+import com.pattern.templatemethod.template.AbstractClass;
+import com.pattern.templatemethod.template.ConcreteClass1;
+import com.pattern.templatemethod.template.ConcreteClass2;
+
+import org.junit.Test;
+
+public class TemplateMethodTest {
+    @Test
+    /**
+     * 基本的模板方法模式测试
+     */
+    public void TemplateTest(){
+        AbstractClass client1 = new ConcreteClass1();
+        AbstractClass client2 = new ConcreteClass2();
+        client1.start();
+        client2.start();
+    }
+}
+</code></pre>
+<h3 id="结果">结果</h3>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gi1w020vjwj30be0540sp.jpg" alt="模板方法模式执行结果" loading="lazy"></figure>
+<h2 id="模板方法模式的扩展">模板方法模式的扩展</h2>
+<h3 id="类图-2">类图</h3>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gi1wy0vlsyj30g00arwf1.jpg" alt="模板方法模式扩展类图" loading="lazy"></figure>
+<h3 id="代码-3">代码</h3>
+<p>模板父类（<strong>抽象类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.templatemethod.extend;
+public abstract class AbstractExtendClass {
+    // 具体的方法，由子类去实现，尽量使用protected修饰
+    protected abstract void step1();
+    protected abstract void step2();
+    protected abstract void step3();
+    // 步骤4,通过钩子控制是否执行
+    protected abstract void step4();
+    // 定义了一个钩子，用于控制是否执行step4。可以由子类继承，然后控制此钩子
+    protected boolean isExecute(){
+        return true;
+    }
+    // 模板方法，抽取子类的共有代码。同时使用为了防止子类复写模板方法使用final修饰
+    public final void start(){
+        // 具体的模板方法，子类共有的代码
+        this.step1();
+        this.step2();
+        this.step3();
+        // 如果为true执行step4,如果为false不执行step4
+        if(isExecute()){
+            this.step4();
+        }
+
+    }
+}
+</code></pre>
+<p>具体子类1（<strong>继承自模板父类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.templatemethod.extend;
+public class ConcreteExtendClass1 extends AbstractExtendClass{
+
+    @Override
+    protected void step1() {
+        System.out.println(&quot;ConcreteClass1步骤1&quot;);
+    }
+
+    @Override
+    protected void step2() {
+        System.out.println(&quot;ConcreteClass1步骤2&quot;);
+    }
+
+    @Override
+    protected void step3() {
+        System.out.println(&quot;ConcreteClass1步骤3&quot;);
+    }
+
+    @Override
+    protected void step4() {
+        System.out.println(&quot;钩子被激活，执行了步骤4&quot;);
+    }
+    // 由于子类1不需要执行步骤4，使用重写了isExecute控制钩子，使得它永远不执行步骤4
+    @Override
+    protected boolean isExecute() {
+        return false;
+    }
+    
+}
+</code></pre>
+<p>具体子类2（<strong>继承自模板父类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.templatemethod.extend;
+
+public class ConcreteExtendClass2 extends AbstractExtendClass {
+    private boolean execute;
+    @Override
+    protected void step1() {
+        System.out.println(&quot;ConcreteClass2步骤1&quot;);
+    }
+
+    @Override
+    protected void step2() {
+        System.out.println(&quot;ConcreteClass2步骤2&quot;);
+    }
+
+    @Override
+    protected void step3() {
+        System.out.println(&quot;ConcreteClass2步骤3&quot;);
+    }
+
+    @Override
+    protected void step4() {
+        System.out.println(&quot;钩子被激活，执行了步骤4&quot;);
+    }
+
+    // 子类2并不知道是否要执行步骤4，所以我们在外部控制。
+    @Override
+    protected boolean isExecute() {
+        return this.execute;
+    }
+    // 用于外界控制构造
+    public void setExecute(boolean execute){
+        this.execute = execute;
+    }
+}
+</code></pre>
+<h3 id="测试代码-2">测试代码</h3>
+<pre><code class="language-Java">package com.pattern;
+
+import com.pattern.templatemethod.extend.AbstractExtendClass;
+import com.pattern.templatemethod.extend.ConcreteExtendClass1;
+import com.pattern.templatemethod.extend.ConcreteExtendClass2;
+import com.pattern.templatemethod.template.AbstractClass;
+import com.pattern.templatemethod.template.ConcreteClass1;
+import com.pattern.templatemethod.template.ConcreteClass2;
+
+import org.junit.Test;
+
+public class TemplateMethodTest {
+    @Test
+    /**
+     * 扩展的模板方法模式测试
+     */
+    public void ExtendTemplateTest(){
+        ConcreteExtendClass1 client1 = new ConcreteExtendClass1();
+        ConcreteExtendClass2 client2 = new ConcreteExtendClass2();
+        System.out.println(&quot;----------子类1并不需要执行步骤4-----------&quot;);
+        // 子类1并不需要执行步骤4
+        client1.start();
+        // 子类2执行步骤4需要外界控制
+        // 首先子类2想执行步骤4
+        System.out.println(&quot;----------首先子类2想执行步骤4-----------&quot;);
+        client2.setExecute(true);
+        client2.start();
+        // 然后子类2不想执行步骤4了
+        System.out.println(&quot;----------然后子类2不想执行步骤4了-----------&quot;);
+        client2.setExecute(false);
+        client2.start();
+    }
+}
+</code></pre>
+<h3 id="运行结果">运行结果</h3>
+<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gi1wv8a24jj30ff09caal.jpg" alt="模板方法模式扩展执行结果" loading="lazy"></figure>
+<h1 id="注意">注意</h1>
+<ul>
+<li>为了防止恶意的操作，一般模板方法都加上final关键字，不允许被覆写</li>
+<li>抽象模板中的基本方法尽量设计为protected类型，符合迪米特法则，不需要暴露的属性或方法尽量不要设置为protected类型。实现类若非必要，尽量不要扩大父类中的访问权限。</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
+<li><a href="#%E7%BC%BA%E7%82%B9">缺点</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
+<ul>
+<li><a href="#%E9%80%9A%E7%94%A8%E7%B1%BB%E5%9B%BE">通用类图</a></li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F">基本的模板方法模式</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9B%BE">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
+</ul>
+</li>
+<li><a href="#%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%89%A9%E5%B1%95">模板方法模式的扩展</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9B%BE-2">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-3">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-2">测试代码</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C">运行结果</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/designpartten-strategy/">
+              <span class="post-title">
+                设计模式-策略模式&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/designpartten-template/" class="leancloud_visitors"
+              data-flag-title="设计模式-模板方法设计模式">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

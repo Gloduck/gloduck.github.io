@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>Graalvm​虚拟机集成 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="Graalvm​虚拟机集成 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="Graalvm​虚拟机集成" />
+  <meta property="og:url" content="https://mxecy.cn/post/graalvm/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/VPOLJ7-I3/" class="tag">JVM</a>
+      
+      <a href="https://mxecy.cn/tag/gS9hbKX8J/" class="tag">Idea</a>
+      
+      <a href="https://mxecy.cn/tag/R1qiuqz-m/" class="tag">Linux</a>
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+    </span>
+    <h1>Graalvm​虚拟机集成</h1>
+    <span class="meta">
+      Posted on
+      2021-02-09，8 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="安装">安装</h1>
+<p><a href="https://github.com/graalvm/graalvm-ce-builds/releases">下载地址</a></p>
+<pre><code class="language-shell"># 下载
+wget https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0/graalvm-ce-java11-linux-amd64-21.0.0.tar.gz
+# 解压
+tar -xzvf graalvm-ce-java11-linux-amd64-21.0.0.tar.gz
+# 移动
+cd graalvm-ce-java11-21.0.0
+mkdir /usr/lib/jvm/grallvm
+mv ./* /usr/lib/jvm/grallvm
+# 设置环境变量
+gedit /etc/profile
+# 添加一下内容，注意如果配置了其他JVM需要替换
+# ---- 分割符 ----
+#grallvm
+export PATH=${JAVA_HOME}/bin:$PATH
+export JAVA_HOME=/usr/lib/jvm/grallvm
+export GRAALVM_HOME=/usr/lib/jvm/grallvm
+# ---- 分割符 ----
+
+# 更新
+source /etc/profile
+# 输入 which java 应该看到配置好的目录了
+
+</code></pre>
+<h1 id="组件">组件</h1>
+<ul>
+<li>Grallvm自带一个名为<code>gu</code>的组件管理器，如果需要安装其他语言的组件可以使用其安装，包括打包为可执行文件的<code>native-image</code>也需要通过<code>gu</code>安装。</li>
+<li><strong><u>由于官网被墙，需要科学上网</u></strong></li>
+</ul>
+<pre><code class="language-shell">gu install ruby
+gu install r
+gu install python
+gu install wasm
+</code></pre>
+<pre><code class="language-shell">gu install native-image
+gu install llvm-toolchain
+</code></pre>
+<h1 id="入门使用">入门使用</h1>
+<p>编写Java程序</p>
+<pre><code class="language-java">public class Main{
+    public static void main(String[] args){
+        System.out.println(&quot;Hello world&quot;);
+
+    }
+}
+</code></pre>
+<pre><code class="language-shell"># 编译Class文件
+javac Main.java
+# 打包可执行文件
+native-image Main
+
+</code></pre>
+<p>过程如下：</p>
+<pre><code class="language-shell">gloduck@Gloduck:~/桌面$ native-image Main
+[main:5260]    classlist:   1,432.60 ms,  0.96 GB
+[main:5260]        (cap):     635.28 ms,  0.96 GB
+[main:5260]        setup:   2,179.71 ms,  0.96 GB
+[main:5260]     (clinit):     237.55 ms,  1.22 GB
+[main:5260]   (typeflow):   5,621.89 ms,  1.22 GB
+[main:5260]    (objects):   4,560.28 ms,  1.22 GB
+[main:5260]   (features):     352.62 ms,  1.22 GB
+[main:5260]     analysis:  11,099.29 ms,  1.22 GB
+[main:5260]     universe:     521.04 ms,  1.72 GB
+[main:5260]      (parse):   1,434.00 ms,  1.72 GB
+[main:5260]     (inline):   1,278.67 ms,  1.72 GB
+[main:5260]    (compile):   9,150.77 ms,  2.35 GB
+[main:5260]      compile:  12,515.00 ms,  2.35 GB
+[main:5260]        image:   1,146.28 ms,  2.35 GB
+[main:5260]        write:     221.07 ms,  2.35 GB
+[main:5260]      [total]:  29,282.69 ms,  2.35 GB
+
+</code></pre>
+<p>最后产生了一个文件名为<code>main</code>的可执行文件（我的文件名为<code>Main.java</code>）。</p>
+<p>然后执行：</p>
+<pre><code class="language-shell">gloduck@Gloduck:~/桌面$ ./main
+Hello world
+</code></pre>
+<p>一个Hello world打包下来有<code>9.1M</code>。虽然比起C之类的打包还是要大很多，不过想对于集成<code>JRE</code>已经很好了</p>
+<h2 id="注意">注意</h2>
+<p>中途如果出现类似：</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gngqev4gssj31hb0hpjwq.jpg" alt="" loading="lazy"></figure>
+<p>的报错，请先安装依赖。</p>
+<pre><code class="language-shell"> sudo apt install zlib1g-dev
+</code></pre>
+<h1 id="windows额外配置">Windows额外配置</h1>
+<ul>
+<li>如果想在Win10打包<code>exe</code>文件需要额外配置。
+<ul>
+<li>vs官网下载VS：<a href="https://visualstudio.microsoft.com/">链接</a></li>
+<li>安装好后，安装以下扩展：</li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gnhac0bes5j31vj14212i.jpg" alt="" loading="lazy"></li>
+<li>找到<code>vs安装路径\VC\Tools\MSVC\14.28.29333\bin\Hostx64\x64</code>，将其注册到<code>PATH</code>环境变量（<strong><u>打包exe需要cl.exe</u></strong>）。</li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gnhajalc57j31kz0w80wo.jpg" alt="" loading="lazy"></li>
+<li>找到VS下载的<code>Windows Kits</code>文件夹，添加以下环境变量<code>LIB</code>和<code>INCLUDE</code>（<strong><u>注意大写，cl.exe打包需要的依赖</u></strong>），然后添加以下路径：</li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gnham73wknj30xz0d075l.jpg" alt="" loading="lazy"></li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gnham7akt5j30v709vdh0.jpg" alt="" loading="lazy"></li>
+<li>然后保留上面的两个文件夹，VS就可以卸载了。可以像我一样移动到别的地方。</li>
+</ul>
+</li>
+</ul>
+<h1 id="集成maven">集成Maven</h1>
+<p><a href="https://docs.oracle.com/en/graalvm/enterprise/19/guide/reference/native-image/maven-plugin.html">插件路径</a></p>
+<ul>
+<li>
+<p>添加依赖：</p>
+<ul>
+<li>注意：
+<ul>
+<li><strong><u>在<code>plugin</code>的配置中有一个<code>mainClass</code>属性必须指定（含有Main方法的类），否则会无法打包。</u></strong></li>
+<li><strong><u>如使用IDEA之类的工具，请把JDK切换为Graalvm</u></strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-xml">&lt;properties&gt;
+    &lt;graalvm.version&gt;21.0.0&lt;/graalvm.version&gt;
+    &lt;main.class&gt;cn.gloduck.vertx.Main&lt;/main.class&gt;
+&lt;/properties&gt;
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.graalvm.sdk&lt;/groupId&gt;
+        &lt;artifactId&gt;graal-sdk&lt;/artifactId&gt;
+        &lt;version&gt;${graalvm.version}&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.graalvm.nativeimage&lt;/groupId&gt;
+        &lt;artifactId&gt;native-image-maven-plugin&lt;/artifactId&gt;
+        &lt;version&gt;${graalvm.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.graalvm.nativeimage&lt;/groupId&gt;
+            &lt;artifactId&gt;native-image-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;${graalvm.version}&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;native-image&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;phase&gt;package&lt;/phase&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+            &lt;configuration&gt;
+                &lt;skip&gt;false&lt;/skip&gt;
+                &lt;mainClass&gt;cn.gloduck.vertx.Main&lt;/mainClass&gt;
+                &lt;imageName&gt;example&lt;/imageName&gt;
+                &lt;buildArgs&gt;
+                    --no-fallback
+                &lt;/buildArgs&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+</li>
+<li>
+<p>指定了MainClass后每次只需要点击<code>Package</code>就能打包成可执行文件了。</p>
+</li>
+</ul>
+<h1 id="打包springboot">打包SpringBoot</h1>
+<p>注意：以下内容为摘录内容。</p>
+<p>参考：<a href="https://github.com/jonashackt/spring-boot-graalvm#relocate-annotation-classpath-scanning-from-runtime-to-build-time">Github</a></p>
+<p>pom添加依赖：</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-context-indexer&lt;/artifactId&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.experimental&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-graalvm-native&lt;/artifactId&gt;
+    &lt;version&gt;0.7.1&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>指定启动类路径：</p>
+<pre><code class="language-xml">&lt;properties&gt;
+    &lt;start-class&gt;cn.gloduck.SpringBootDemo.Start&lt;/start-class&gt;
+&lt;/properties&gt;
+</code></pre>
+<p>配置一个独立的 profile，在编译时通过 <code>native-image-maven-plugin</code> 插件将其编译成本地可执行文件。</p>
+<pre><code class="language-xml">&lt;profiles&gt;
+    &lt;profile&gt;
+        &lt;id&gt;native&lt;/id&gt;
+        &lt;build&gt;
+            &lt;plugins&gt;
+                &lt;plugin&gt;
+                    &lt;groupId&gt;org.graalvm.nativeimage&lt;/groupId&gt;
+                    &lt;artifactId&gt;native-image-maven-plugin&lt;/artifactId&gt;
+                    &lt;version&gt;20.1.0&lt;/version&gt;
+                    &lt;configuration&gt;
+                        &lt;buildArgs&gt;-J-Xmx4G -H:+TraceClassInitialization
+                            -H:+ReportExceptionStackTraces
+                            -Dspring.graal.remove-unused-autoconfig=true
+                            -Dspring.graal.remove-yaml-support=true
+                        &lt;/buildArgs&gt;
+                        &lt;imageName&gt;${project.artifactId}&lt;/imageName&gt;
+                    &lt;/configuration&gt;
+                    &lt;executions&gt;
+                        &lt;execution&gt;
+                            &lt;goals&gt;
+                                &lt;goal&gt;native-image&lt;/goal&gt;
+                            &lt;/goals&gt;
+                            &lt;phase&gt;package&lt;/phase&gt;
+                        &lt;/execution&gt;
+                    &lt;/executions&gt;
+                &lt;/plugin&gt;
+                &lt;plugin&gt;
+                    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                    &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+                &lt;/plugin&gt;
+            &lt;/plugins&gt;
+        &lt;/build&gt;
+    &lt;/profile&gt;
+&lt;/profiles&gt;
+</code></pre>
+<p>该插件在 Maven 中央仓库不存在，需要指定 pluginRepositories 和 repositories：</p>
+<pre><code class="language-xml">&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;spring-milestones&lt;/id&gt;
+        &lt;name&gt;Spring Milestones&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+&lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;spring-milestones&lt;/id&gt;
+        &lt;name&gt;Spring Milestones&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+    &lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;
+</code></pre>
+<h1 id="native-image对java动态特性的处理">Native Image对Java动态特性的处理</h1>
+<p>由于Native Image是静态分析及AOT编译，编译器不能完全准确地预估目标应用所依赖的所有动态特性。为了保证功能的完整性，GraalVM Native Image为以下四种动态特性提供了特殊处理：</p>
+<ul>
+<li>Java Native interface (JNI)</li>
+<li>Java Reflection</li>
+<li>Dynamic proxy (java.lang.reflect.Proxy)</li>
+<li>Class path resources (Class.getResource)</li>
+</ul>
+<h1 id="注意-2">注意</h1>
+<ul>
+<li>Graal VM不支持CGLIB，只能使用JDK动态代理</li>
+<li>如果是打包SpringBoot之类的程序，可能由于某些特性不支持，出错。如：
+<ul>
+<li>动态代理：SpringBoot默认使用的是CGLIB动态代理。目前不支持CGLIB。所以要关闭SpringBoot的动态代理。</li>
+</ul>
+</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="#%E7%BB%84%E4%BB%B6">组件</a></li>
+<li><a href="#%E5%85%A5%E9%97%A8%E4%BD%BF%E7%94%A8">入门使用</a>
+<ul>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</li>
+<li><a href="#windows%E9%A2%9D%E5%A4%96%E9%85%8D%E7%BD%AE">Windows额外配置</a></li>
+<li><a href="#%E9%9B%86%E6%88%90maven">集成Maven</a></li>
+<li><a href="#%E6%89%93%E5%8C%85springboot">打包SpringBoot</a></li>
+<li><a href="#native-image%E5%AF%B9java%E5%8A%A8%E6%80%81%E7%89%B9%E6%80%A7%E7%9A%84%E5%A4%84%E7%90%86">Native Image对Java动态特性的处理</a></li>
+<li><a href="#%E6%B3%A8%E6%84%8F-2">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/java-hashmap/">
+              <span class="post-title">
+                Java HashMap源码分析&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/graalvm/" class="leancloud_visitors"
+              data-flag-title="Graalvm​虚拟机集成">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

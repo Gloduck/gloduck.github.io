@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>设计模式-代理模式 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="设计模式-代理模式 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="设计模式-代理模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/designpartten-proxy/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>设计模式-代理模式</h1>
+    <span class="meta">
+      Posted on
+      2020-09-09，12 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="定义">定义</h1>
+<ul>
+<li>Provide a surrogate or placeholder for another object to control access to it.（为其他对象提供一种代理以控制对这个对象的访问）</li>
+<li>代理设计模式通常有三个角色
+<ul>
+<li>Subject抽象主题角色：抽象主题类可以是抽象类也可以是接口，是一个最普通的业务类型定义，无特殊要求。</li>
+<li>RealSubject具体角色：也叫做被委托角色、被代理角色。是业务逻辑具体的执行者。</li>
+<li>Proxy代理主题角色：也叫做委托类、代理类。他负责对真实角色的应用，把所有抽象主题类的方法限制委托给真实主题角色实现，并且在真实主题角色处理完毕前后做预处理和善后处理工作。</li>
+</ul>
+</li>
+<li>代理模式也叫做委托模式，它是一种基本设计技巧，其他许多模式，如状态模式、策略模式、访问者模式本质上是更特殊场合采用了委托模式</li>
+</ul>
+<h1 id="优点">优点</h1>
+<ul>
+<li>职责清晰：真实的角色就是实现实际的业务逻辑，不用关心其他非本职责的事务，通过后的代理完成一件事务，附带的结果就是编程简洁清晰。</li>
+<li>高扩展性：具体主题角色是随时都会发生变化的，只要它实现了接口，不管如何变化。代理类完全可以在不做任何修改的情况下使用。</li>
+<li>智能化：如Mybatis自动将表单元素映射到对象上。</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<ul>
+<li>场景：
+<ul>
+<li>如Spring中的AOP等</li>
+</ul>
+</li>
+</ul>
+<h1 id="代码">代码</h1>
+<h2 id="通用类图">通用类图</h2>
+<p>静态代理通用类图</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0l9zsbv7j30u00i8acq.jpg" alt="代理模式通用类图" loading="lazy"></figure>
+<p>动态代理通用类图</p>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0lavxfz7j31gg0p4wo8.jpg" alt="动态代理通用类图" loading="lazy"></figure>
+<h2 id="静态代理">静态代理</h2>
+<p>静态代理是相对来说比较简单的代理，优点是逻辑简单</p>
+<h3 id="类图">类图</h3>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gikemlwsuvj30as09tdg2.jpg" alt="静态代理类图" loading="lazy"></figure>
+<h3 id="代码-2">代码</h3>
+<p>代理接口</p>
+<pre><code class="language-java">package com.pattern.proxy.staticproxy;
+
+public interface Subject {
+    void request();
+}
+</code></pre>
+<p>具体被代理的对象（<strong>实现代理接口</strong>）</p>
+<pre><code class="language-java">package com.pattern.proxy.staticproxy;
+
+public class RealSubject implements Subject {
+
+    @Override
+    public void request() {
+        System.out.println(&quot;执行了被代理对象的方法&quot;);
+    }
+    
+}
+</code></pre>
+<p>用于代理的对象（<strong>实现代理接口</strong>）</p>
+<pre><code class="language-java">package com.pattern.proxy.staticproxy;
+
+public class Proxy implements Subject {
+    // 被代理的对象
+    Subject subject = null;
+    // 设置默认的代理
+    public Proxy(){
+        this.subject = new Proxy();
+    }
+    public Proxy(Subject subject){
+        this.subject = subject;
+    }
+    // 前置方法
+    private void before(){
+        System.out.println(&quot;执行了前置方法&quot;);
+    }
+    // 后置方法
+    private void after(){
+        System.out.println(&quot;执行了后置方法&quot;);
+    }
+    // 使用代理在原有的方法上增强操作
+    @Override
+    public void request() {
+        this.before();
+        this.subject.request();
+        this.after();
+    }
+    
+}
+</code></pre>
+<h3 id="测试代码">测试代码</h3>
+<pre><code class="language-java">package com.pattern;
+
+import com.pattern.proxy.normal.Proxy;
+import com.pattern.proxy.normal.RealSubject;
+import com.pattern.proxy.normal.Subject;
+
+import org.junit.Test;
+
+public class ProxyTest {
+    @Test
+    public void StaticProxyTest(){
+        Subject subject = new RealSubject();
+        Subject proxy = new Proxy(subject);
+        proxy.request();
+    }
+}
+</code></pre>
+<h3 id="结果">结果</h3>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gikeoa68soj30fg05d3yn.jpg" alt="静态代理执行结果" loading="lazy"></figure>
+<h2 id="普通代理">普通代理</h2>
+<p>普通代理要求客户端只能访问代理角色，而不能访问真实角色。他和静态代理基本相同，只是在静态代理的基础上屏蔽了对高层真实角色。</p>
+<p>为方便理解，这里使用游戏代练的场景举例。</p>
+<h3 id="类图-2">类图</h3>
+<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gikffgmldrj30e90gkmxz.jpg" alt="普通代理类图" loading="lazy"></figure>
+<h3 id="代码-3">代码</h3>
+<p>代理接口</p>
+<pre><code class="language-java">package com.pattern.proxy.normal;
+
+public interface IGamePlayer {
+    void playGame();
+    void login();
+    void logout();
+}
+
+</code></pre>
+<p>具体被代理的对象（<strong>实现代理接口</strong>）</p>
+<pre><code class="language-java">package com.pattern.proxy.normal;
+
+public class RealGamePlayer implements IGamePlayer {
+    String username;
+    String account;
+    String password;
+    // 构造方法，传入了一个ProxyGamePlayer类型的参数，用于禁止直接通过new来获取一个对象。这只是一个约束，尽量通过团队编程规范约束，而非代码约束
+    public RealGamePlayer(ProxyGamePlayer proxyGamePlayer,String username, String account, String password) throws Exception{
+        if(proxyGamePlayer == null){
+            throw new Exception(&quot;无法创建对象&quot;);
+        } else {
+            this.username = username;
+            this.account = account;
+            this.password = password;
+        }
+    }
+    @Override
+    public void playGame() {
+        System.out.println(&quot;用户：&quot; + username + &quot;正在打游戏&quot;);
+    }
+
+    @Override
+    public void login() {
+        System.out.println(&quot;帐号为：&quot; + account + &quot;,密码为：&quot; + password + &quot;,登录成功&quot;);
+    }
+
+    @Override
+    public void logout() {
+        System.out.println(&quot;用户：&quot; + username + &quot;登出&quot;);
+    }
+}
+
+</code></pre>
+<p>用于代理的对象（<strong>实现代理接口</strong>）</p>
+<pre><code class="language-java">package com.pattern.proxy.normal;
+
+public class ProxyGamePlayer implements IGamePlayer {
+    private RealGamePlayer realGamePlayer;
+    public ProxyGamePlayer(String name, String account, String password){
+        try {
+            // 创建一个被代理的对象
+            realGamePlayer = new RealGamePlayer(this, name, account, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void playGame() {
+        this.realGamePlayer.playGame();
+    }
+
+    @Override
+    public void login() {
+        this.realGamePlayer.login();
+    }
+
+    @Override
+    public void logout() {
+        this.realGamePlayer.logout();
+
+    }
+}
+
+</code></pre>
+<h3 id="测试代码-2">测试代码</h3>
+<pre><code class="language-java">package com.pattern;
+
+import com.pattern.proxy.normal.ProxyGamePlayer;
+import com.pattern.proxy.normal.RealGamePlayer;
+import com.pattern.proxy.staticproxy.Proxy;
+import com.pattern.proxy.staticproxy.RealSubject;
+import com.pattern.proxy.staticproxy.Subject;
+
+import org.junit.Test;
+
+public class ProxyTest {
+    @Test
+    public void NormalProxyTest(){
+        System.out.println(&quot;--------------试图直接创建一个对象--------------&quot;);
+        try {
+            RealGamePlayer realGamePlayer = new RealGamePlayer(null, &quot;张三&quot;,&quot;admin&quot;,&quot;admin&quot;);
+        } catch (Exception e) {
+            // 无法直接创建成功，必须使用代理对象
+            System.out.println(e.getMessage());
+        }
+        System.out.println(&quot;--------------使用代理创建一个对象--------------&quot;);
+        ProxyGamePlayer proxy = new ProxyGamePlayer(&quot;张三&quot;,&quot;admin&quot;,&quot;admin&quot;);
+        proxy.login();
+        proxy.playGame();
+        proxy.logout();
+
+    }
+}
+</code></pre>
+<h3 id="运行结果">运行结果</h3>
+<figure data-type="image" tabindex="6"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gikfhve6yzj30f005zt94.jpg" alt="普通代理运行结果" loading="lazy"></figure>
+<h2 id="强制代理">强制代理</h2>
+<p>强制代理在代理模式的大家族里比较另类，因为代理模式正常的思维是通过代理找到真实的角色，而强制代理则是必须要&quot;强制&quot;。必须通过真实角色查找到代理角色，否则你不能访问。简单来说就是高层模块new了一个真实角色的对象，返回的却是代理角色。</p>
+<p>为了方便理解，使用用户售后的场景。用户买的XX牌电脑出故障了，找XX牌公司进行售后，但是实际售后的并不是商家本身，而是产品的代工厂。</p>
+<h3 id="类图-3">类图</h3>
+<figure data-type="image" tabindex="7"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gikgu6ka0aj30ds0d5zkx.jpg" alt="强制代理类图" loading="lazy"></figure>
+<h3 id="代码-4">代码</h3>
+<p>代理接口（<strong>接口</strong>）</p>
+<pre><code class="language-java">package com.pattern.proxy.force;
+
+/**
+ * 电脑售后接口，相当于代理接口
+ */
+public interface IComputerAfterSale {
+    // 对电脑进行售后
+    void afterSale();
+    IComputerAfterSale getProxy();
+}
+
+</code></pre>
+<p>被代理对象（<strong>实现代理接口</strong>）</p>
+<pre><code class="language-java">package com.pattern.proxy.force;
+
+/**
+ * XXX品牌电脑公司，相当于被代理的对象
+ */
+public class ComputerCompany implements IComputerAfterSale {
+    // 代工厂，电脑公司的代理
+    private IComputerAfterSale oem;
+    // 找到自己的代理
+    @Override
+    public  IComputerAfterSale getProxy(){
+        this.oem = new ComputerOEM(this);
+        return oem;
+    }
+    // 检测是否是代理访问
+    private boolean isProxy(){
+        return (oem == null);
+    }
+
+    @Override
+    public void afterSale() {
+        if(this.isProxy()){
+            System.out.println(&quot;售后由代工厂提供&quot;);
+        } else {
+            // 虽然是代工厂给你进行的售后，但是你只认牌子不认代工厂
+            System.out.println(&quot;厂家完成了电脑的售后&quot;);
+        }
+    }
+}
+
+</code></pre>
+<p>用于代理的对象（<strong>实现代理接口</strong>）</p>
+<pre><code class="language-java">package com.pattern.proxy.force;
+
+/**
+ * 电脑代工厂，相当于强制代理中的代理角色
+ */
+public class ComputerOEM implements IComputerAfterSale{
+    private  IComputerAfterSale computerCompany;
+    // 初始化的时候传入厂商，这样代工厂才知道你要售后的电脑是那个厂家的
+    public ComputerOEM(IComputerAfterSale computerCompany){
+        this.computerCompany = computerCompany;
+    }
+    @Override
+    public void afterSale() {
+        this.computerCompany.afterSale();
+    }
+    // 代工厂没有代理
+    @Override
+    public IComputerAfterSale getProxy() {
+        return this;
+    }
+}
+
+</code></pre>
+<h3 id="测试代码-3">测试代码</h3>
+<pre><code class="language-java">package com.pattern;
+
+import com.pattern.proxy.force.ComputerCompany;
+import com.pattern.proxy.force.ComputerOEM;
+import com.pattern.proxy.force.IComputerAfterSale;
+import com.pattern.proxy.normal.ProxyGamePlayer;
+import com.pattern.proxy.normal.RealGamePlayer;
+import com.pattern.proxy.staticproxy.Proxy;
+import com.pattern.proxy.staticproxy.RealSubject;
+import com.pattern.proxy.staticproxy.Subject;
+
+import org.junit.Test;
+
+public class ProxyTest {
+    @Test
+    public void ForceProxyTest(){
+        System.out.println(&quot;-------------直接找厂家售后（直接访问真实角色）-------------&quot;);
+        // 不能访问，厂家只负责贴牌并不负责维修之类的
+        ComputerCompany computerCompany = new ComputerCompany();
+        computerCompany.afterSale();
+        System.out.println(&quot;-------------直接找代工厂售后（直接访问代理角色）-------------&quot;);
+        // 不能访问，代理对象是你自己new出来的，相当于你直接找代工厂售后，代工厂也不认你
+        ComputerOEM oem = new ComputerOEM(computerCompany);
+        oem.afterSale();
+        System.out.println(&quot;-------------强制代理-------------&quot;);
+        // 创建一个电脑公司
+        ComputerCompany intel = new ComputerCompany();
+        // 电脑公司联系代工厂处理你的电脑
+        IComputerAfterSale proxy = intel.getProxy();
+        // 代工厂进行维修
+        proxy.afterSale();
+    }
+}
+</code></pre>
+<h3 id="运行结果-2">运行结果</h3>
+<figure data-type="image" tabindex="8"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gikgws2fgij30f004s0t2.jpg" alt="强制代理运行结果哦" loading="lazy"></figure>
+<h2 id="动态代理">动态代理</h2>
+<p>动态代理在实现阶段不用关心代理谁，而是在运行阶段才指定代理哪一个对象。动态代理根据被代理的接口生成所有的方法。给定一个接口，动态代理会宣称&quot;已经实现了接口下所有的方法&quot;。所有被代理的方法都由InvocationHandler接管实际的处理操作。</p>
+<h3 id="类图-4">类图</h3>
+<figure data-type="image" tabindex="9"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gikj9svkcyj30p809lwf7.jpg" alt="动态代理类图" loading="lazy"></figure>
+<h3 id="代码-5">代码</h3>
+<p>代理接口（<strong>接口</strong>）</p>
+<pre><code class="language-java">package com.pattern.proxy.dynamic;
+
+public interface IProxySubject {
+    void doSomething();
+}
+
+</code></pre>
+<p>具体被代理的类（<strong>实现代理接口</strong>）</p>
+<pre><code class="language-java">package com.pattern.proxy.dynamic;
+
+public class ProxySubjectImpl implements IProxySubject{
+    @Override
+    public void doSomething() {
+        System.out.println(&quot;执行了逻辑事务&quot;);
+    }
+}
+
+</code></pre>
+<p>Handler（<strong>实现InvocationHandler接口</strong>）：具体的方法交由此类处理</p>
+<pre><code class="language-java">package com.pattern.proxy.dynamic;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+/**
+ * 动态代理的方法交给此类接管，通过Invoke执行真正的方法
+ */
+public class SubjectInvocationHandler implements InvocationHandler {
+    private IProxySubject proxySubject;
+    public SubjectInvocationHandler(IProxySubject proxySubject){
+        this.proxySubject = proxySubject;
+    }
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        Object value = null;
+        this.before();
+        // 执行代理对象的业务方法
+        value = method.invoke(proxySubject,args);
+        this.after();
+        return value;
+    }
+    private void before(){
+        System.out.println(&quot;对业务进行权限验证&quot;);
+    }
+    private void after(){
+        System.out.println(&quot;记录日志&quot;);
+    }
+}
+
+</code></pre>
+<p>创建代理对象的工具类</p>
+<pre><code class="language-java">package com.pattern.proxy.dynamic;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+
+public class DynamicUtils {
+    // 用于创建代理对象的工具类
+    public static Object newProxyInstance(Object target, InvocationHandler invocationHandler) {
+        ClassLoader classLoader = target.getClass().getClassLoader();
+        Class&lt;?&gt;[] interfaces = target.getClass().getInterfaces();
+        return Proxy.newProxyInstance(classLoader, interfaces, invocationHandler);
+    }
+}
+
+</code></pre>
+<h3 id="测试代码-4">测试代码</h3>
+<pre><code class="language-java">package com.pattern;
+
+import com.pattern.proxy.dynamic.DynamicUtils;
+import com.pattern.proxy.dynamic.IProxySubject;
+import com.pattern.proxy.dynamic.ProxySubjectImpl;
+import com.pattern.proxy.dynamic.SubjectInvocationHandler;
+import com.pattern.proxy.force.ComputerCompany;
+import com.pattern.proxy.force.ComputerOEM;
+import com.pattern.proxy.force.IComputerAfterSale;
+import com.pattern.proxy.normal.ProxyGamePlayer;
+import com.pattern.proxy.normal.RealGamePlayer;
+import com.pattern.proxy.staticproxy.Proxy;
+import com.pattern.proxy.staticproxy.RealSubject;
+import com.pattern.proxy.staticproxy.Subject;
+
+import org.junit.Test;
+
+import java.lang.reflect.InvocationHandler;
+
+public class ProxyTest {
+    @Test
+    public void DynamicProxyTest(){
+        // 创建一个动态代理对象
+        IProxySubject subject = new ProxySubjectImpl();
+        InvocationHandler invocationHandler = new SubjectInvocationHandler(subject);
+        // 创建一个代理对象
+        IProxySubject proxy = (IProxySubject) DynamicUtils.newProxyInstance(subject, invocationHandler);
+        proxy.doSomething();
+
+
+    }
+}
+</code></pre>
+<h3 id="运行结果-3">运行结果</h3>
+<figure data-type="image" tabindex="10"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gikj9yaievj30cq05ewen.jpg" alt="动态代理运行结果" loading="lazy"></figure>
+<h1 id="注意">注意</h1>
+<ul>
+<li>普通代理模式的约束问题，尽量通过团队内编程规范类约束，</li>
+<li>代理是有个性的，代理类不仅仅可以实现主题接口也可以实现其他的接口完成不同的任务，<font color=red>代理的目的是在目标对象方法的基础上做增强。这种增强的本质就是对目标对象的方法进行拦截和过滤</font></li>
+<li>代理类不仅仅可以有自己的方法，通常情况下代理的职责并不单一，可以组合其他的真实角色，也可以实现自己的职责</li>
+<li>动态代理和静态代理的区别：动态代理主要的意图是解决&quot;审计&quot;问题，也就是切面编程，在不改变已有的代码结构的情况下增强或控制对象的行为。</li>
+<li>动态代理的首要条件是：被代理类必须实现一个接口，但现在有例如CGLIB可以不需要接口也能实现动态代理。</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
+<ul>
+<li><a href="#%E9%80%9A%E7%94%A8%E7%B1%BB%E5%9B%BE">通用类图</a></li>
+<li><a href="#%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86">静态代理</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9B%BE">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
+</ul>
+</li>
+<li><a href="#%E6%99%AE%E9%80%9A%E4%BB%A3%E7%90%86">普通代理</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9B%BE-2">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-3">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-2">测试代码</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C">运行结果</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BC%BA%E5%88%B6%E4%BB%A3%E7%90%86">强制代理</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9B%BE-3">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-4">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-3">测试代码</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C-2">运行结果</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86">动态代理</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9B%BE-4">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-5">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-4">测试代码</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C-3">运行结果</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/designpartten-builder/">
+              <span class="post-title">
+                设计模式-建造者模式&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/designpartten-proxy/" class="leancloud_visitors"
+              data-flag-title="设计模式-代理模式">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

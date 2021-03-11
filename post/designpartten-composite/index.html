@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>设计模式-组合模式 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="设计模式-组合模式 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="设计模式-组合模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/designpartten-composite/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>设计模式-组合模式</h1>
+    <span class="meta">
+      Posted on
+      2020-09-28，6 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="定义">定义</h1>
+<ul>
+<li>Compose objects into tree structures to represent part-whole hierarchies.Composite lets clients<br>
+treat individual objects and compositions of objects uniformly.（将对象组合成树形结构以表<br>
+示“部分-整体”的层次结构，使得用户对单个对象和组合对象的使用具有一致性。）</li>
+<li>组合模式的结构就类似一棵树，只是它将数据结构中的树的树枝和树叶分开来了。</li>
+<li>组成：
+<ul>
+<li>Component抽象构件角色：定义参加组合对象的共有方法和属性，可以定义一些默认的行为或属性，比如我们例子<br>
+中的getInfo就封装到了抽象类中。</li>
+<li>Leaf叶子构件：叶子对象，其下再也没有其他的分支，也就是遍历的最小单位。</li>
+<li>Composite树枝构件：树枝对象，它的作用是组合树枝节点和叶子节点形成一个树形结构。</li>
+</ul>
+</li>
+<li>通用类图</li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj6hcz4ph2j31gg0pzwlk.jpg" alt="组合模式通用类图" loading="lazy"></figure>
+<h1 id="优点">优点</h1>
+<ul>
+<li>高层模块调用简单：一棵树形机构中的所有节点都是Component，局部和整体对调用者来说没有任何区别，也就是说高层模块不必关心自己处理的是单个对象还是整个组合机构，简化了高层模块的代码</li>
+<li>节点自由增加：如果想增加和删除一个节点都是很容易的（参考数据结构）</li>
+</ul>
+<h1 id="缺点">缺点</h1>
+<ul>
+<li>树枝和树叶使用时候直接使用了实现类，这在面向接口编程上是很不恰当的，与依赖倒置原则冲突</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<ul>
+<li>场景：
+<ul>
+<li>维护和展示部分-整体关系的场景，如树形菜单、文件和文件夹管理</li>
+<li>从一个整体中能够独立出部分模块或功能的场景</li>
+</ul>
+</li>
+</ul>
+<h1 id="代码">代码</h1>
+<h2 id="安全模式">安全模式</h2>
+<p>安全模式是组合模式中的一种，类似树的一种结构。组合模式使得用户对单个对象和组合对象的使用具有一致性。</p>
+<figure data-type="image" tabindex="2"><img src="https://tva4.sinaimg.cn/large/006ZFECEgy1gj6k84x2vkj30dr0b43yt.jpg" alt="本项目使用类图" loading="lazy"></figure>
+<h3 id="代码-2">代码</h3>
+<p>总接口（<strong>抽象类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.composite;
+
+public abstract class Component {
+    // 对象的名字
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public Component(String name) {
+        this.name = name;
+    }
+
+    // 当前对象的老大
+    private Component parent;
+    /**
+     * 个体和整体都具有的共享
+     */
+    public void doSomething(){
+        System.out.println(&quot;这是共有的方法&quot;);
+    }
+    /**
+     * 设置树枝，相当于设置老大是谁
+     * @param parent
+     */
+    public void setParent(Component parent){
+        this.parent = parent;
+    }
+}
+</code></pre>
+<p>树枝（<strong>继承自总接口</strong>）</p>
+<pre><code class="language-Java">package com.pattern.composite;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 树枝，用企业的结构来将讲这个就是经理
+ */
+public class Composite extends Component {
+    public Composite(String name) {
+        super(name);
+    }
+
+    /**
+     * 叶子的容器，放打工仔的
+     */
+    private List&lt;Component&gt; components = new ArrayList&lt;&gt;();
+    // 当前树枝的老大
+    private Component composite;
+    /**
+     * 添加叶子，给经理添加打工仔
+     * @param component
+     */
+    public void add(Component component){
+        this.components.add(component);
+    }
+
+    /**
+     * 移除叶子，开除打工仔
+     * @param component
+     */
+    public void remove(Component component){
+        this.components.remove(component);
+    }
+
+    /**
+     * 列出叶子，列出所有打工仔
+     * @return
+     */
+    public List&lt;Component&gt; getComponents(){
+        return this.components;
+    }
+
+}
+
+
+</code></pre>
+<p>树叶（<strong>继承自总接口</strong>）</p>
+<pre><code class="language-Java">package com.pattern.composite;
+
+/**
+ * 叶子，拿企业来讲就是打工仔
+ */
+public class Leaf extends Component {
+    public Leaf(String name){
+        super(name);
+    }
+    // 当前叶子的老大
+    private Component composite;
+    public void LeafMethod(){
+        System.out.println(&quot;叶子自己的方法&quot;);
+    }
+}
+
+</code></pre>
+<h3 id="测试代码">测试代码</h3>
+<pre><code class="language-Java">package com.pattern;
+
+import com.pattern.composite.Component;
+import com.pattern.composite.Composite;
+import com.pattern.composite.Leaf;
+import org.junit.Test;
+
+import java.util.List;
+
+public class CompositeTest {
+
+    @Test
+    public void test() {
+        // 定义一个大boss
+        Composite boss = new Composite(&quot;总经理&quot;);
+        // 定义几个部门经理
+        Composite productManager = new Composite(&quot;产品经理&quot;);
+        Composite salesManager = new Composite(&quot;销售经理&quot;);
+        // 设置经理的老大为总经理
+        boss.add(productManager);
+        boss.add(salesManager);
+        productManager.setParent(boss);
+        salesManager.setParent(boss);
+        // 定义几个打工仔
+        Leaf programmerA = new Leaf(&quot;程序员A&quot;);
+        Leaf programmerB = new Leaf(&quot;程序员B&quot;);
+        Leaf programmerC = new Leaf(&quot;程序员C&quot;);
+        Leaf sellerA = new Leaf(&quot;产品推销A&quot;);
+        Leaf sellerB = new Leaf(&quot;产品推销B&quot;);
+        // 给打工仔设置Boss
+        productManager.add(programmerA);
+        productManager.add(programmerB);
+        productManager.add(programmerC);
+        programmerA.setParent(productManager);
+        programmerB.setParent(productManager);
+        programmerC.setParent(productManager);
+        salesManager.add(sellerA);
+        salesManager.add(sellerB);
+        sellerA.setParent(salesManager);
+        sellerB.setParent(salesManager);
+        // 循环输出
+        List&lt;Component&gt; managers = boss.getComponents();
+        for (int i = 0; i &lt; managers.size(); i++) {
+            System.out.println(&quot;总经理手下有：&quot; + managers.get(i).getName());
+        }
+        for (int i = 0; i &lt; productManager.getComponents().size(); i++) {
+            System.out.println(&quot;产品经理手下有：&quot; + productManager.getComponents().get(i).getName());
+        }
+        for (int i = 0; i &lt; salesManager.getComponents().size(); i++) {
+            System.out.println(&quot;销售经理手下有：&quot; + salesManager.getComponents().get(i).getName());
+        }
+
+    }
+}
+
+</code></pre>
+<h3 id="结果">结果</h3>
+<pre><code class="language-shell">总经理手下有：产品经理
+总经理手下有：销售经理
+产品经理手下有：程序员A
+产品经理手下有：程序员B
+产品经理手下有：程序员C
+销售经理手下有：产品推销A
+销售经理手下有：产品推销B
+
+Process finished with exit code 0
+</code></pre>
+<h2 id="透明模式">透明模式</h2>
+<ul>
+<li>透明模式是把用来组合使用的方法放到抽象类中，不管叶子对象还是树枝对象都有相同的结构，如果处理不当会在运行期期间出现问题。并且不便于维护。此处只附上类图</li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj6j10mp5gj31gg0v246y.jpg" alt="透明模式通用类图" loading="lazy"></figure>
+<h1 id="注意">注意</h1>
+<ul>
+<li>组合模式分为安全模式和透明模式，推荐使用透明模式</li>
+<li>将对象组合成树形结构以表示“部分整体”的层次结构。组合模式使得用户对单个对象和组合对象的使用具有一致性。</li>
+<li>组合模式解耦了客户程序与复杂元素内部结构，从而使客户程序可以像处理简单元素一样来处理复杂元素。</li>
+<li>无论如何，树的组装是跑不了的，但是在实际的应用环境中，可以直接从数据库中提取出那些要分配到树枝，那些要分配到树叶。</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
+<li><a href="#%E7%BC%BA%E7%82%B9">缺点</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
+<ul>
+<li><a href="#%E5%AE%89%E5%85%A8%E6%A8%A1%E5%BC%8F">安全模式</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
+</ul>
+</li>
+<li><a href="#%E9%80%8F%E6%98%8E%E6%A8%A1%E5%BC%8F">透明模式</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/designpartten-adapter/">
+              <span class="post-title">
+                设计模式-适配器模式&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/designpartten-composite/" class="leancloud_visitors"
+              data-flag-title="设计模式-组合模式">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

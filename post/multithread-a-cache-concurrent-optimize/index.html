@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>一个模拟Cache的并发优化的案例 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="一个模拟Cache的并发优化的案例 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="一个模拟Cache的并发优化的案例" />
+  <meta property="og:url" content="https://mxecy.cn/post/multithread-a-cache-concurrent-optimize/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>一个模拟Cache的并发优化的案例</h1>
+    <span class="meta">
+      Posted on
+      2020-09-29，9 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <ul>
+<li>在看多线程和并发的时候看到书上使用并发的知识设计了一个缓存容器，觉得挺有用的，故写一篇博客记录一下。</li>
+</ul>
+<p>首先，定义一个接口，接口中定义一个运算的方法：</p>
+<pre><code class="language-java">/**
+ * 定义一个接口，实现这个接口的缓存方法
+ * @param &lt;A&gt;
+ * @param &lt;V&gt;
+ */
+interface Computable&lt;A,V&gt;{
+    /**
+     * 传入一个类型为A的值，并且返回一个V的结果
+     * @param arg
+     * @return
+     * @throws InterruptedException
+     */
+    V compute(A arg) throws InterruptedException;
+}
+</code></pre>
+<p>然后我们给出一个实现类，这个实现类实现最基本的功能</p>
+<pre><code class="language-java">class Function implements Computable&lt;String,String&gt;{
+
+    @Override
+    public String compute(String arg) throws InterruptedException {
+        arg = &quot;参数为：&quot; + arg + &quot;的运算结果&quot;;
+        //        Thread.sleep(1000);
+        return arg;
+    }
+}
+</code></pre>
+<p>然后是一个缓存类A（不知道有没有发现，这里使用了装饰者模式）：</p>
+<pre><code class="language-java">class CacheClassA&lt;A,V&gt; implements Computable&lt;A,V&gt;{
+    // 使用HashMap来缓存结果，并且使用final来保证不可变性
+    private final Map&lt;A,V&gt; cache = new HashMap&lt;&gt;(16);
+    // 需要进行缓存操作的对象
+    private final Computable&lt;A,V&gt; computable;
+    public CacheClassA(Computable&lt;A,V&gt; cacheable){
+        this.computable = cacheable;
+    }
+    @Override
+    public synchronized V compute(A arg) throws InterruptedException {
+        V result = cache.get(arg);
+        if(result == null){
+            result = computable.compute(arg);
+            cache.put(arg,result);
+        }
+        return result;
+    }
+}
+</code></pre>
+<p>现在给出了这三个类，那么这三个类在多线程进行运算（即调用compute）的时候有没有线程不安全的问题？</p>
+<p>由于我们使用了synchronized对方法进行了加锁，所以很明显这个没什么线程不安全的问题，它有什么问题呢？那就是并发行下降，由于使用了同步加锁，使得这段代码在多线程的时候无法承受高并发。但是，我们也需要线程安全。总所周知，HashMap并不是一个线程安全的Map集合，如果去掉synchronized，就会导致多线程不安全的问题。于是我们将HashMap替换成ConcurrentHashMap。其他代码不变。</p>
+<pre><code class="language-java">class CacheClassB&lt;A, V&gt; implements Computable&lt;A, V&gt; {
+    // 使用HashMap来缓存结果，并且使用final来保证不可变性
+    private final Map&lt;A, V&gt; cache = new ConcurrentHashMap&lt;&gt;(16);
+    // 需要进行缓存操作的对象
+    private final Computable&lt;A, V&gt; computable;
+    public CacheClassB(Computable&lt;A, V&gt; cacheable) {
+        this.computable = cacheable;
+    }
+    @Override
+    public V compute(A arg) throws InterruptedException {
+        V result = cache.get(arg);
+        if (result == null) {
+            //            System.out.println(&quot;计算了：&quot; + arg + &quot;的值&quot;);
+            result = computable.compute(arg);
+            cache.put(arg, result);
+        }
+        return result;
+    }
+}
+</code></pre>
+<p>在此段代码中，只是将HashMap改变成了ConcurrentHashMap。那么这段代码安全么，在当前场景是安全的，但是如果是其他场景就会有问题。只不过在此处这个代码不安全的表现在进行了重复计算。</p>
+<p>比如两个线程，A和B同时进入compute的代码，他们运行的是同一个值（即arg相同）。此时由A先进入到if判断result=null，开始运算。但是由于这个运算的时间特别长，导致B进入判断的时候还没有出结果，于是B也开始进行了这个运算。这就造成了重复计算。与我们的目的就偏离了。</p>
+<p>我们释放掉CacheClassB和Function类的注释来模拟长时间运算的场景，测试一下：</p>
+<pre><code class="language-java">    public static void main(String[] args)  {
+        Computable&lt;String,String&gt; computer = new Function();
+        CacheClassB&lt;String,String&gt; cachedComputer = new CacheClassB&lt;&gt;(computer);
+        Thread threadA = new Thread(()-&gt;{
+            try {
+                cachedComputer.compute(&quot;1&quot;);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        Thread threadB = new Thread(()-&gt;{
+            try {
+                cachedComputer.compute(&quot;1&quot;);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        threadA.start();
+        threadB.start();
+    }
+</code></pre>
+<p>运行结果为：</p>
+<pre><code class="language-shell">计算了：1的值
+计算了：1的值
+
+Process finished with exit code 0
+
+</code></pre>
+<p>我们发现运行了两次，也就验证了我们的猜测。在第二个线程中并没有从缓存中取值，而是又进行了一次运算。</p>
+<p>那么我们希望通过某种方法表示：&quot;线程X正在计算&quot;这种情况，那么对另外一个线程计算同一个值，它能够直到最高效的方法是等待X计算结束。这里我们使用FutureTask来实现这个功能。也能使用其他同步工具类来实现</p>
+<pre><code class="language-java">class CacheClassC&lt;A, V&gt; implements Computable&lt;A, V&gt; {
+    // 使用HashMap来缓存结果，并且使用final来保证不可变性
+    private final Map&lt;A, Future&lt;V&gt;&gt; cache = new ConcurrentHashMap&lt;&gt;(16);
+    // 需要进行缓存操作的对象
+    private final Computable&lt;A, V&gt; computable;
+
+    public CacheClassC(Computable&lt;A, V&gt; cacheable) {
+        this.computable = cacheable;
+    }
+
+    @Override
+    public V compute(A arg) throws InterruptedException {
+        /**
+         * 利用了Future.get的特性，如果没取到值就阻塞。如果有值就返回。
+         * 如果f不为空的话，那么就证明这个参数是计算过的，那么调用Future.get会立即返回结果
+         */
+
+        Future&lt;V&gt; f = cache.get(arg);
+        if (f == null) {
+            System.out.println(&quot;计算了：&quot; + arg + &quot;的值&quot;);
+            Callable&lt;V&gt; eval = new Callable&lt;V&gt;() {
+                @Override
+                public V call() throws Exception {
+                    return computable.compute(arg);
+                }
+            };
+            FutureTask&lt;V&gt; ft = new FutureTask&lt;&gt;(eval);
+            f = ft;
+            cache.put(arg, ft);
+            ft.run();
+
+        }
+        V result = null;
+        try {
+            result = f.get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+}
+</code></pre>
+<p>注意对比和CacheClassB的区别。我们利用Future对应map中的参数，如果通过参数能取到Future那么证明这个参数是计算过的。可以直接返回。</p>
+<p>如果不能取到的话，我们也能防止长时间的运算导致重复计算的情况（当然，这里也可能会重复计算，如果多个线程同时进入if条件中的话。但是由于相比耗时长的compute操作，这个概率会小很多）。（鉴于直接运行两个线程太快，所以这里不做测试了。只要直到这里重复计算的概率会小很多就行了。）</p>
+<p>由于if代码块仍然是非原子的&quot;先检查在执行&quot;，所以两个线程仍然可能在同一时间调用compute来计算相同的值。<br>
+原因是复合操作&quot;若没有则添加&quot;是在底层的Map对象执行的，而这个对象无法通过加锁来保证原子性。所以我们使用putIfAbsent方法来解决这个漏洞<br>
+同时在run方法调用的时机多做一次判断，再次减小，A和B线程真就那么同时在几乎相同的时刻计算同一个值导致重复计算的概率</p>
+<pre><code class="language-java">class CacheClassD&lt;A, V&gt; implements Computable&lt;A, V&gt; {
+    // 使用HashMap来缓存结果，并且使用final来保证不可变性
+    private final Map&lt;A, Future&lt;V&gt;&gt; cache = new ConcurrentHashMap&lt;&gt;(16);
+    // 需要进行缓存操作的对象
+    private final Computable&lt;A, V&gt; computable;
+
+    public CacheClassD(Computable&lt;A, V&gt; cacheable) {
+        this.computable = cacheable;
+    }
+
+    @Override
+    public V compute(A arg) throws InterruptedException {
+        /**
+         * 利用了Future.get的特性，如果没取到值就阻塞。如果有值就返回。
+         * 如果f不为空的话，那么就证明这个参数是计算过的，那么调用Future.get会立即返回结果
+         */
+        Future&lt;V&gt; f = cache.get(arg);
+        if (f == null) {
+            Callable&lt;V&gt; eval = new Callable&lt;V&gt;() {
+                @Override
+                public V call() throws Exception {
+                    return computable.compute(arg);
+                }
+            };
+            FutureTask&lt;V&gt; ft = new FutureTask&lt;&gt;(eval);
+            f = cache.putIfAbsent(arg,ft);
+            if(f == null){
+                System.out.println(&quot;计算了：&quot; + arg + &quot;的值&quot;);
+                f = ft;
+                ft.run();
+            }
+        }
+        V result = null;
+        try {
+            result = f.get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+}
+</code></pre>
+<p>注意，这里改变了一下compute中打印代码的位置，因为只有进入第二层if的时候才是真正的调用了compute方法的</p>
+<pre><code class="language-she">计算了：1的值
+
+Process finished with exit code 0
+</code></pre>
+<p>OK，我们看到这里只进行了一次计算。这就是对一个同步代码的高并发优化。</p>
+<p>顺便一提：CacheClassD还是存在问题的，鉴于这里只讨论并发优化，所以还有的问题只提一下</p>
+<ul>
+<li>
+<p>当缓存的是Future而不是值的时候，将会导致缓存污染问题（Cache Pollution）：如果某个计算被取消或失败，那么在计算这个结果时将指明计算过程被取消或者失败。为了避免这种情况，还要在CacheClassD的代码上添加如果发现计算被取消，或者检测到RuntimeException的时候移除Future的功能。这个代码才算完美。</p>
+</li>
+<li>
+<p>CacheClassD没有解决缓存逾期的问题，它可以通过使用FutureTask的子类来解决，在子类为每个结果指定一个逾期时间，并且定期扫描逾期的元素。</p>
+</li>
+<li>
+<p>CacheClassD没有解决缓存清理的问题，即移除旧的计算结果以便为新的计算结果腾出空间，从而不会消耗过多的内存。</p>
+</li>
+</ul>
+
+          <div class="toc-container"></div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/designpartten-composite/">
+              <span class="post-title">
+                设计模式-组合模式&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/multithread-a-cache-concurrent-optimize/" class="leancloud_visitors"
+              data-flag-title="一个模拟Cache的并发优化的案例">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

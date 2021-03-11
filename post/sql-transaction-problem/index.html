@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>事务的隔离级别 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="事务的隔离级别 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="事务的隔离级别" />
+  <meta property="og:url" content="https://mxecy.cn/post/sql-transaction-problem/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/gTnYTJKls/" class="tag">SQL</a>
+      
+    </span>
+    <h1>事务的隔离级别</h1>
+    <span class="meta">
+      Posted on
+      2020-05-13，7 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p>事务的基本要素有：原子性、一致性、隔离性、持久性<br>
+由事务的隔离级别不同，并发会产生不同的并发问题。</p>
+<ul>
+<li>脏读</li>
+<li>不可重复读</li>
+<li>幻读</li>
+</ul>
+<p>事务的隔离级别分为以下几类：</p>
+<ul>
+<li>读未提交（Read uncommitted）：一个事务可以读取另一个未提交事务的数据</li>
+<li>读提交（Read committed）：一个事务要等另一个事务提交后才能读取数据</li>
+<li>重复读（Repeatable read）：在同一个事务内的查询都是事务开始时刻一致的</li>
+<li>序列化（Serializable）：完全串行化的读，每次读都需要获得表级共享锁，读写相互都会阻塞</li>
+</ul>
+<p>在开始介绍隔离级别之前，先提一下丢失更新的概念。下面以存取款的方式来举例。</p>
+<h1 id="丢失更新">丢失更新</h1>
+<h2 id="第一类丢失更新">第一类丢失更新</h2>
+<table>
+<thead>
+<tr>
+<th>时刻</th>
+<th>事务1（小A）</th>
+<th>事务2（小B）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>查询余额10000元</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>---</td>
+<td>查询余额10000元</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>---</td>
+<td>消费1000元</td>
+</tr>
+<tr>
+<td>T4</td>
+<td><strong>消费1000元</strong></td>
+<td>---</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>提交事务，余额9000元</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>---</td>
+<td><strong>取消订单，回滚到T2时刻，余额10000元</strong></td>
+</tr>
+</tbody>
+</table>
+<p>其中，只有小A花费啦1000元，但是在T6时刻，余额却恢复到啦10000元。<br>
+这是由于两个事务并发，一个回滚一个提交导致打不一致。通常这种不一致称为第一类丢失更新。<br>
+不过大部分的主流数据库（如：Mysql和Oracle）都已经消除了此类丢失更新。</p>
+<h2 id="第二类丢失更新">第二类丢失更新</h2>
+<table>
+<thead>
+<tr>
+<th>时刻</th>
+<th>事务1（小A）</th>
+<th>事务2（小B）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>查询余额10000元</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>---</td>
+<td>查询余额10000元</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>---</td>
+<td><strong>消费1000元</strong></td>
+</tr>
+<tr>
+<td>T4</td>
+<td><strong>消费1000元</strong></td>
+<td>---</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>提交事务，余额9000元</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>---</td>
+<td><strong>提交事务，根据之前的余额10000元减去1000元余下9000元</strong></td>
+</tr>
+</tbody>
+</table>
+<p>此过程中一共有着两笔交易，小A的和小B的，但是由于是在两个事务中，并不知道另外一个事务进行了怎样的操作。导致两笔事务提交后的余额都是9000元。这就是第二类丢失更新。</p>
+<h1 id="事务的隔离级别">事务的隔离级别</h1>
+<p>为了克服事务之间的隔离级别，来不同程度上减少出现丢失更新的可能，数据库标准规范中定义了事务之间的隔离级别。</p>
+<h2 id="读未提交">读未提交</h2>
+<p>读未提交是数据库的最低隔离级别，举个例子便于理解。</p>
+<table>
+<thead>
+<tr>
+<th>时刻</th>
+<th>事务1（小A）</th>
+<th>事务2（小B）</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>查询余额10000元</td>
+<td>---</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>---</td>
+<td>查询余额10000元</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>---</td>
+<td>消费1000元，余下9000</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>消费1000元，余下8000</td>
+<td>---</td>
+<td>读取到事务2未提交的9000</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>提交事务</td>
+<td>---</td>
+<td>余下8000</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>---</td>
+<td>回滚事务</td>
+<td><strong>第一类丢失更新已被解决，余下8000</strong></td>
+</tr>
+</tbody>
+</table>
+<p>在这个场景中，T3时刻小B消费了1000元，因为此时的隔离级别是读未提交，所以在T4时刻小A消费时，读取到了小B未提交的事务2的数据，当在T5提交事务的时候，余额只剩下了8000元了。而在T6时刻由于小B的回滚，余额本应该是9000元的。这种错误的读取场景被称为脏读。</p>
+<h2 id="读提交">读提交</h2>
+<p>为了解决脏读，sql标准提出了第二个隔离级别：读/写提交。</p>
+<table>
+<thead>
+<tr>
+<th>时刻</th>
+<th>事务1（小A）</th>
+<th>事务2（小B）</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>查询余额10000元</td>
+<td>---</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>---</td>
+<td>查询余额10000元</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>---</td>
+<td>消费1000元，余下9000</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>消费1000元，余下9000</td>
+<td>---</td>
+<td><strong>无法读取事务2未提交的数据，所以余额为9000</strong></td>
+</tr>
+<tr>
+<td>T5</td>
+<td>提交事务</td>
+<td>---</td>
+<td>余下9000</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>---</td>
+<td>回滚事务</td>
+<td>第一类丢失更新已被解决，余下9000</td>
+</tr>
+</tbody>
+</table>
+<p>在T4时刻由于读提交的限制，事务1无法读取到事务2未提交的记录。只能读取到余额10000元，所以消费后为9000元，这样即使是事务2回滚了事务，余额也是正确的9000元。<br>
+这样虽然解决了脏读带来的问题，但是也引发了其他的问题。</p>
+<table>
+<thead>
+<tr>
+<th>时刻</th>
+<th>事务1（小A）</th>
+<th>事务2（小B）</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>查询余额10000元</td>
+<td>---</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>---</td>
+<td>查询余额10000元</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>---</td>
+<td>消费1000元，余下9000</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>消费2000元，余下8000</td>
+<td>---</td>
+<td>无法读取事务2未提交的数据，还是10000-2000</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>---</td>
+<td>消费8000,余下1000</td>
+<td>无法读取事务1未提交的数据，9000-1000</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>---</td>
+<td>提交事务，余下1000</td>
+<td><strong>提交事务，余额变为1000</strong></td>
+</tr>
+<tr>
+<td>T7</td>
+<td>提交事务时，余额只有1000了，不足以买单</td>
+<td>---</td>
+<td><strong>由于事务2已经提交，事务1会发现余额不足</strong></td>
+</tr>
+</tbody>
+</table>
+<p>在当前场景下，由于在小A开始消费的时候并不知道事务2中的消费是怎样的，而在T7时刻才知道事务2的提交结果，发现余额不足。这时候对于小A来说，他只知道钱莫名其妙的从T1时刻查询的10000元变成了1000元。对他来说账户余额是不能重复读取的，而是一个变化的值。这样的场景称之为不可重复读（unrepeatable read），这是读提交存在的问题。</p>
+<h2 id="可重复读">可重复读</h2>
+<p>为了解决不可重复读带来的问题，sql标准提出了可重复读的隔离级别。此处，可重复读的概念是针对于数据库同一条记录而言的。可重复读会使得同一条数据库记录的读/写按照一个序列化进行操作，不会产生交叉的情况。这样就能保证同一条数据的一致性。<br>
+但是由于数据库常常会对多条记录进行读写，这时候就会产生幻读的情况。<br>
+下面以消费记录来举例子</p>
+<table>
+<thead>
+<tr>
+<th>时刻</th>
+<th>事务1（小A）</th>
+<th>事务2（小B）</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>---</td>
+<td>查询到10条消费记录，打印小票</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>开启一笔消费</td>
+<td>---</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>提交事务</td>
+<td>---</td>
+<td>---</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>---</td>
+<td>打印出11条记录</td>
+<td><strong>由于在打印的过程中，小A多增加了一笔记录，所以打印出11条</strong></td>
+</tr>
+</tbody>
+</table>
+<p>在T1时刻，小B查询到10条记录，但是在T4之前的过程中，小A提交了一条事务，导致T4时刻打印出来的小票消费记录一共有11条。（可重复读针对同一条记录，此处针对的是多条记录，这是可重复读与幻读的区别所在）这样的场景叫做幻读。</p>
+<h2 id="序列化">序列化</h2>
+<p>为了解决幻读的问题，sql提出了序列化的隔离级别。它能够让sql按照顺序读写的方式，能够消除数据库事务之间并发产生数据不一致的问题。</p>
+<h2 id="各隔离级别的问题">各隔离级别的问题</h2>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读未提交</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>读提交</td>
+<td>×</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>可重复读</td>
+<td>×</td>
+<td>×</td>
+<td>√</td>
+</tr>
+<tr>
+<td>序列化</td>
+<td>×</td>
+<td>×</td>
+<td>×</td>
+</tr>
+</tbody>
+</table>
+<h2 id="隔离级别的选择">隔离级别的选择</h2>
+<p>隔离级别越高，就越能够保证数据的正确性，但是会导致性能的直线下降。如最高级别序列化，会产生严重的并发问题，导致大量的线程被挂起，直到获得锁才能够进一步的操作，而恢复时又需要大量的等待时间。大部分场景下会选择读提交的方式来设置事务。不同数据库对隔离级别的默认值也不相同，其中Mysql的默认隔离级别是可重复读，Oracle的默认隔离级别是读提交。</p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E4%B8%A2%E5%A4%B1%E6%9B%B4%E6%96%B0">丢失更新</a>
+<ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E7%B1%BB%E4%B8%A2%E5%A4%B1%E6%9B%B4%E6%96%B0">第一类丢失更新</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E7%B1%BB%E4%B8%A2%E5%A4%B1%E6%9B%B4%E6%96%B0">第二类丢失更新</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB">事务的隔离级别</a>
+<ul>
+<li><a href="#%E8%AF%BB%E6%9C%AA%E6%8F%90%E4%BA%A4">读未提交</a></li>
+<li><a href="#%E8%AF%BB%E6%8F%90%E4%BA%A4">读提交</a></li>
+<li><a href="#%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB">可重复读</a></li>
+<li><a href="#%E5%BA%8F%E5%88%97%E5%8C%96">序列化</a></li>
+<li><a href="#%E5%90%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E7%9A%84%E9%97%AE%E9%A2%98">各隔离级别的问题</a></li>
+<li><a href="#%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E7%9A%84%E9%80%89%E6%8B%A9">隔离级别的选择</a></li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/gridea-setting/">
+              <span class="post-title">
+                Gridea配置记录&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/sql-transaction-problem/" class="leancloud_visitors"
+              data-flag-title="事务的隔离级别">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

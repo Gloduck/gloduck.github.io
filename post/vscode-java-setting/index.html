@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>如何利用VScode打造一个媲美Idea的编辑器 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="如何利用VScode打造一个媲美Idea的编辑器 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="如何利用VScode打造一个媲美Idea的编辑器" />
+  <meta property="og:url" content="https://mxecy.cn/post/vscode-java-setting/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/EndumAuhT/" class="tag">Software</a>
+      
+    </span>
+    <h1>如何利用VScode打造一个媲美Idea的编辑器</h1>
+    <span class="meta">
+      Posted on
+      2020-03-10，18 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p>Idea作为写Java程序员的福音，上手难度低，使用简单，收到了很多程序员的追捧。但是由于软件本身是属于收费的，所以需要对其进行一些不可名状的操作才能正常使用。本文讨论的是一款Idea的替代品，将从安装出发来进行配置。注：本文部分图片来源于网络。<br>
+<del><strong>提示：右边的目录基本上是配置相关的目录，基本快捷键以及使用方面的点击右边的<span style="color: #ff0000;">使用技巧</span></strong></del><br>
+使用Vscode来进行Java开发有如下优势：</p>
+<ol>
+<li>强大的插件扩展</li>
+<li>支持多语言</li>
+<li>轻量运行快</li>
+<li>免费</li>
+<li>通过扩展可以支持其他语言<br>
+下面正式开始进行打造：</li>
+</ol>
+<hr>
+<h1 id="安装jdk">安装JDK</h1>
+<p>首先，到甲骨文官网下载最新版的jdk，根据自己的版本进行下载。注：需要注册<br>
+[下载](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html）<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d4ixp2x1j30e00amgmb.jpg" alt="" loading="lazy"><br>
+其中公共jre可以不进行安装<br>
+然后进行环境的配置：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d4kbdmbcj314b0snacg.jpg" alt="" loading="lazy"><br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d4leeky7j30qw0puq49.jpg" alt="" loading="lazy"><br>
+在环境变量中点击新建：<br>
+变量名为：</p>
+<pre><code class="language-shell">JAVA_HOME
+</code></pre>
+<p>变量值为：D:\Java 这里是java的安装根目录<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d4onlq95j30rb0sz40k.jpg" alt="" loading="lazy"><br>
+添加如下字符串：</p>
+<pre><code class="language-shell">%JAVA_HOME%\bin
+</code></pre>
+<p>其实也可以直接在path里指定Java根目录下的bin文件，但是由于本文还要继续使用Tomcat，所以暂时不讨论此种配置方法。<br>
+接下来在cmd中输入：</p>
+<pre><code class="language-shell">java -version
+</code></pre>
+<p>如果显示了版本号的话，则证明java环境已经配置好了。</p>
+<h1 id="vscode安装">VScode安装</h1>
+<p>在微软官网下载VScode，安装<br>
+<a href="https://code.visualstudio.com/">下载</a><br>
+安装完后进行一些基础的配置：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d4v03fctj30bb0dwdgp.jpg" alt="" loading="lazy"><br>
+打开后点击扩展按钮，输入Language<br>
+找到中文简体安装<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d4vxmtkfj30ah03m0sq.jpg" alt="" loading="lazy"><br>
+接下来点击<br>
+按下组合键Ctrl+Shift+p，在搜索框中输入“configure display language”，点击确定后选中zh-cn，重启后将会变成中文。</p>
+<h1 id="插件安装1">插件安装1</h1>
+<p>在vscode的官网，给了我们如下的插件推荐<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d519f0c7j30km0lbdhy.jpg" alt="" loading="lazy"><br>
+可以直接按照这个上面的来安装插件。<br>
+其中上面大部分插件在java扩展包中都集成了的，所以我们直接安装这个插件包就行了。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5553wflj30am02wweh.jpg" alt="" loading="lazy"><br>
+安装Spring boot相关插件<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93oczazrfj30b202n0so.jpg" alt="" loading="lazy"><br>
+然后为了使我们能一键生成java的标准模板，我们需要安装：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5554qk1j309w02xglm.jpg" alt="" loading="lazy"><br>
+为了快捷开启tomcat需要安装：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d55540gbj309w02taa1.jpg" alt="" loading="lazy"><br>
+还有其他的插件，本文暂时不讨论，后续添加</p>
+<h1 id="插件安装2">插件安装2</h1>
+<p>如果你觉得插件安装过于麻烦，微软官方专门针对Java开发者提供了一套安装包。可以直接安装插件，以及傻瓜式的检测本地的环境。并且进行了一些功能增强。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d57sauz4j30dw09774o.jpg" alt="" loading="lazy"><br>
+<a href="https://vscjavaci.blob.core.windows.net/vscodejavainstaller/latest/VSCodeJavaInstaller-online-win-0.1.0.exe">下载</a><br>
+加强的功能主要有如下：<br>
+1.增强“生成getter和setter”<br>
+除了为所有成员变量批量生成getter和setter之外，如果类具有多个字段，源操作还将提示快速选择框，允许您选择目标字段以生成访问者方法。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5atdzf4g30sg0lc7ci.gif" alt="" loading="lazy"><br>
+2.生成委托方法<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5ba59tng30sg0lcq9a.gif" alt="" loading="lazy"><br>
+3.生成构造函数<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5bmzcp4g30sg0lcdo4.gif" alt="" loading="lazy"><br>
+4.将参数分配给新字段<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5c3m3bhg30hq07st9l.gif" alt="" loading="lazy"><br>
+5.调试器更新<br>
+6.新的HCR按钮<br>
+为了更好地公开热代码替换功能并让您更明确地控制它，我们在工具栏中添加了一个新按钮，并提供了一个新的调试设置java.debug.settings.hotCodeReplace，允许您控制如何触发HCR。默认为manual。 manual - 单击工具栏以将更改应用于正在运行的应用程序  auto - 编译后自动应用更改。这是旧的行为。 never - 从不应用更改<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5e0d2fig30sg0lck3f.gif" alt="" loading="lazy"><br>
+7.其他更新<br>
+至此，插件安装介绍完毕，接下来将进行一些配置以及使用方面的教程。</p>
+<h1 id="tomcat">Tomcat</h1>
+<p><strong>配置：</strong><br>
+为了方便的使用Tomcat需要 进行如下的配置：<br>
+依此点击文件-首选项-设置<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5hy8jp7j314e0e5mxs.jpg" alt="" loading="lazy"><br>
+搜索Tomcat会出现两个设置选项<br>
+一个是tomcat.restart_when_http(s)_port_change设置在端口改变时是否重启，默认为true；另一个是tomcat.workspace设置tomcat的工作目录，tomcat扩展相关的资源都会存储在此工作目录下，此目录不是安装的tomcat的目录。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5ixznprj30hf09waaj.jpg" alt="" loading="lazy"><br>
+然后返回文件，点击左侧边栏的下Tomcat Servers的加号。<br>
+指定Tomcat的根目录，来创建Tomcat容器<br>
+右键菜单会有两个选项，分别对tomcat进行配置<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5lq4blwj30ba099aaf.jpg" alt="" loading="lazy"><br>
+<strong>使用：</strong><br>
+创建Java项目：由于插件不支持自动创建，所以Javaee的项目结构需要自己创建。<br>
+打包war：使用组合键Ctrl+shift+p打开搜索框，输入tomcat，在项目文件下选择第一个命令 会生成该项目文件夹命名的一个war包<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5oplcwbj30xc09dmx4.jpg" alt="" loading="lazy"><br>
+运行项目：右键生成的war包 选择 Run on Tomcat Server。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5peiuw5j30xc0hzwf9.jpg" alt="" loading="lazy"><br>
+如果是多个Tomcat容器，则还需要进行指定<br>
+查看项目：直接右键 open in Browser或者输入网址http://localhost:8080<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5qkuu5fj30bi05dt8j.jpg" alt="" loading="lazy"><br>
+重要提示：<br>
+如果你使用Maven构建的项目的话，并不需要单独下载一个Tomcat插件，可以直接在配置Tomcat7的依赖，然后通过Maven启动Tomcat，这样会更方便。</p>
+<h1 id="maven">Maven</h1>
+<h2 id="配置">配置</h2>
+<p>如果要通过Maven部署项目，首先要先配置Maven相关的环境。首先在Maven官网下载相关的文件。<br>
+<a href="http://maven.apache.org/download.cgi">下载</a><br>
+然后：我的电脑-属性-高级系统设置-系统属性-环境变量<br>
+在系统变量中点击新建，新建系统变量<br>
+变量名写：</p>
+<pre><code class="language-shell">%MAVEN_HOME%
+</code></pre>
+<p>变量值写：MAVEN的安装目录<br>
+接着在path中新建环境变量，输入：</p>
+<pre><code class="language-shell">%MAVEN_HOME%\bin
+</code></pre>
+<p>如下图：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93oiv9evoj30nj0me0u4.jpg" alt="" loading="lazy"><br>
+注：MAVEN是依赖于JAVA_HOME的，所以如果你是直接指定的JAVA bin目录的话要添加JAVA_HOME<br>
+MAVEN变量配置完后需要在VSCODE中配置MAVEN<br>
+点左下角的设置图标-设置，打开设置内容筛选框，输入maven，然后点击右侧的打开json格式setting：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93olq8yibj30vo089mxt.jpg" alt="" loading="lazy"><br>
+然后把maven的可执行文件路径配置、maven的setting路径配置、java.home的路径配置，拷贝到右侧的用户设置区域并且设置为自己电脑的实际路径<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93om6bmgxj311h0bbjtn.jpg" alt="" loading="lazy"><br>
+参考：</p>
+<pre><code class="language-json">{
+      &quot;workbench.iconTheme&quot;: &quot;vscode-icons&quot;,//无视
+      &quot;workbench.startupEditor&quot;: &quot;newUntitledFile&quot;,//无视
+      &quot;java.errors.incompleteClasspath.severity&quot;: &quot;ignore&quot;,//无视
+      &quot;workbench.colorTheme&quot;: &quot;Atom One Dark&quot;,//无视
+      &quot;java.home&quot;:&quot;D:\\software\\Java\\jdk1.8.0_60&quot;,//无视
+      &quot;java.configuration.maven.userSettings&quot;: &quot;D:\\software\\apache-maven-3.3.3-bin\\apache-maven-3.3.3\\conf\\settings.xml&quot;,
+      &quot;maven.executable.path&quot;: &quot;D:\\software\\apache-maven-3.3.3-bin\\apache-maven-3.3.3\\bin\\mvn.cmd&quot;,
+      &quot;maven.terminal.useJavaHome&quot;: true,
+      &quot;maven.terminal.customEnv&quot;: [
+       {
+         &quot;environmentVariable&quot;: &quot;JAVA_HOME&quot;,
+         &quot;value&quot;: &quot;D:\\software\\Java\\jdk1.8.0_60&quot;
+       }
+     ],
+    }
+</code></pre>
+<p>其实因为大部分在VScode安装插件的时候都配置了的。只需要在setting中指定一下用户自定义的setting.xml就行了。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g94j77gbbhj30z80bgjs2.jpg" alt="" loading="lazy"><br>
+如果MAVEN拉仓库慢的话，可以使用阿里云的镜像，打开MAVEN安装目录，找到conf文件，在setting.xml中的mirrors标签中添加以下内容：</p>
+<pre><code class="language-html">&lt;mirror&gt;
+      &lt;id&gt;alimaven&lt;/id&gt;
+      &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+     &lt;namealiyun maven&lt;/name&gt;
+      &lt;url&gt;http://maven.aliyun.com/nexus/content/repositories/central/&lt;/url&gt;
+&lt;/mirror&gt;
+</code></pre>
+<p>MAVEN默认的仓库路径为C:\Users\XX.m2。如果需要修改仓库路径，需要打开setting.xml，在localRepository标签中指定自定义仓库路径。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g94j9h5vcoj30n807at97.jpg" alt="" loading="lazy"><br>
+配置完成重启 VSCode。 创建Spring Boot项目 使用快捷键(Ctrl+Shift+P)命令窗口，输入 MAVEN，然后就可以看到MAVEN的相关命令了。</p>
+<h2 id="创建maven项目">创建MAVEN项目</h2>
+<p>VSCODE支持使用骨架创建MAVEN项目。<br>
+使用快捷键(Ctrl+Shift+P)命令窗口，输入Maven，选择创建MAVEN项目并且指定骨架。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g94jbvquizj30u0065wer.jpg" alt="" loading="lazy"><br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g94jcapxipj30uf0ctdg1.jpg" alt="" loading="lazy"><br>
+接下来如果本地没有相关资源，会自动拉仓库，如果有资源会直接弹出选择文件夹的窗口，用于选择Maven项目存储地址。<br>
+接下来会在命令窗口叫你输入POM基本信息。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g94jfd08h4j30pr085aaq.jpg" alt="" loading="lazy"><br>
+输入完成后y确定。然后就会创建出一个标准的骨架。然后就可以愉快的打代码了。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g94jhg7narj31070oft9v.jpg" alt="" loading="lazy"></p>
+<h1 id="创建spring-boot项目">创建Spring boot项目</h1>
+<p>接配置MAVEN，想要创建Spring boot项目首先要安装Spring boot插件<br>
+使用快捷键(Ctrl+Shift+P)命令窗口，输入 Spring 选择创建 Maven 项目。 效果如下：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93owtkytuj30kq05hwes.jpg" alt="" loading="lazy"><br>
+选择需要使用的语言、Group Id、项目名称等，这里选择Java：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93oxcfio8j30j204caa2.jpg" alt="" loading="lazy"></p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93oxia2j8j30hi021dfq.jpg" alt="" loading="lazy"></figure>
+<p><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93oxmwh54j30he025746.jpg" alt="" loading="lazy"><br>
+选择Spring Boot版本：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93oxw01x5j30iq05pdfw.jpg" alt="" loading="lazy"><br>
+选择需要引入的包，引入如下几个包即可满足web开发：<br>
+DevTools（代码修改热更新，无需重启）、Web（集成tomcat、SpringMVC）、Lombok（智能生成setter、getter、toString等接口，无需手动生成，代码更简介）、Thymeleaf （模板引擎）。<br>
+选择好要引入的包后直接回车，在新弹出的窗口中选择项目路径，至此Spring Boot项目创建完成。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93oyef8maj30kg0eyjsh.jpg" alt="" loading="lazy"><br>
+创建好后vscode右下角会有如下提示，点击Open it 即可打开刚才创建的Spring Boot项目。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93oynsyjpj30cp02tmx3.jpg" alt="" loading="lazy"></p>
+<h2 id="项目运行跟调试">项目运行跟调试</h2>
+<p>项目创建后会自动创建DemoApplication.java文件，在DemoApplication 文件目录下新建文件夹 Controller，新建文件HomeController.java。效果如下：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93oyz9vbmj30os0a50u1.jpg" alt="" loading="lazy"><br>
+Ps:SpringBoot项目的Bean装配默认规则是根据DemoApplication类所在的包位置从上往下扫描。所以必须放在同一目录下否则会无法访问报如下所示错误：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93oz8vp6vj30lk071aag.jpg" alt="" loading="lazy"><br>
+启动工程之前还需要配置下运行环境，如下图，点左边的小虫子图标，然后点上面的下拉箭头，选择添加配置，第一次设置时VS Code会提示选择需要运行的语言环境，选择对应环境后自动创建 launch.json 文件。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93ozgygh7j30ry0azmy9.jpg" alt="" loading="lazy"><br>
+launch.json 调试配置文件如下，默认不修改配置也可使用：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93ozox55uj312l0kqadg.jpg" alt="" loading="lazy"><br>
+选择对应的配置环境调式项目如下，默认端口为8080。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93ozwcuppj30b706g3yq.jpg" alt="" loading="lazy"><br>
+启动后可在控制台输出面板查看启动信息，显示如下后，访问：http://localhost:8080即可。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93p0cqx96j317t0dewid.jpg" alt="" loading="lazy"><br>
+最终效果如下：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93p0ja7xij30k2069q3c.jpg" alt="" loading="lazy"></p>
+<h1 id="xml提示">XML提示</h1>
+<p>对于一些框架的配置需要用到XML文件，但是没有XML的提示的话是以下很痛苦的事情。目前网上好像很少有关于VSCODE如何配置提示的文章，反正我踩坑的时候只找到一篇，而且那个作者还是根本就是偶然配上的。当时我被那篇文章误导了很久最后无可奈何去gayhub上询问作者还是问了半天才解决的。<br>
+首先你需要安装xml的插件。这个插件依赖于Java环境。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ga00zl28iqj30kc0570t2.jpg" alt="" loading="lazy"><br>
+如果你配置了Java_HOME并且你的电脑用户名是英文的话那么在你引入XML约束文件的时候就可以有类似的代码提示了。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ga011molzkj30k3048t8q.jpg" alt="" loading="lazy"><br>
+如果你的电脑用户名不是中文的话需要重新配置路径（当时就是因为这个问题一直不提示）、<br>
+还是在设置页找到：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ga012szyecj30nq04g0sr.jpg" alt="" loading="lazy"><br>
+然后选择一个全英文路径来存放cache。<br>
+然后就能有提示了。<br>
+为了不每次写xml的时候都要去百度约束文件，本插件提供了自动根据名称匹配约束文件：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ga014exze7j30em082wel.jpg" alt="" loading="lazy"><br>
+配置很简单，根据文件名和xsd文件对应就行了（文件名支持正则）。比如：</p>
+<pre><code class="language-json">&quot;xml.fileAssociations&quot;: [
+    {
+    &quot;systemId&quot;: &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;,
+    &quot;pattern&quot;: &quot;mybatis-config.xml&quot;
+    }
+    ],
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ga01rczhe2j30xg0gkdh1.jpg" alt="" loading="lazy"></figure>
+<h1 id="sql">SQL</h1>
+<p>安装插件：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93pi8g865j30ti09q759.jpg" alt="" loading="lazy"><br>
+可以对sql代码自动补全之类的。其中预设了一些通用操作的代码。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93pj584n0j30uu0e8myx.jpg" alt="" loading="lazy"><br>
+如果使用Mysql，则下载插件：<br>
+<img src="https://tvax1.sinaimg.cn/large/006ZFECEgy1gek5ryo8emj30bw02r0sn.jpg" alt="" loading="lazy"><br>
+然后列表会出现一个Mysql选项，点击+号添加新的连接<br>
+<img src="https://tvax1.sinaimg.cn/large/006ZFECEgy1gek5sf235jj30bf02d743.jpg" alt="" loading="lazy"><br>
+依次输入主机地址、用户名、密码、端口号，连接成功后就可以正常使用了。</p>
+<h1 id="自定义代码片段">自定义代码片段</h1>
+<p>Vscode提供了自定义代码片段，可以让你灵活的编写代码提示。<br>
+文件-首选项-设置-用户代码片段<br>
+然后会让你选择代码片段对应的语言<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ga02n2ernrj30gy0dpwet.jpg" alt="" loading="lazy"><br>
+实际上是一个Json文件，然后你可以根据默认的规则进行配对。会出现提示的。<br>
+snippets语法：</p>
+<pre><code class="language-shell">prefix      //代码片段名字，即输入此名字就可以调用代码片段。
+body        //这个是代码段的主体.需要编写的代码放在这里,　　　　　 
+$1          //生成代码后光标的初始位置.
+$2          //生成代码后光标的第二个位置,按tab键可进行快速切换,还可以有$3,$4,$5.....
+${1,字符}    //生成代码后光标的初始位置(其中1表示光标开始的序号，字符表示生成代码后光标会直接选中字符。)
+description //代码段描述,输入名字后编辑器显示的提示信息。
+</code></pre>
+<ol>
+<li>多行语句使用,隔开。</li>
+<li>每行代码需要用引号包裹住。</li>
+<li>字符串间如果值里包含特殊字符需要 \ 进行转义。</li>
+<li>变量使用<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mi mathvariant="normal">变</mi><mi mathvariant="normal">量</mi><mi mathvariant="normal">名</mi><mi mathvariant="normal">∣</mi><mi mathvariant="normal">默</mi><mi mathvariant="normal">认</mi><mi mathvariant="normal">值</mi></mrow><mi mathvariant="normal">或</mi></mrow><annotation encoding="application/x-tex">{变量名|默认值}或</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord cjk_fallback">变</span><span class="mord cjk_fallback">量</span><span class="mord cjk_fallback">名</span><span class="mord">∣</span><span class="mord cjk_fallback">默</span><span class="mord cjk_fallback">认</span><span class="mord cjk_fallback">值</span></span><span class="mord cjk_fallback">或</span></span></span></span>{变量名}<br>
+系统默认变量名如下：</li>
+</ol>
+<pre><code class="language-shell">TM_SELECTED_TEXT //当前选定的文本或空字符串
+TM_CURRENT_LINE //当前行的内容
+TM_CURRENT_WORD //光标下的单词的内容或空字符串
+TM_LINE_INDEX //基于零索引的行号
+TM_LINE_NUMBER //基于一索引的行号
+TM_FILENAME //当前文档的文件名
+TM_FILENAME_BASE //当前文档的文件名（不含后缀名)
+TM_DIRECTORY //当前文档的目录
+TM_FILEPATH //当前文档的完整文件路径
+CLIPBOARD //剪切板里的内容
+</code></pre>
+<p>插入当前日期或时间：</p>
+<pre><code class="language-shell">CURRENT_YEAR //当前年(四位数)
+CURRENT_YEAR_SHORT //当前年(两位数)
+CURRENT_MONTH //当前月
+CURRENT_MONTH_NAME //本月的全名（’七月’）
+CURRENT_MONTH_NAME_SHORT //月份的简称（’Jul’）
+CURRENT_DATE //当前日
+CURRENT_DAY_NAME //当天的名称（’星期一’）
+CURRENT_DAY_NAME_SHORT //当天的短名称（’Mon’）
+CURRENT_HOUR //当前小时
+CURRENT_MINUTE //当前分钟
+CURRENT_SECOND //当前秒
+</code></pre>
+<p>注释：</p>
+<pre><code class="language-shell">BLOCK_COMMENT_START //块注释开始标识,如 PHP /* 或 HTML &lt;!-- BLOCK_COMMENT_END //块注释结束标识,如 PHP */ 或 HTML --&gt;
+LINE_COMMENT //行注释，如： PHP // 或 HTML &lt;!-- --&gt;
+</code></pre>
+<p>以上内容来自：https://segmentfault.com/a/1190000018457312</p>
+<h2 id="示例">示例：</h2>
+<pre><code class="language-json">{
+    	&quot;Print Class&quot;:{
+    		&quot;prefix&quot;: &quot;pcn&quot;,
+    		&quot;body&quot;: [
+    			&quot;public class $TM_FILENAME_BASE {&quot;,
+    			&quot;$1&quot;,
+    			&quot;}&quot;
+    		],
+    		&quot;description&quot;: &quot;类主体&quot;
+    	},
+    	&quot;Print Interface&quot;:{
+    		&quot;prefix&quot;: &quot;pin&quot;,
+    		&quot;body&quot;: [
+    			&quot;public interface $TM_FILENAME_BASE {&quot;,
+    			&quot;$1&quot;,
+    			&quot;}&quot;
+    		],
+    		&quot;description&quot;: &quot;接口主体&quot;
+    	},
+    	&quot;Print Abstract&quot;:{
+    		&quot;prefix&quot;: &quot;pacn&quot;,
+    		&quot;body&quot;: [
+    			&quot;public abstract class $TM_FILENAME_BASE {&quot;,
+    			&quot;$1&quot;,
+    			&quot;}&quot;
+    		],
+    		&quot;description&quot;: &quot;抽象类主体&quot;
+    	},
+    	&quot;Print Class Extend&quot;:{
+    		&quot;prefix&quot;: &quot;pcne&quot;,
+    		&quot;body&quot;: [
+    			&quot;public class $TM_FILENAME_BASE extends $1{&quot;,
+    			&quot;$2&quot;,
+    			&quot;}&quot;
+    		],
+    		&quot;description&quot;: &quot;类主体继承&quot;
+    	},
+    	&quot;Print Class Implement&quot;:{
+    		&quot;prefix&quot;: &quot;pcni&quot;,
+    		&quot;body&quot;: [
+    			&quot;public class $TM_FILENAME_BASE implements $1{&quot;,
+    			&quot;$2&quot;,
+    			&quot;}&quot;
+    		],
+    		&quot;description&quot;: &quot;类主体实现&quot;
+    	},
+    }
+</code></pre>
+<p>效果：<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1ga02y0e3grj30m9060mx3.jpg" alt="" loading="lazy"></p>
+<h1 id="使用技巧">使用技巧</h1>
+<h2 id="翻译">翻译</h2>
+<p><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93p2jntbvj30ay02w3yd.jpg" alt="" loading="lazy"><br>
+安装插件。当鼠标悬浮在注释或者代码之类亦或者框选的时候会自动调用谷歌翻译。避免看不懂报错或者注释之类的东西</p>
+<h2 id="代码补全前端">代码补全(前端)</h2>
+<p><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93p3rxmrej30bb02sdfr.jpg" alt="" loading="lazy"><br>
+前端方面代码补全推荐使用这个插件。作者专门添加了一个笔记。可以通过右键葵花宝典呼出。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93p4x122yj30bj0bn74g.jpg" alt="" loading="lazy"><br>
+同时，对一些注释做了中文汉化。最最重要的是，可以一键生成预设模板，如bootstrap模板之类的。可以简化开发成本。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g93p63q3ipj30rn0boq47.jpg" alt="" loading="lazy"></p>
+<h2 id="乱数假文">乱数假文</h2>
+<p>在Vscode中编辑HTML的时候，输入lorem可以生成乱数假文，也就是一段随机的英文文本。可以使用数字来指定生成的伪单词个数。</p>
+<h2 id="导入jar包">导入Jar包</h2>
+<p>目前vscode没有好的jar包导入插件(Auto import不是很好用)，所以需要自己配置。<br>
+找到项目文件夹，选择.classpath，输入以下内容导包</p>
+<pre><code class="language-xml">&lt;classpathentry kind=&quot;lib&quot; path=&quot;包路径&quot;/
+</code></pre>
+<p>然后就能使用包了。<br>
+注意：推荐使用Maven，这样就不用一个个的导包了。</p>
+<h2 id="代码格式化">代码格式化</h2>
+<p>按下组合键alt+shift+f可以自动格式化代码格式</p>
+<h2 id="自动导包和自动补全">自动导包和自动补全</h2>
+<p><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5wa1gskj30rm0fqad1.jpg" alt="" loading="lazy"><br>
+输入一些字段会有自动提示，然后直接tab或者回车会补全并且导包。或者可以使用alt+shift+o导包</p>
+<h2 id="自动修复">自动修复</h2>
+<p>代码检测到错误为以红色波浪线提示，这时候可以将鼠标悬浮在错误位置查看错误，并且可以对一些基本的错误进行简单的错误自动修复，或者提示一些修复方法</p>
+<h2 id="代码重构">代码重构</h2>
+<p>右键代码，点击重构可以生成getter和setter以及构造器等<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5zxzpkzj30o50hcjsj.jpg" alt="" loading="lazy"></p>
+<h2 id="运行代码和debug">运行代码和debug</h2>
+<p>这个就不多介绍了，main方法下会自动出来</p>
+<h2 id="新建标准java项目">新建标准Java项目</h2>
+<p>按下组合键Ctrl+shift+p，输入java<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1g7d5rjpziaj30qr0bt75n.jpg" alt="" loading="lazy"><br>
+找到Create java project，然后选择存放的项目文件夹，再键入项目的名字，将会创建出一套标准的java模板</p>
+<h1 id="常见问题">常见问题</h1>
+<h2 id="代码片段中无代码提示">代码片段中无代码提示</h2>
+<p>描述：Vscode使用补全其中有代码片段的内容无智能提示。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gbvf7ulsrdg30s606zq58.gif" alt="" loading="lazy"><br>
+解决方法：在设置中搜索prevent，去掉前面的勾。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gbvf9jml7oj30ud06m0tc.jpg" alt="" loading="lazy"></p>
+<h1 id="插件推荐">插件推荐</h1>
+<ul>
+<li>Bracket Pair Colorizer：括号高亮显示</li>
+<li>change-case：清洁代码，普通文本一键转换包括驼峰命名、下划线分隔命名，snake_case 命名以及 CONST_CAS 命名等。</li>
+<li>open in browser：浏览器打开文件，快捷键：alt+b 或右键打开</li>
+<li>GlassIt-VSC：使vscode软件整体变透明的插件，包括背景，字体，透明度可以调节。ctrl+alt+z透明，ctrl+alt+c恢复正常。我自己特别喜欢，把vscode放在浏览器上面，配合自动保存，和自动刷新，只要一改代码，就立马能看见效果。</li>
+<li>vscode-pdf：vscode中打开pdf格式文档。</li>
+<li>Image Preview：鼠标移到路径里显示图像预览。</li>
+<li>Easy LESS：less格式语法自动转换相对应css文件，方便引用。</li>
+<li>Auto Rename Tag：自动重命名标签，关联使用，更改开始标签，结束标签同时更改。</li>
+<li>Path Intellisense：路径补全。</li>
+<li>Prettier - Code formatter：代码格式化软件，支持：html，css，js，json，php，nodejs、等，使用方式： CMD + Shift + P - Format Document</li>
+<li>HTML CSS Support：智能的CSS类名提示，可以方便补全CSS的类名</span></li>
+<li>Settings Sync：可以让你同步你的Vscode 的配置到github上，这样就不用每次换台电脑就重新配置了。</li>
+<li>Leetcode：可以让你直接在Vscode上刷Leetcode的题。注意：需要Node.js作为服务器支持。</li>
+<li>Live Server：编写前端必备，让你实时能看到代码的改动。最好换一个大点的屏幕，或者双屏。</li>
+</ul>
+<hr>
+<p>时间有限，其他的将在以后补充</p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%89%E8%A3%85jdk">安装JDK</a></li>
+<li><a href="#vscode%E5%AE%89%E8%A3%85">VScode安装</a></li>
+<li><a href="#%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%851">插件安装1</a></li>
+<li><a href="#%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%852">插件安装2</a></li>
+<li><a href="#tomcat">Tomcat</a></li>
+<li><a href="#maven">Maven</a>
+<ul>
+<li><a href="#%E9%85%8D%E7%BD%AE">配置</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BAmaven%E9%A1%B9%E7%9B%AE">创建MAVEN项目</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%9B%E5%BB%BAspring-boot%E9%A1%B9%E7%9B%AE">创建Spring boot项目</a>
+<ul>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E8%BF%90%E8%A1%8C%E8%B7%9F%E8%B0%83%E8%AF%95">项目运行跟调试</a></li>
+</ul>
+</li>
+<li><a href="#xml%E6%8F%90%E7%A4%BA">XML提示</a></li>
+<li><a href="#sql">SQL</a></li>
+<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5">自定义代码片段</a>
+<ul>
+<li><a href="#%E7%A4%BA%E4%BE%8B">示例：</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7">使用技巧</a>
+<ul>
+<li><a href="#%E7%BF%BB%E8%AF%91">翻译</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81%E8%A1%A5%E5%85%A8%E5%89%8D%E7%AB%AF">代码补全(前端)</a></li>
+<li><a href="#%E4%B9%B1%E6%95%B0%E5%81%87%E6%96%87">乱数假文</a></li>
+<li><a href="#%E5%AF%BC%E5%85%A5jar%E5%8C%85">导入Jar包</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81%E6%A0%BC%E5%BC%8F%E5%8C%96">代码格式化</a></li>
+<li><a href="#%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%8C%85%E5%92%8C%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8">自动导包和自动补全</a></li>
+<li><a href="#%E8%87%AA%E5%8A%A8%E4%BF%AE%E5%A4%8D">自动修复</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81%E9%87%8D%E6%9E%84">代码重构</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E4%BB%A3%E7%A0%81%E5%92%8Cdebug">运行代码和debug</a></li>
+<li><a href="#%E6%96%B0%E5%BB%BA%E6%A0%87%E5%87%86java%E9%A1%B9%E7%9B%AE">新建标准Java项目</a></li>
+</ul>
+</li>
+<li><a href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">常见问题</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5%E4%B8%AD%E6%97%A0%E4%BB%A3%E7%A0%81%E6%8F%90%E7%A4%BA">代码片段中无代码提示</a></li>
+</ul>
+</li>
+<li><a href="#%E6%8F%92%E4%BB%B6%E6%8E%A8%E8%8D%90">插件推荐</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/baidu-link-invalid/">
+              <span class="post-title">
+                如何防止百度链接失效&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/vscode-java-setting/" class="leancloud_visitors"
+              data-flag-title="如何利用VScode打造一个媲美Idea的编辑器">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

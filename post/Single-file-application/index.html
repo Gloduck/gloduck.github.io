@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>单文件应用合集 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="单文件应用合集 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="单文件应用合集" />
+  <meta property="og:url" content="https://mxecy.cn/post/Single-file-application/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/EndumAuhT/" class="tag">Software</a>
+      
+    </span>
+    <h1>单文件应用合集</h1>
+    <span class="meta">
+      Posted on
+      2019-04-09，4 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="前言">前言</h1>
+<p>如果你是一个维修电脑的，或者经常去帮别人装电脑或者修复系统的话。那么你会时常有个烦恼，机主的新系统什么都没有，导致需要花上很多时间去装一些不必要或者说用不了多久就会卸载的软件。像我，就经常被这些问题所困扰。但是单文件程序的出现，很大程度上的解决了这一个问题。</p>
+<p>所谓的单文件，是指那些从一个单独的应用程序之中抽离出来，或者将程序压缩成一个可执行文件(exe)的应用程序。这类文件普遍的特点是：</p>
+<p>1.文件大小小</p>
+<p>2.只有一个文件</p>
+<p>3.运行是将程序主题释放在内存或者硬盘上，待关闭后自动回收</p>
+<p>从上面可以看出，单文件的程序有着快捷，方便的特点。不用想普遍的应用程序一样会经历一个卸载的过程。所以说单文件程序也就成为了我特别喜欢的一类。装在U盘上面简直爽的不要不要的。</p>
+<p>本文着重更新那些网络上收集或者说自己经常在使用的单文件程序。由于出处较多，也不好注明来源，故以下所有资源来源于网络。如有侵权请文章留言，我将会删除。</p>
+<p>在未声明情况下，文章内所有程序均为64位应用程序，请自行确认。</p>
+<h1 id="程序列表">程序列表</h1>
+<h2 id="360文件粉碎">360文件粉碎</h2>
+<p>备注：此程序用于删除电脑上因为占用或者其他原因无法删除的文件</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54li9o1m2j30jg0dwmxb.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xamb">下载地址</a></p>
+<hr>
+<h2 id="anydesk">AnyDesk</h2>
+<p>备注：此软件用于远程办公，可以从任意装有AnyDesk的设备上访问另一台设备。支持Android，Mac，Window，Linux</p>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54lnzzmp7j31400lo3z9.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xaod">下载地址</a></p>
+<hr>
+<h2 id="as-ssd-benchmark">AS SSD Benchmark</h2>
+<p>备注：此软件用于测试硬盘读写性能</p>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54lq5zrh3j30e90d8wez.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xape">下载地址</a></p>
+<hr>
+<h2 id="ccleaner">CCleaner</h2>
+<p>备注：CCleaner是一款免费强大的系统优化、清理系统垃圾和隐私保护工具。</p>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54lsohcugj30sg0joq4g.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xarg">下载地址</a></p>
+<hr>
+<h2 id="ce">CE</h2>
+<p>备注：这个就不多说了吧，内存修改工具</p>
+<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54ltcckc8j30hq0i43za.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xash">下载地址</a></p>
+<hr>
+<h2 id="diskgen">Diskgen</h2>
+<p>备注：专家级数据恢复软件,集数据恢复、硬盘分区、系统备份还原等多种功能于一身的超级工具软件</p>
+<figure data-type="image" tabindex="6"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54lw4i17oj30y40p0776.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xati">下载地址</a></p>
+<hr>
+<h2 id="dism">Dism++</h2>
+<p>备注：初雨_Dism++_是一个微软Dism的一个GUI版,能够固化补丁、Installer清理、离线集成更新、驱动等</p>
+<figure data-type="image" tabindex="7"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54lxwsgvij30rs0jgq4a.jpg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="8"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54lxwtdg1j30rs0jgq4j.jpg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="9"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54lxwsk7bj30rs0jgjsf.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xauj">下载地址</a></p>
+<hr>
+<p>谷歌浏览器</p>
+<p>备注：强大的浏览器，不解释</p>
+<figure data-type="image" tabindex="10"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54lzy2vfhj30q90obt9a.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xava">下载地址</a></p>
+<hr>
+<h2 id="gpu-z">GPU-Z</h2>
+<p>备注：GPU-Z是一款轻量级实用程序，旨在为您提供有关视频卡和GPU的所有信息。</p>
+<figure data-type="image" tabindex="11"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54m1izo7sj30b80ejgmb.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xawb">下载地址</a></p>
+<hr>
+<h2 id="ocam录屏">oCam录屏</h2>
+<p>备注：一款设计简单功能强大的屏幕截图小工具。</p>
+<figure data-type="image" tabindex="12"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54m2u9qemj30e703raat.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xaxc">下载地址</a></p>
+<hr>
+<h2 id="partassist企业版">PartAssist企业版</h2>
+<p>备注：一款强大的分区软件</p>
+<figure data-type="image" tabindex="13"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54m4k7i98j31hc0svmyr.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xayd">下载地址</a></p>
+<hr>
+<h2 id="ultraiso">UltraISO</h2>
+<p>备注：虚拟光驱</p>
+<figure data-type="image" tabindex="14"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54m5qb7dpj30lt0g00ud.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xaze">下载地址</a></p>
+<hr>
+<h2 id="crystaldiskinfo">CrystalDiskInfo</h2>
+<p>备注：一款功能强大的硬盘辅助软件,可用于监测电脑中硬盘的所有信息,包括借口、转速、温度、使用时间等。</p>
+<figure data-type="image" tabindex="15"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54m87vqdgj30j40ez0ud.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xb0f">下载地址</a></p>
+<hr>
+<h2 id="win10activation">Win10Activation</h2>
+<p>备注：用于数字激活Windows，永久激活</p>
+<figure data-type="image" tabindex="16"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54m9krhnxj30ds0efweq.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xb1g">下载地址</a></p>
+<hr>
+<h2 id="百度云破解版">百度云破解版</h2>
+<p>备注：破解了无限加速，只能三方登录。</p>
+<figure data-type="image" tabindex="17"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54ma6wsdej30ie0cajsm.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xb5a">下载地址</a></p>
+<hr>
+<h2 id="鲁大师">鲁大师</h2>
+<p>备注：娱乐大师，不解释。</p>
+<figure data-type="image" tabindex="18"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54mc4pjffj30pa0gymz9.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xb6b">下载地址</a></p>
+<hr>
+<h2 id="驱动精灵">驱动精灵</h2>
+<p>备注：非带网卡驱动版本，带网卡驱动版本以后更新。</p>
+<figure data-type="image" tabindex="19"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54mda3sxhj30pk0g4q56.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xb7c">下载地址</a></p>
+<hr>
+<h2 id="网络测速">网络测速</h2>
+<p>备注：360家的基于P2P测速软件。</p>
+<p><a href="https://www.lanzous.com/i51xb8d">下载地址</a></p>
+<hr>
+<h2 id="notepad">Notepad++</h2>
+<p>备注：比较强大的一款文本编辑器，可以拿来敲一些简单的代码。</p>
+<figure data-type="image" tabindex="20"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54mg1tw9mj30uk0jgdgh.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xb9e">下载地址</a></p>
+<hr>
+<h2 id="软媒美化大师">软媒美化大师</h2>
+<p>备注：美化电脑用的。</p>
+<figure data-type="image" tabindex="21"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54mi1pn3mj30og0g4myi.jpg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="22"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54mi1qqhaj30og0g4wgf.jpg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="23"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54mi1pojsj30og0g4my3.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xbaf">下载地址</a></p>
+<hr>
+<h2 id="迅雷单文件敏感资源版">迅雷单文件敏感资源版</h2>
+<p>备注：去除广告，能下载敏感资源。</p>
+<figure data-type="image" tabindex="24"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54mjew1soj30a40godia.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xbbg">下载地址</a></p>
+<hr>
+<h2 id="迅雷尊享版播放器">迅雷尊享版播放器</h2>
+<p>备注：一个提取的播放器，没什么卵用。</p>
+<figure data-type="image" tabindex="25"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54mklkp2ij30qo0hrglk.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xbch">下载地址</a></p>
+<hr>
+<h2 id="hd-tune-pro">HD Tune Pro</h2>
+<p>备注：一款小巧易用的硬盘工具软件,其主要功能有硬盘传输速率检测,健康状态检测,温度检测及磁盘表面扫描等。</p>
+<figure data-type="image" tabindex="26"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g54mlv9xpmj30j00hpgmg.jpg" alt="" loading="lazy"></figure>
+<p><a href="https://www.lanzous.com/i51xbfa">下载地址</a></p>
+<hr>
+<h2 id="下载链接整合">下载链接整合</h2>
+<p>https://www.lanzous.com/b844697/ 密码:82y9</p>
+<h1 id="声明">声明</h1>
+<p>由于版权存在争议，本文严禁转载！</p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E7%A8%8B%E5%BA%8F%E5%88%97%E8%A1%A8">程序列表</a>
+<ul>
+<li><a href="#360%E6%96%87%E4%BB%B6%E7%B2%89%E7%A2%8E">360文件粉碎</a></li>
+<li><a href="#anydesk">AnyDesk</a></li>
+<li><a href="#as-ssd-benchmark">AS SSD Benchmark</a></li>
+<li><a href="#ccleaner">CCleaner</a></li>
+<li><a href="#ce">CE</a></li>
+<li><a href="#diskgen">Diskgen</a></li>
+<li><a href="#dism">Dism++</a></li>
+<li><a href="#gpu-z">GPU-Z</a></li>
+<li><a href="#ocam%E5%BD%95%E5%B1%8F">oCam录屏</a></li>
+<li><a href="#partassist%E4%BC%81%E4%B8%9A%E7%89%88">PartAssist企业版</a></li>
+<li><a href="#ultraiso">UltraISO</a></li>
+<li><a href="#crystaldiskinfo">CrystalDiskInfo</a></li>
+<li><a href="#win10activation">Win10Activation</a></li>
+<li><a href="#%E7%99%BE%E5%BA%A6%E4%BA%91%E7%A0%B4%E8%A7%A3%E7%89%88">百度云破解版</a></li>
+<li><a href="#%E9%B2%81%E5%A4%A7%E5%B8%88">鲁大师</a></li>
+<li><a href="#%E9%A9%B1%E5%8A%A8%E7%B2%BE%E7%81%B5">驱动精灵</a></li>
+<li><a href="#%E7%BD%91%E7%BB%9C%E6%B5%8B%E9%80%9F">网络测速</a></li>
+<li><a href="#notepad">Notepad++</a></li>
+<li><a href="#%E8%BD%AF%E5%AA%92%E7%BE%8E%E5%8C%96%E5%A4%A7%E5%B8%88">软媒美化大师</a></li>
+<li><a href="#%E8%BF%85%E9%9B%B7%E5%8D%95%E6%96%87%E4%BB%B6%E6%95%8F%E6%84%9F%E8%B5%84%E6%BA%90%E7%89%88">迅雷单文件敏感资源版</a></li>
+<li><a href="#%E8%BF%85%E9%9B%B7%E5%B0%8A%E4%BA%AB%E7%89%88%E6%92%AD%E6%94%BE%E5%99%A8">迅雷尊享版播放器</a></li>
+<li><a href="#hd-tune-pro">HD Tune Pro</a></li>
+<li><a href="#%E4%B8%8B%E8%BD%BD%E9%93%BE%E6%8E%A5%E6%95%B4%E5%90%88">下载链接整合</a></li>
+</ul>
+</li>
+<li><a href="#%E5%A3%B0%E6%98%8E">声明</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/n1box/">
+              <span class="post-title">
+                某N1盒子调教笔记&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/Single-file-application/" class="leancloud_visitors"
+              data-flag-title="单文件应用合集">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

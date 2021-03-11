@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>Discuz模拟签到 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="Discuz模拟签到 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="Discuz模拟签到" />
+  <meta property="og:url" content="https://mxecy.cn/post/discuz-sign/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>Discuz模拟签到</h1>
+    <span class="meta">
+      Posted on
+      2020-03-11，9 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p>由于大多论坛都是使用的Discuz程序，所以打算写一个签到的程序用于各个论坛的签到。本文模拟签到的论坛使用的是【DSU】每日签到。即签到页面是：https://域名/plugin.php?id=dsu_paulsign:sign的网站本文才对你有帮助。</p>
+<h1 id="抓包">抓包</h1>
+<p>首先先打开要签到的网站，本文随便找了个网站来进行测试。签到页面如下。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqddyor1jj30rb086tfr.jpg" alt="" loading="lazy"><br>
+考虑到这个插件签到成功后会进行刷新，然后上图所示的内容就不显示了，这样就要等一天以后才能重新抓包了。所以先打开抓包工具。先错误的请求一次，即啥都不选直接签到。<br>
+顺便一提：这个地方是个form表单，可以直接查看源码来获取参数以及请求链接。但是为了省事，就直接抓包了。</p>
+<p><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqdhbcqyvj307h06lwef.jpg" alt="" loading="lazy"><br>
+发送请求后，打开请求的内容，查看请求头可以看到以下内容。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqdpqlusfj30a007kjre.jpg" alt="" loading="lazy"><br>
+这些就是所有的请求参数了。</p>
+<ul>
+<li>id</li>
+<li>operation</li>
+<li>infloat</li>
+<li>inajax</li>
+<li>formhash</li>
+<li>qdxq</li>
+<li>qdmode</li>
+<li>todaysay</li>
+<li>fastreplay</li>
+</ul>
+<p>看到上面的参数，基本上就差不多知道签到请求所需要的东西了。<br>
+其中前面四个是固定的，所以无视。<br>
+然后跳到Form Data。参数名称大多都很明显了。</p>
+<ul>
+<li>qdxq = 签到心情，即选择的心情图片</li>
+<li>qdmode = 今天最想说模式</li>
+<li>todaysay = 我今天最想说的内容</li>
+<li>fastreplay = 快速回复</li>
+</ul>
+<p>至于其中还有个formhash还不知道是什么参数，不过肯定是自己生成的，于是在页面元素里面搜索了一波。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqdtyie3kj30dg042aaa.jpg" alt="" loading="lazy"><br>
+接着百度了一波是怎么生成的。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqdw54q0yj30ju0f70tq.jpg" alt="" loading="lazy"><br>
+看来想模拟生成这个是不太现实的了。<br>
+但是考虑到HTML文档里面有这个参数，所以把他提取出来，然后拼接请求以下。<br>
+https://域名/plugin.php?id=dsu_paulsign:sign&amp;operation=qiandao&amp;inajax=1&amp;qdxq=kx&amp;qdmode=2&amp;todaysay=&amp;fastreply=1&amp;formhash=d3103290<br>
+得到以下的链接，然后放在浏览器里面请求一下。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqe0ip64kj31h607cq30.jpg" alt="" loading="lazy"><br>
+看样子请求是成功的了。<br>
+接着我们的思路就出来了。</p>
+<ol>
+<li>登录获取Cookie（貌似Dz的Cookie没有对失效时间做判断，所以可以一直用）</li>
+<li>先模拟请求一次获取formhash</li>
+<li>将获取到的formhash拼接，然后再请求一次。</li>
+<li>签到成功。<br>
+为防止小白，在文章的末尾附上各个参数的内容的获取方式。</li>
+</ol>
+<h1 id="代码">代码</h1>
+<p>由于本人主修Java，所以代码使用Java来完成。<br>
+其中用于提取formhash的正则表达式为：</p>
+<pre><code class="language-html">&lt;input type=&quot;hidden&quot; name=&quot;formhash&quot; value=&quot;(.*?)&quot; /&gt;
+</code></pre>
+<h2 id="获取formhash">获取formhash</h2>
+<pre><code class="language-java">    public static String getFormHash(String link,String cookie) throws Exception{
+        URL url = new URL(link);
+        HttpURLConnection connection =  (HttpURLConnection)url.openConnection();
+        connection.setConnectTimeout(5000);
+        connection.setRequestProperty(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;);
+        connection.setRequestProperty(&quot;user-agent&quot;, &quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.25 Safari/537.36 Core/1.70.3754.400 QQBrowser/10.5.4020.400&quot;);
+        connection.setRequestProperty(&quot;Cookie&quot;, cookie);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String line = null;
+        StringBuilder response = new StringBuilder();
+        while((line = reader.readLine())!=null){
+            response.append(line);
+        }
+        Pattern pattern = Pattern.compile(&quot;&lt;input type=\&quot;hidden\&quot; name=\&quot;formhash\&quot; value=\&quot;(.*?)\&quot; /&gt;&quot;);
+        Matcher matcher = pattern.matcher(response.toString());
+        String formhash = null;
+        if (matcher.find()) {
+            formhash = matcher.group(1);
+            }
+        return formhash;
+    }
+</code></pre>
+<p>获取到了formhash后就可以签到了，代码如下：</p>
+<pre><code class="language-java">    public static void sign(String link, String cookie,String formhash) throws Exception{
+        URL url = new URL(link + &quot;&amp;operation=qiandao&amp;inajax=1&amp;qdxq=kx&amp;qdmode=2&amp;todaysay=&amp;fastreply=1&amp;formhash=&quot; + formhash);
+        HttpURLConnection connection =  (HttpURLConnection)url.openConnection();
+        connection.setConnectTimeout(5000);
+        connection.setRequestProperty(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;);
+        connection.setRequestProperty(&quot;user-agent&quot;, &quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.25 Safari/537.36 Core/1.70.3754.400 QQBrowser/10.5.4020.400&quot;);
+        connection.setRequestProperty(&quot;Cookie&quot;, cookie);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String line = null;
+        StringBuilder response = new StringBuilder();
+        while((line = reader.readLine())!=null){
+            response.append(line);
+        }
+        System.out.println(response.toString());
+    }
+</code></pre>
+<p>后面几段打印的代码其实可以删除掉。<br>
+附上完整的代码：</p>
+<pre><code class="language-java">package app;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class App {
+    
+    public static void main(String[] args) throws Exception {
+        String link = &quot;https://域名/plugin.php?id=dsu_paulsign:sign&quot;;
+        String cookie = &quot;&quot;;
+        sign(link, cookie, getFormHash(link, cookie));
+    }
+    public static String getFormHash(String link,String cookie) throws Exception{
+        URL url = new URL(link);
+        HttpURLConnection connection =  (HttpURLConnection)url.openConnection();
+        connection.setConnectTimeout(5000);
+        connection.setRequestProperty(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;);
+        connection.setRequestProperty(&quot;user-agent&quot;, &quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.25 Safari/537.36 Core/1.70.3754.400 QQBrowser/10.5.4020.400&quot;);
+        connection.setRequestProperty(&quot;Cookie&quot;, cookie);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String line = null;
+        StringBuilder response = new StringBuilder();
+        while((line = reader.readLine())!=null){
+            response.append(line);
+        }
+        Pattern pattern = Pattern.compile(&quot;&lt;input type=\&quot;hidden\&quot; name=\&quot;formhash\&quot; value=\&quot;(.*?)\&quot; /&gt;&quot;);
+        Matcher matcher = pattern.matcher(response.toString());
+        String formhash = null;
+        if (matcher.find()) {
+            formhash = matcher.group(1);
+            }
+        return formhash;
+    }
+    public static void sign(String link, String cookie,String formhash) throws Exception{
+        URL url = new URL(link + &quot;&amp;operation=qiandao&amp;inajax=1&amp;qdxq=kx&amp;qdmode=2&amp;todaysay=&amp;fastreply=1&amp;formhash=&quot; + formhash);
+        HttpURLConnection connection =  (HttpURLConnection)url.openConnection();
+        connection.setConnectTimeout(5000);
+        connection.setRequestProperty(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;);
+        connection.setRequestProperty(&quot;user-agent&quot;, &quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.25 Safari/537.36 Core/1.70.3754.400 QQBrowser/10.5.4020.400&quot;);
+        connection.setRequestProperty(&quot;Cookie&quot;, cookie);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String line = null;
+        StringBuilder response = new StringBuilder();
+        while((line = reader.readLine())!=null){
+            response.append(line);
+        }
+        System.out.println(response.toString());
+    }
+}
+</code></pre>
+<p>别忘了使用的时候把域名和Cookie替换掉。<br>
+对了，为了方便起见没有处理异常，有需求的话自己处理一下。<br>
+部署云函数的时候发现我是真的用不来腾讯云的云函数部署。然后把上面代码用php重构了一下。</p>
+<pre><code class="language-php">&lt;?php
+  
+    function discuz_sign(){
+        function get_response($url,$cookie)
+        {
+              $curl = curl_init(); 
+                curl_setopt($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_HEADER, 0);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($curl,CURLOPT_COOKIE,$cookie);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); 
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);  
+                $response = curl_exec($curl);  
+                curl_close($curl);
+                return $response;
+            
+        }
+        $link = 'https://域名/plugin.php?id=dsu_paulsign:sign';
+        $cookie = '';
+        $response = get_response($link,$cookie);
+        preg_match_all('&lt;input type=&quot;hidden&quot; name=&quot;formhash&quot; value=&quot;(.*?)&quot; /&gt;', $response, $match);
+        $formhash = $match[1][0];
+        $result = get_response($link . '&amp;operation=qiandao&amp;inajax=1&amp;qdxq=kx&amp;qdmode=2&amp;todaysay=&amp;fastreply=1&amp;formhash=' . $formhash,$cookie);
+        echo $result;
+    }
+?&gt;
+</code></pre>
+<h1 id="部署云函数">部署云函数</h1>
+<p>鉴于不会用云函数部署Java项目（各种奇葩报错），所以这里使用PHP来部署。<br>
+云函数官网：<a href="https://cloud.tencent.com/product/scf/">https://cloud.tencent.com/product/scf/</a></p>
+<h2 id="部署">部署</h2>
+<p>函数服务-新建<br>
+环境选PHP5.6<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqhq7044cj30lx0bi0sz.jpg" alt="" loading="lazy"><br>
+然后把上面的php代码的link和cookie修改后复制到代码框里。<br>
+执行方法改成方法名。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqhsofjucj31610kmdhc.jpg" alt="" loading="lazy"><br>
+创建完成后，在函数代码里测试一下看能不能用。出现下图类似的就成功了。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqhuvi39cj313o0ebgme.jpg" alt="" loading="lazy"></p>
+<h2 id="触发">触发</h2>
+<p>由于签到是每天一次，所以只需要每天触发一次就行了。<br>
+点击触发方式-添加触发方式-定时触发-自定义触发周期<br>
+表达式设置成：0 0 12 * * * * （每天12点）<br>
+保存<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqhyd3xp6j311d0fhdgc.jpg" alt="" loading="lazy"><br>
+想设置其他周期的话参考腾讯云的Cron文档。</p>
+<h2 id="其他">其他</h2>
+<p>为了节省资源，函数配置里修改一下资源占用。<br>
+点击编辑，主要调整内存和超时时间就行了。内存选择最小即可，超时时间根据网站相应速度来填写。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqi13w5z8j312m0j20te.jpg" alt="" loading="lazy"></p>
+<h1 id="参数内容获取">参数内容获取</h1>
+<h2 id="获取cookie">获取cookie</h2>
+<p>登录dz按下f12，在右边选择Network。然后刷新。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqfahn1wdj30me0e5jwj.jpg" alt="" loading="lazy"><br>
+加载完成后在下面列表框种随便找一个可能带有Cookie的请求。<br>
+比如后面带了php的。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqfbv4i78j30fp09at9c.jpg" alt="" loading="lazy"><br>
+点击Headers然后往下拉，找到红框中的内容就是cookie了。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gcqfe4vsmgj30g00clgmx.jpg" alt="" loading="lazy"><br>
+全部复制出来就行了。</p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E6%8A%93%E5%8C%85">抓包</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
+<ul>
+<li><a href="#%E8%8E%B7%E5%8F%96formhash">获取formhash</a></li>
+</ul>
+</li>
+<li><a href="#%E9%83%A8%E7%BD%B2%E4%BA%91%E5%87%BD%E6%95%B0">部署云函数</a>
+<ul>
+<li><a href="#%E9%83%A8%E7%BD%B2">部署</a></li>
+<li><a href="#%E8%A7%A6%E5%8F%91">触发</a></li>
+<li><a href="#%E5%85%B6%E4%BB%96">其他</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E6%95%B0%E5%86%85%E5%AE%B9%E8%8E%B7%E5%8F%96">参数内容获取</a>
+<ul>
+<li><a href="#%E8%8E%B7%E5%8F%96cookie">获取cookie</a></li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/gloduck-theme/">
+              <span class="post-title">
+                Gridea自改主题&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/discuz-sign/" class="leancloud_visitors"
+              data-flag-title="Discuz模拟签到">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

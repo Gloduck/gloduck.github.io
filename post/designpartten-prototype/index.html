@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>设计模式-原型模式 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="设计模式-原型模式 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="设计模式-原型模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/designpartten-prototype/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>设计模式-原型模式</h1>
+    <span class="meta">
+      Posted on
+      2020-09-09，5 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="定义">定义</h1>
+<ul>
+<li>Specify the kinds of objects to create using a prototypical instance,and create new objects by copying this prototype（用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象）</li>
+<li>原型模式简单程度仅次于单例模式和迭代器模式，其核心是一个Clone方法，通过该方法进行对象的拷贝。</li>
+</ul>
+<h1 id="优点">优点</h1>
+<ul>
+<li>
+<p>性能优良：原型模式是在内存二进制流的拷贝，要比直接new一个对象性能好很多，特别是要在一个循环体内产生大量的对象时，原型模式可以更好的体现其优点。</p>
+</li>
+<li>
+<p>逃避构造函数的约束：这是它的优点也是它的缺点，直接在内存中拷贝，<font color=red></p>
+<p>构造函数是不会执行的</font>。优点和缺点就是减少了约束</p>
+</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<ul>
+<li>场景：
+<ul>
+<li>资源优化场景：类初始化需要消耗非常多的资源，这个资源包括数据、硬件资源等。</li>
+<li>性能和安全要求的场景：通过new产生一个对象需要非常繁琐的数据准备或访问权限，则可以使用原型模式。</li>
+<li>一个对象多个修改者的场景：一个对象需要提供给其他对象访问，而且各个调用者都可能需要修改其值时，可以使用原型模式拷贝多个对象给调用者调用。</li>
+<li>利用原型模式先产生一个包含大量共有信息的类，然后可以拷贝出副本，修正细节信息，建立一个完整的个性对象。</li>
+</ul>
+</li>
+</ul>
+<h1 id="代码">代码</h1>
+<h2 id="通用类图">通用类图</h2>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0lelk07fj31gg0woq8p.jpg" alt="原型模式通用类图" loading="lazy"></figure>
+<h2 id="基本的建造者模式">基本的建造者模式</h2>
+<h3 id="类图">类图</h3>
+<p>没有，就一个类</p>
+<h3 id="代码-2">代码</h3>
+<p>原型设计模式代码</p>
+<pre><code class="language-Java">package com.pattern;
+
+import com.pattern.prototype.PrototypeClass;
+import org.junit.Test;
+
+public class PrototypeTest {
+    @Test
+    public void PrototypeTest(){
+        PrototypeClass instance1 = new PrototypeClass();
+        try {
+            PrototypeClass instance2 = instance1.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+</code></pre>
+<h3 id="测试代码">测试代码</h3>
+<pre><code class="language-Java">package com.pattern;
+
+import com.pattern.prototype.PrototypeClass;
+import org.junit.Test;
+
+public class PrototypeTest {
+    @Test
+    public void PrototypeTest(){
+        PrototypeClass instance1 = new PrototypeClass();
+        try {
+            PrototypeClass instance2 = instance1.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+</code></pre>
+<h3 id="结果">结果</h3>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gikmuqm7wnj30b5059mx7.jpg" alt="原型模式执行结果" loading="lazy"></figure>
+<h2 id="浅拷贝和深拷贝">浅拷贝和深拷贝</h2>
+<h3 id="代码-3">代码</h3>
+<p><strong>浅拷贝</strong></p>
+<pre><code class="language-Java">package com.pattern.prototype;
+
+import java.util.ArrayList;
+
+public class ShallowCopy implements Cloneable {
+    private ArrayList&lt;String&gt; arrayList = new ArrayList&lt;&gt;();
+    @Override
+    public ShallowCopy clone(){
+        ShallowCopy shallowCopy = null;
+        try {
+            shallowCopy = (ShallowCopy) super.clone();
+        } catch (CloneNotSupportedException e){
+            e.printStackTrace();
+        }
+        return shallowCopy;
+    }
+    public void addValue(String value){
+        this.arrayList.add(value);
+    }
+    public ArrayList&lt;String&gt; getArrayList(){
+        return this.arrayList;
+    }
+}
+
+</code></pre>
+<p>测试代码</p>
+<pre><code class="language-java">    @Test
+    public void ShallowCopyTest(){
+        ShallowCopy instance1 = new ShallowCopy();
+        instance1.addValue(&quot;1&quot;);
+        ShallowCopy instance2 = instance1.clone();
+        instance2.addValue(&quot;2&quot;);
+        System.out.println(instance1.getArrayList());
+    }
+</code></pre>
+<p>运行结果</p>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gikns7t210j30dl05fdfu.jpg" alt="浅拷贝运行结果" loading="lazy"></figure>
+<p><strong>深拷贝</strong></p>
+<pre><code class="language-Java">package com.pattern.prototype;
+
+import java.util.ArrayList;
+
+public class DeepCopy implements Cloneable {
+    private ArrayList&lt;String&gt; arrayList = new ArrayList&lt;&gt;();
+    @Override
+    public DeepCopy clone(){
+        DeepCopy deepCopy = null;
+        try {
+            deepCopy = (DeepCopy) super.clone();
+            deepCopy.arrayList = (ArrayList&lt;String&gt;) this.arrayList.clone();
+        } catch (CloneNotSupportedException e){
+            e.printStackTrace();
+        }
+        return deepCopy;
+    }
+    public void addValue(String value){
+        this.arrayList.add(value);
+    }
+    public ArrayList&lt;String&gt; getArrayList(){
+        return this.arrayList;
+    }
+}
+
+</code></pre>
+<p>测试代码</p>
+<pre><code class="language-java">    @Test
+    public void DeepCopyTest(){
+        DeepCopy instance1= new DeepCopy();
+        instance1.addValue(&quot;1&quot;);
+        DeepCopy instance2 = instance1.clone();
+        instance2.addValue(&quot;2&quot;);
+        System.out.println(instance1.getArrayList());
+    }
+</code></pre>
+<p>运行结果</p>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gikns81lxkj309k04nglm.jpg" alt="深拷贝运行结果" loading="lazy"></figure>
+<p>我们发现，在浅拷贝的时候，改变instance2中arraylist的值导致instance1的值也改变了，而在深拷贝则没这样的情况。这是因为Java做了一个偷懒的动作。</p>
+<p>Object类提供的方法Clone只是拷贝本对象，<font color=red>其对象内部的数组、引用对象等都不拷贝，还是指向原生对象的内部元素地址</font>，这就是浅拷贝。两个对象共享了一个私有变量。这是一种非常不安全的，至于String类为什么也会被拷贝。请自行网上查阅资料。</p>
+<h1 id="注意">注意</h1>
+<ul>
+<li>原型模式的构造函数不会被执行，Object类的clone方法是从内存中（堆内存）以二进制流的方式进行拷贝，重新分配一个内存块。</li>
+<li>浅拷贝和深拷贝</li>
+<li>原型模式，引用的成员变量必须满足两个条件才会被拷贝：一是类的成员变量，而不是方法内变量；二是必须是一个可变的引用对象，而不是一个原始类型或不可变对象</li>
+<li>深拷贝和浅拷贝不建议混合使用，特别是涉及到类的继承时，父类有多个引用的情况就非常复杂，建议方案是浅拷贝和深拷贝分开实现</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
+<ul>
+<li><a href="#%E9%80%9A%E7%94%A8%E7%B1%BB%E5%9B%BE">通用类图</a></li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F">基本的建造者模式</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9B%BE">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E6%8B%B7%E8%B4%9D">浅拷贝和深拷贝</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81-3">代码</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/designpartten-proxy/">
+              <span class="post-title">
+                设计模式-代理模式&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/designpartten-prototype/" class="leancloud_visitors"
+              data-flag-title="设计模式-原型模式">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

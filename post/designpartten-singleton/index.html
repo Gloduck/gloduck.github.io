@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>设计模式-单例设计模式 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="设计模式-单例设计模式 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="设计模式-单例设计模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/designpartten-singleton/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>设计模式-单例设计模式</h1>
+    <span class="meta">
+      Posted on
+      2020-07-06，8 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="定义">定义</h1>
+<ul>
+<li>Ensure a class has only one instance,and provide a global point of access to it（确保某一个类只有一个实例，而且自行实例化并向这个系统提供这个实例）</li>
+</ul>
+<h1 id="优点">优点</h1>
+<ul>
+<li>内存中只有一个实例，减少了内存开支。特别是当一个对象需要频繁的创建销毁时</li>
+<li>只生成一个实例，减少系统性能开销。（当一个对象产生需要比较多的资源如读取配置文件的时候，可以在应用启动时产生一个单例对象，然后用<strong>永久驻留内存的方式解决（注意垃圾回收机制）</strong>）</li>
+</ul>
+<h1 id="缺点">缺点</h1>
+<ul>
+<li>单例模式一般没有接口，扩展很难（接口对单例模式没有任何意义）</li>
+<li>单例模式对测试不利（并行开发环境下，如果单例模式没有完成，是不能够测试的）</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<ul>
+<li>需求：要求一个类有且仅有一个对象，如果多个对象就会出现不良反应</li>
+<li>举例
+<ul>
+<li>要求生成唯一序列号的环境</li>
+<li>在整个项目中需要一个共享访问点或共享数据</li>
+<li>创建一个对象需要消耗的资源过多。如访问IO和数据库等资源</li>
+<li>需要定义大量的静态常量和静态方法，如工具类（也可以直接使用static）</li>
+</ul>
+</li>
+</ul>
+<h1 id="分类">分类</h1>
+<h2 id="通用类图">通用类图</h2>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0kp7lc1nj31c80hlgrs.jpg" alt="单例模式通用类图" loading="lazy"></figure>
+<h2 id="懒汉式单例">懒汉式单例</h2>
+<p>在使用时创建单例对象。</p>
+<h3 id="代码">代码</h3>
+<pre><code class="language-JAVA">package com.pattern.singleton;
+
+/* 懒汉式单例，在调用的时候再初始化 */
+public class SingletonLazy {
+    // 构造私有化
+    private SingletonLazy() {
+    };
+
+    private static SingletonLazy singletonLazy = null;
+
+    // 通过静态方法获取对象
+    public static SingletonLazy newInstance() {
+        if (singletonLazy == null) {
+            singletonLazy = new SingletonLazy();
+        }
+        return singletonLazy;
+    }
+    /**
+     * 注意： 懒汉式单例会导致在高并发的时候线程不安全。如两个线程A和B 当第一个线程A走到new
+     * SingletonLazy的时候，此时正在创建对象，还没获取到对象（创建对象需要时间），然后线程B走到了(singletonLazy ==
+     * null)方法，此时判断结果为true，于是就创建了一个SingletonLazy对象然后返回给B，此时A完成了singletonlazy对象的初始化然后返回给A。
+     * 这个时候，线程A和线程B的singleton对象实际上并不是同一个对象。
+     * 解决方法：
+     *  1.使用饿汉式单例（推荐使用）
+     *  2.给newInstance加锁。如：public synchronized SingletonLazy newInstance()
+     */
+}
+</code></pre>
+<h3 id="存在问题">存在问题</h3>
+<ul>
+<li>线程不安全（高并发的情况下），如：线程A执行到new的时候，但是还没有获取到对象，线程B执行到 对象==null判断，此时B判断为true于是就会创建一个对象，这时A也创建对象就会导致有两个实例。</li>
+</ul>
+<h2 id="懒汉式单利synchronized">懒汉式单利Synchronized</h2>
+<p>使用synchronized解决单例模式线程不安全的问题，但是存在效率问题</p>
+<pre><code class="language-java">package com.pattern.singleton;
+
+/**
+ * 使用synchronized来解决多线程不安全的问题，但是同时会带来极大的性能消耗
+ */
+public class SingletonLazySynchronized {
+    private static SingletonLazySynchronized instance;
+    private SingletonLazySynchronized(){}
+    public synchronized static SingletonLazySynchronized getInstance(){
+        if(instance != null){
+            instance = new SingletonLazySynchronized();
+        }
+        return instance;
+    }
+}
+
+</code></pre>
+<h2 id="懒汉式单例dcl">懒汉式单例DCL</h2>
+<p>双重锁定检查的单例模式，注：此模式也不一定线程安全，因为有指令重排的存在</p>
+<p>某一线程执行到第一次检测时，读取到instance!=null，instance的引用对象可能没有完成初始化</p>
+<p>instance =  new SingletonLazyDCL()；可以分为3步</p>
+<ul>
+<li>分配内存空间：memory = allocate();</li>
+<li>初始化对象：instance(memory)</li>
+<li>设置instance指向刚分配的内存地址，此时instance != null：instance = memory</li>
+</ul>
+<p>其中步骤2和3**<u>不存在数据依赖关系</u>**，而且无论重排前还是重排后在执行结果在单线程中没有改变。所以这种重排优化是允许的（2步3步交换顺序）</p>
+<p><font color="red">指令重排后，当一条线程访问instance不为null时，由于instance未必已经初始化完成，也就造成了线程安全的问题</font></p>
+<pre><code class="language-java">package com.pattern.singleton;
+
+/**
+ * DLC：双端检锁机制
+ * DCL模式的单例模式，用于防止多线程并发的情况下普通的懒汉式单例模式线程不安全的问题
+ */
+public class SingletonLazyDCL {
+    private static SingletonLazyDCL instance;
+    // 构造私有化
+    private SingletonLazyDCL(){}
+    public static SingletonLazyDCL getInstance(){
+        if(instance == null){
+            synchronized (SingletonLazyDCL.class){
+                if(instance == null){
+                    instance = new SingletonLazyDCL();
+                }
+            }
+        }
+        return instance;
+    }
+}
+
+</code></pre>
+<h2 id="饿汉式单例dlcvolatile">饿汉式单例DLC+Volatile</h2>
+<p>解决由于指令重排导致的线程不安全</p>
+<pre><code class="language-java">package com.pattern.singleton;
+
+public class SingletonLazyDCLVolatile {
+    private static volatile SingletonLazyDCLVolatile instance;
+    private SingletonLazyDCLVolatile(){}
+    public static SingletonLazyDCLVolatile getInstance(){
+        if(instance == null){
+            synchronized (SingletonLazyDCLVolatile.class){
+                if(instance == null){
+                    instance = new SingletonLazyDCLVolatile();
+                }
+            }
+        }
+        return instance;
+    }
+}
+
+</code></pre>
+<h2 id="静态内部类单例">静态内部类单例</h2>
+<p>通过静态内部类的方式实现单例模式是线程安全的，同时静态内部类不会在Singleton类加载时就加载，而是在调用getInstance()方法时才进行加载，达到了懒加载的效果。</p>
+<pre><code class="language-java">package com.pattern.singleton;
+
+public class SingletonInnerClass {
+    private static class InnnerClass{
+        private static SingletonInnerClass instance = new SingletonInnerClass();
+    }
+    private SingletonInnerClass(){}
+    public static SingletonInnerClass getInstance(){
+        return InnnerClass.instance;
+    }
+}
+
+</code></pre>
+<h2 id="枚举单例">枚举单例</h2>
+<p>算是最好的一种单例模式了吧，可以防止反序列化以及反射带来的问题。</p>
+<pre><code class="language-java">package com.pattern.singleton;
+
+public enum  SingletonEnum {
+    INSTANCE;
+    public void singletonMethod(){
+        System.out.println(&quot;singletonMethod&quot;);
+    }
+}
+
+</code></pre>
+<h2 id="饿汉式单例">饿汉式单例</h2>
+<p>在初始化时候直接创建对象。</p>
+<h3 id="代码-2">代码</h3>
+<pre><code class="language-JAVA">package com.pattern.singleton;
+/* 饿汉式单例，在初始化时候就创建对象，开发中常用的单例模式 */
+public class SingletonEager {
+    // 构造私有化
+    private SingletonEager(){};
+    private static SingletonEager singletonEager = new SingletonEager();
+    // 使用静态方法创建对象
+    public static SingletonEager newInstance(){
+        return singletonEager;
+    }
+}
+</code></pre>
+<h2 id="有上限的多例">有上限的多例</h2>
+<p>有上限的多例是单例模式的一个变种，通过容器来限制多例的数量。<br>
+如：写日志文件，分别写在两个不同的路径。此时就可以使用有上限的多例来为每个路径的日志文件分配一个对象。</p>
+<h3 id="代码-3">代码</h3>
+<pre><code class="language-JAVA">package com.pattern.singleton;
+
+import java.util.ArrayList;
+/* 有限的多例模式，是单例的一个变种 */
+public class LimitMultiton {
+    // 指定实例的上限
+    private static int MAX_INSTANCE_COUNT = 2;
+    // 存放指定数量多例的容器，集合类初始化时最好给定大小，不确定给默认值
+    // 此处使用了ArrayList可能导致线程不安全，可以改成vetor
+    private static ArrayList&lt;LimitMultiton&gt; instanceList = new ArrayList&lt;&gt;(MAX_INSTANCE_COUNT);
+    // 构造私有化
+    private LimitMultiton(){};
+    // 静态代码块，只执行一次
+    static{
+        for (int i = 0; i &lt; MAX_INSTANCE_COUNT; i++) {
+            instanceList.add(new LimitMultiton());
+        }
+    }
+    // 返回容器中实例的数量
+    public static int getInstanceCount(){
+        return MAX_INSTANCE_COUNT;
+    }
+    // 返回实例
+    public static LimitMultiton newInstance(int index){
+        return instanceList.get(index);
+    }
+}  
+</code></pre>
+<h2 id="测试代码">测试代码</h2>
+<pre><code class="language-Java">package com.pattern;
+
+import java.util.Random;
+
+import com.pattern.singleton.LimitMultiton;
+import com.pattern.singleton.SingletonEager;
+import com.pattern.singleton.SingletonLazy;
+
+import org.junit.Test;
+
+public class SingletonTest {
+    @Test
+    public void SingletonEagerTest(){
+        SingletonEager singletonEager = null;
+        for (int i = 0; i &lt; 10; i++) {
+            singletonEager = SingletonEager.newInstance();
+            System.out.println(singletonEager);
+        }
+    }
+    @Test
+    public void SingletonLazyTest(){
+        SingletonLazy singletonLazy = null;
+        for (int i = 0; i &lt; 10; i++) {
+            singletonLazy = SingletonLazy.newInstance();
+            System.out.println(singletonLazy);
+        }
+    }
+    @Test
+    public void LimitMultitonTest(){
+        LimitMultiton limitMultiton = null;
+        for (int i = 0; i &lt; 20; i++) {
+            limitMultiton = LimitMultiton.newInstance(new Random().nextInt(LimitMultiton.getInstanceCount()));
+            System.out.println(limitMultiton);
+        }
+    }
+}
+</code></pre>
+<h1 id="注意">注意</h1>
+<ul>
+<li>单例类不要实现Cloneable，否则可以通过对象复制来创建一个新的单例对象（Java中，如果类实现了Cloneable接口，并实现了clone方法，可以直接通过对象复制方式创建一个新的对象）</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
+<li><a href="#%E7%BC%BA%E7%82%B9">缺点</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
+<li><a href="#%E5%88%86%E7%B1%BB">分类</a>
+<ul>
+<li><a href="#%E9%80%9A%E7%94%A8%E7%B1%BB%E5%9B%BE">通用类图</a></li>
+<li><a href="#%E6%87%92%E6%B1%89%E5%BC%8F%E5%8D%95%E4%BE%8B">懒汉式单例</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a></li>
+<li><a href="#%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98">存在问题</a></li>
+</ul>
+</li>
+<li><a href="#%E6%87%92%E6%B1%89%E5%BC%8F%E5%8D%95%E5%88%A9synchronized">懒汉式单利Synchronized</a></li>
+<li><a href="#%E6%87%92%E6%B1%89%E5%BC%8F%E5%8D%95%E4%BE%8Bdcl">懒汉式单例DCL</a></li>
+<li><a href="#%E9%A5%BF%E6%B1%89%E5%BC%8F%E5%8D%95%E4%BE%8Bdlcvolatile">饿汉式单例DLC+Volatile</a></li>
+<li><a href="#%E9%9D%99%E6%80%81%E5%86%85%E9%83%A8%E7%B1%BB%E5%8D%95%E4%BE%8B">静态内部类单例</a></li>
+<li><a href="#%E6%9E%9A%E4%B8%BE%E5%8D%95%E4%BE%8B">枚举单例</a></li>
+<li><a href="#%E9%A5%BF%E6%B1%89%E5%BC%8F%E5%8D%95%E4%BE%8B">饿汉式单例</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9C%89%E4%B8%8A%E9%99%90%E7%9A%84%E5%A4%9A%E4%BE%8B">有上限的多例</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81-3">代码</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/gridea-natural/">
+              <span class="post-title">
+                Gridea主题-Natural&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/designpartten-singleton/" class="leancloud_visitors"
+              data-flag-title="设计模式-单例设计模式">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

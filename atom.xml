@@ -1,0 +1,3530 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://mxecy.cn</id>
+    <title>Gloduck</title>
+    <updated>2021-03-11T14:11:58.814Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://mxecy.cn"/>
+    <link rel="self" href="https://mxecy.cn/atom.xml"/>
+    <subtitle>一个菜鸡JAVA后端的博客～</subtitle>
+    <logo>https://mxecy.cn/images/avatar.png</logo>
+    <icon>https://mxecy.cn/favicon.ico</icon>
+    <rights>All rights reserved 2021, Gloduck</rights>
+    <entry>
+        <title type="html"><![CDATA[Graalvm​虚拟机集成]]></title>
+        <id>https://mxecy.cn/post/graalvm/</id>
+        <link href="https://mxecy.cn/post/graalvm/">
+        </link>
+        <updated>2021-02-08T20:30:28.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="安装">安装</h1>
+<p><a href="https://github.com/graalvm/graalvm-ce-builds/releases">下载地址</a></p>
+<pre><code class="language-shell"># 下载
+wget https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0/graalvm-ce-java11-linux-amd64-21.0.0.tar.gz
+# 解压
+tar -xzvf graalvm-ce-java11-linux-amd64-21.0.0.tar.gz
+# 移动
+cd graalvm-ce-java11-21.0.0
+mkdir /usr/lib/jvm/grallvm
+mv ./* /usr/lib/jvm/grallvm
+# 设置环境变量
+gedit /etc/profile
+# 添加一下内容，注意如果配置了其他JVM需要替换
+# ---- 分割符 ----
+#grallvm
+export PATH=${JAVA_HOME}/bin:$PATH
+export JAVA_HOME=/usr/lib/jvm/grallvm
+export GRAALVM_HOME=/usr/lib/jvm/grallvm
+# ---- 分割符 ----
+
+# 更新
+source /etc/profile
+# 输入 which java 应该看到配置好的目录了
+
+</code></pre>
+<h1 id="组件">组件</h1>
+<ul>
+<li>Grallvm自带一个名为<code>gu</code>的组件管理器，如果需要安装其他语言的组件可以使用其安装，包括打包为可执行文件的<code>native-image</code>也需要通过<code>gu</code>安装。</li>
+<li><strong><u>由于官网被墙，需要科学上网</u></strong></li>
+</ul>
+<pre><code class="language-shell">gu install ruby
+gu install r
+gu install python
+gu install wasm
+</code></pre>
+<pre><code class="language-shell">gu install native-image
+gu install llvm-toolchain
+</code></pre>
+<h1 id="入门使用">入门使用</h1>
+<p>编写Java程序</p>
+<pre><code class="language-java">public class Main{
+    public static void main(String[] args){
+        System.out.println(&quot;Hello world&quot;);
+
+    }
+}
+</code></pre>
+<pre><code class="language-shell"># 编译Class文件
+javac Main.java
+# 打包可执行文件
+native-image Main
+
+</code></pre>
+<p>过程如下：</p>
+<pre><code class="language-shell">gloduck@Gloduck:~/桌面$ native-image Main
+[main:5260]    classlist:   1,432.60 ms,  0.96 GB
+[main:5260]        (cap):     635.28 ms,  0.96 GB
+[main:5260]        setup:   2,179.71 ms,  0.96 GB
+[main:5260]     (clinit):     237.55 ms,  1.22 GB
+[main:5260]   (typeflow):   5,621.89 ms,  1.22 GB
+[main:5260]    (objects):   4,560.28 ms,  1.22 GB
+[main:5260]   (features):     352.62 ms,  1.22 GB
+[main:5260]     analysis:  11,099.29 ms,  1.22 GB
+[main:5260]     universe:     521.04 ms,  1.72 GB
+[main:5260]      (parse):   1,434.00 ms,  1.72 GB
+[main:5260]     (inline):   1,278.67 ms,  1.72 GB
+[main:5260]    (compile):   9,150.77 ms,  2.35 GB
+[main:5260]      compile:  12,515.00 ms,  2.35 GB
+[main:5260]        image:   1,146.28 ms,  2.35 GB
+[main:5260]        write:     221.07 ms,  2.35 GB
+[main:5260]      [total]:  29,282.69 ms,  2.35 GB
+
+</code></pre>
+<p>最后产生了一个文件名为<code>main</code>的可执行文件（我的文件名为<code>Main.java</code>）。</p>
+<p>然后执行：</p>
+<pre><code class="language-shell">gloduck@Gloduck:~/桌面$ ./main
+Hello world
+</code></pre>
+<p>一个Hello world打包下来有<code>9.1M</code>。虽然比起C之类的打包还是要大很多，不过想对于集成<code>JRE</code>已经很好了</p>
+<h2 id="注意">注意</h2>
+<p>中途如果出现类似：</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gngqev4gssj31hb0hpjwq.jpg" alt="" loading="lazy"></figure>
+<p>的报错，请先安装依赖。</p>
+<pre><code class="language-shell"> sudo apt install zlib1g-dev
+</code></pre>
+<h1 id="windows额外配置">Windows额外配置</h1>
+<ul>
+<li>如果想在Win10打包<code>exe</code>文件需要额外配置。
+<ul>
+<li>vs官网下载VS：<a href="https://visualstudio.microsoft.com/">链接</a></li>
+<li>安装好后，安装以下扩展：</li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gnhac0bes5j31vj14212i.jpg" alt="" loading="lazy"></li>
+<li>找到<code>vs安装路径\VC\Tools\MSVC\14.28.29333\bin\Hostx64\x64</code>，将其注册到<code>PATH</code>环境变量（<strong><u>打包exe需要cl.exe</u></strong>）。</li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gnhajalc57j31kz0w80wo.jpg" alt="" loading="lazy"></li>
+<li>找到VS下载的<code>Windows Kits</code>文件夹，添加以下环境变量<code>LIB</code>和<code>INCLUDE</code>（<strong><u>注意大写，cl.exe打包需要的依赖</u></strong>），然后添加以下路径：</li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gnham73wknj30xz0d075l.jpg" alt="" loading="lazy"></li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gnham7akt5j30v709vdh0.jpg" alt="" loading="lazy"></li>
+<li>然后保留上面的两个文件夹，VS就可以卸载了。可以像我一样移动到别的地方。</li>
+</ul>
+</li>
+</ul>
+<h1 id="集成maven">集成Maven</h1>
+<p><a href="https://docs.oracle.com/en/graalvm/enterprise/19/guide/reference/native-image/maven-plugin.html">插件路径</a></p>
+<ul>
+<li>
+<p>添加依赖：</p>
+<ul>
+<li>注意：
+<ul>
+<li><strong><u>在<code>plugin</code>的配置中有一个<code>mainClass</code>属性必须指定（含有Main方法的类），否则会无法打包。</u></strong></li>
+<li><strong><u>如使用IDEA之类的工具，请把JDK切换为Graalvm</u></strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-xml">&lt;properties&gt;
+    &lt;graalvm.version&gt;21.0.0&lt;/graalvm.version&gt;
+    &lt;main.class&gt;cn.gloduck.vertx.Main&lt;/main.class&gt;
+&lt;/properties&gt;
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.graalvm.sdk&lt;/groupId&gt;
+        &lt;artifactId&gt;graal-sdk&lt;/artifactId&gt;
+        &lt;version&gt;${graalvm.version}&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.graalvm.nativeimage&lt;/groupId&gt;
+        &lt;artifactId&gt;native-image-maven-plugin&lt;/artifactId&gt;
+        &lt;version&gt;${graalvm.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.graalvm.nativeimage&lt;/groupId&gt;
+            &lt;artifactId&gt;native-image-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;${graalvm.version}&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;native-image&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;phase&gt;package&lt;/phase&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+            &lt;configuration&gt;
+                &lt;skip&gt;false&lt;/skip&gt;
+                &lt;mainClass&gt;cn.gloduck.vertx.Main&lt;/mainClass&gt;
+                &lt;imageName&gt;example&lt;/imageName&gt;
+                &lt;buildArgs&gt;
+                    --no-fallback
+                &lt;/buildArgs&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+</li>
+<li>
+<p>指定了MainClass后每次只需要点击<code>Package</code>就能打包成可执行文件了。</p>
+</li>
+</ul>
+<h1 id="打包springboot">打包SpringBoot</h1>
+<p>注意：以下内容为摘录内容。</p>
+<p>参考：<a href="https://github.com/jonashackt/spring-boot-graalvm#relocate-annotation-classpath-scanning-from-runtime-to-build-time">Github</a></p>
+<p>pom添加依赖：</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-context-indexer&lt;/artifactId&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.experimental&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-graalvm-native&lt;/artifactId&gt;
+    &lt;version&gt;0.7.1&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>指定启动类路径：</p>
+<pre><code class="language-xml">&lt;properties&gt;
+    &lt;start-class&gt;cn.gloduck.SpringBootDemo.Start&lt;/start-class&gt;
+&lt;/properties&gt;
+</code></pre>
+<p>配置一个独立的 profile，在编译时通过 <code>native-image-maven-plugin</code> 插件将其编译成本地可执行文件。</p>
+<pre><code class="language-xml">&lt;profiles&gt;
+    &lt;profile&gt;
+        &lt;id&gt;native&lt;/id&gt;
+        &lt;build&gt;
+            &lt;plugins&gt;
+                &lt;plugin&gt;
+                    &lt;groupId&gt;org.graalvm.nativeimage&lt;/groupId&gt;
+                    &lt;artifactId&gt;native-image-maven-plugin&lt;/artifactId&gt;
+                    &lt;version&gt;20.1.0&lt;/version&gt;
+                    &lt;configuration&gt;
+                        &lt;buildArgs&gt;-J-Xmx4G -H:+TraceClassInitialization
+                            -H:+ReportExceptionStackTraces
+                            -Dspring.graal.remove-unused-autoconfig=true
+                            -Dspring.graal.remove-yaml-support=true
+                        &lt;/buildArgs&gt;
+                        &lt;imageName&gt;${project.artifactId}&lt;/imageName&gt;
+                    &lt;/configuration&gt;
+                    &lt;executions&gt;
+                        &lt;execution&gt;
+                            &lt;goals&gt;
+                                &lt;goal&gt;native-image&lt;/goal&gt;
+                            &lt;/goals&gt;
+                            &lt;phase&gt;package&lt;/phase&gt;
+                        &lt;/execution&gt;
+                    &lt;/executions&gt;
+                &lt;/plugin&gt;
+                &lt;plugin&gt;
+                    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                    &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+                &lt;/plugin&gt;
+            &lt;/plugins&gt;
+        &lt;/build&gt;
+    &lt;/profile&gt;
+&lt;/profiles&gt;
+</code></pre>
+<p>该插件在 Maven 中央仓库不存在，需要指定 pluginRepositories 和 repositories：</p>
+<pre><code class="language-xml">&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;spring-milestones&lt;/id&gt;
+        &lt;name&gt;Spring Milestones&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+&lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;spring-milestones&lt;/id&gt;
+        &lt;name&gt;Spring Milestones&lt;/name&gt;
+        &lt;url&gt;https://repo.spring.io/milestone&lt;/url&gt;
+    &lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;
+</code></pre>
+<h1 id="native-image对java动态特性的处理">Native Image对Java动态特性的处理</h1>
+<p>由于Native Image是静态分析及AOT编译，编译器不能完全准确地预估目标应用所依赖的所有动态特性。为了保证功能的完整性，GraalVM Native Image为以下四种动态特性提供了特殊处理：</p>
+<ul>
+<li>Java Native interface (JNI)</li>
+<li>Java Reflection</li>
+<li>Dynamic proxy (java.lang.reflect.Proxy)</li>
+<li>Class path resources (Class.getResource)</li>
+</ul>
+<h1 id="注意-2">注意</h1>
+<ul>
+<li>Graal VM不支持CGLIB，只能使用JDK动态代理</li>
+<li>如果是打包SpringBoot之类的程序，可能由于某些特性不支持，出错。如：
+<ul>
+<li>动态代理：SpringBoot默认使用的是CGLIB动态代理。目前不支持CGLIB。所以要关闭SpringBoot的动态代理。</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java HashMap源码分析]]></title>
+        <id>https://mxecy.cn/post/java-hashmap/</id>
+        <link href="https://mxecy.cn/post/java-hashmap/">
+        </link>
+        <updated>2021-01-26T16:52:16.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="hashmap">HashMap</h1>
+<h2 id="基本">基本</h2>
+<ul>
+<li>
+<p>HashMap基本特性：</p>
+</li>
+<li>
+<p>HashMap的Key和Value均允许为null</p>
+</li>
+<li>
+<p>HashMap的存取是没有顺序的</p>
+<ul>
+<li>JDK8的底层是数组 + 链表 + 红黑树，JDK7是数组 + 链表</li>
+</ul>
+</li>
+<li>
+<p>初始容量和装载因子会决定性能。</p>
+<ul>
+<li>HashMap的table数组是<strong>懒汉式创建的，只有在put数据的时候才会创建</strong></li>
+<li>HashMap转换成红黑树的时候会先变化成双向链表最终转化为红黑树</li>
+<li>链表转换为红黑树后会将红黑树的root节点和链表的头节点和table[i]节点融合成同一个</li>
+<li>在删除的时候会先判断删除节点的红黑树是否需要转化成链表，如果不转链表就找个合适的节点来填充删除的节点</li>
+<li>红黑树的根节点不一定和table[i]也就是链表的头节点是同一个，三者的同步是靠MoveRootToFront实现的。而HashIterator.remove()会在调用removeNode的时候movable=false。</li>
+</ul>
+</li>
+<li>
+<p><strong>计算下标是通过<code>(n - 1) &amp; hash</code>来计算的，在n为2的N次幂的情况下，等同于<code>hash % n</code></strong></p>
+</li>
+<li>
+<p>resize通过<code>(e.hash &amp; oldCap) == 0 ? 原来位置 : 原来位置+原来哈希表大小</code>来计算新位置。</p>
+</li>
+<li>
+<p>哈希表容量是2的次幂的原因</p>
+<ul>
+<li>capacity 为 2的整数次幂的话，计算桶的位置 h&amp;(length-1) 就相当于对 length 取模，提升了计算效率</li>
+<li>capacity 为 2 的整数次幂的话，便保证了 h&amp;(capacity-1) 的结果可能是0也可能是1，保证了散列的均匀性</li>
+<li>capacity 为 2 的整数次幂可以使得在resize的时候不用重新计算hash值。而通过<code>(e.hash &amp; oldCap) == 0 ? 原来位置 : 原来位置+原来哈希表大小</code>就能算出在新哈希表的正确位置（能通过<code>(n - 1) &amp; hash</code>正确获取元素）</li>
+</ul>
+</li>
+</ul>
+<h2 id="节点">节点</h2>
+<ul>
+<li>
+<p>HashMap中的节点</p>
+<ul>
+<li>
+<p><code>java.util.Map.Entry</code>：定义了一些比较接口的方法。</p>
+</li>
+<li>
+<p><code>java.util.HashMap.Node</code>：一个kv节点。链表节点</p>
+<ul>
+<li>
+<pre><code class="language-java">static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {
+   final int hash;	// key的hash值，防止重复计算
+   final K key;
+   V value;
+   Node&lt;K,V&gt; next;	// 单链表，指向下一个节点
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>java.util.LinkedHashMap.Enrty</code>：LinkedHashMap的一个静态内部类</p>
+<ul>
+<li>
+<pre><code class="language-java">static class Entry&lt;K,V&gt; extends HashMap.Node&lt;K,V&gt; {
+    Entry&lt;K,V&gt; before, after;
+    Entry(int hash, K key, V value, Node&lt;K,V&gt; next) {
+        super(hash, key, value, next);
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>java.util.HashMap.TreeNode</code>：继承了LinkedHashMap的Entry，红黑树节点。</p>
+<ul>
+<li>
+<pre><code class="language-java">static final class TreeNode&lt;K,V&gt; extends LinkedHashMap.Entry&lt;K,V&gt; {
+    TreeNode&lt;K,V&gt; parent;  // red-black tree links
+    TreeNode&lt;K,V&gt; left;
+    TreeNode&lt;K,V&gt; right;
+    TreeNode&lt;K,V&gt; prev;    // needed to unlink next upon deletion
+    boolean red;
+    TreeNode(int hash, K key, V val, Node&lt;K,V&gt; next) {
+        super(hash, key, val, next);
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="参数">参数</h2>
+<ul>
+<li>
+<p>静态参数：</p>
+<ul>
+<li><code>static final int DEFAULT_INITIAL_CAPACITY = 1 &lt;&lt; 4</code>：初始容量，默认为16。如果太少会很容易触发扩容，如果太多会导致遍历哈希表比较慢</li>
+<li><code>static final int MAXIMUM_CAPACITY = 1 &lt;&lt; 30</code>：数组的最大容量</li>
+<li><code>static final float DEFAULT_LOAD_FACTOR = 0.75f</code>：默认的负载因子。当存储的节点数大于了 <code>初始容量 * 负载因子</code>就会触发扩容。较高的值可以降低空间开销，但是会提高查找成本。</li>
+<li><code>static final int TREEIFY_THRESHOLD = 8</code>：转换树阈值，表示当某个桶的数据的数量大于了这个值时，可能会转化为红黑树。</li>
+<li><code>static final int UNTREEIFY_THRESHOLD = 6</code>：退化树阈值，在哈希表扩容时，如果发现链表长度&lt;=6，会由红黑树重新退化成链表</li>
+<li><code>static final int MIN_TREEIFY_CAPACITY = 64</code>：链表转换树最小大小，在变换成红黑树之前还会有一次判断。只有数组长度大于64才会转换。这是为了避免在哈希表建立初期，多个键值对恰好被放入了同一个链表中而导致不必要的转化。</li>
+</ul>
+</li>
+<li>
+<p>动态参数：</p>
+<ul>
+<li><code>transient Node&lt;K,V&gt;[] table</code>：HashMap的链表数组，扩容的时候总是2的次幂</li>
+<li><code>transient Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet</code>：表示HashMap中的Entry的Set集合</li>
+<li><code>transient int size</code>：表示HashMap中存放的键值对的个数</li>
+<li><code>transient int modCount</code>：凡是我们做的增删改都会引发modCount值的变化，跟版本控制功能类似，可以理解成version，在特定的操作下需要对version进行检查。
+<ul>
+<li>在java的集合类中存在一种Fail-Fast的错误检测机制，当多个线程对同一集合的内容进行操作时，可能就会产生此类异常。比如当A通过iterator去遍历某集合的过程中，其他线程修改了此集合，此时会抛出ConcurrentModificationException异常。此类机制就是通过modCount实现的，在迭代器初始化时，会赋值expectedModCount，在迭代过程中判断modCount和expectedModCount是否一致。</li>
+</ul>
+</li>
+<li><code>int threshold</code>：扩容阈值，<code>初始容量 * 负载因子</code>。这个是在resize改变的，构造方法只会赋个初始容量。</li>
+</ul>
+</li>
+<li>
+<p><code>final float loadFactor</code>：自定义负载因子。一般都是用的自带的0.75</p>
+</li>
+</ul>
+<h2 id="构造方法">构造方法</h2>
+<ul>
+<li>
+<p>构造方法：其中使用了tableSizeFor将initialCapacity调整为离initialCapacity最小的2次幂</p>
+<ul>
+<li>
+<pre><code class="language-java">public HashMap() {
+    this.loadFactor = DEFAULT_LOAD_FACTOR; // 只设置负载因子为0.75，阈值（threshold）将会在第一次put resize的时候初始化为12
+}
+public HashMap(int initialCapacity, float loadFactor) {
+    if (initialCapacity &lt; 0)
+        throw new IllegalArgumentException(&quot;Illegal initial capacity: &quot; +
+                                           initialCapacity);
+    if (initialCapacity &gt; MAXIMUM_CAPACITY)
+        initialCapacity = MAXIMUM_CAPACITY;
+    if (loadFactor &lt;= 0 || Float.isNaN(loadFactor))
+        throw new IllegalArgumentException(&quot;Illegal load factor: &quot; +
+                                           loadFactor);
+    // 前面是进行参数检查
+    this.loadFactor = loadFactor;
+    // 调整阈值，将当前阈值为输入阈值的最小的2的次幂，并且此处相当于初始化容量，在第一次put resize的时候会初始化为 当前值 * 负载因子
+    this.threshold = tableSizeFor(initialCapacity);
+}
+
+// jdk8版本，让最高位1后面的位全部变为1，然后让结果+1。得到2的整数次幂
+// 减一是为了让找到的目标值大于或等于原值。否则如果输入为8不减一的话得到的结果就是16了
+static final int tableSizeFor(int c) {
+    int n = c - 1;
+    n |= n &gt;&gt;&gt; 1;
+    n |= n &gt;&gt;&gt; 2;
+    n |= n &gt;&gt;&gt; 4;
+    n |= n &gt;&gt;&gt; 8;
+    n |= n &gt;&gt;&gt; 16;
+    return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+}
+
+// jdk11版本
+static final int tableSizeFor(int cap) {
+    int n = -1 &gt;&gt;&gt; Integer.numberOfLeadingZeros(cap - 1);
+    return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+}
+
+// 通过Map集合来构造HashMap
+public HashMap(Map&lt;? extends K, ? extends V&gt; m) {
+    this.loadFactor = DEFAULT_LOAD_FACTOR;
+    putMapEntries(m, false);
+}
+
+final void putMapEntries(Map&lt;? extends K, ? extends V&gt; m, boolean evict) {
+    int s = m.size();
+    if (s &gt; 0) {
+        if (table == null) { // pre-size
+            float ft = ((float)s / loadFactor) + 1.0F; // 向上取整反推容器的大小
+            int t = ((ft &lt; (float)MAXIMUM_CAPACITY) ? // 如果推断出来的容器大小大于最大容量就设置成最大容量。
+                     (int)ft : MAXIMUM_CAPACITY);
+            if (t &gt; threshold) // 重新计算扩容阈值
+                threshold = tableSizeFor(t);
+        }
+        else if (s &gt; threshold)
+            resize();
+        for (Map.Entry&lt;? extends K, ? extends V&gt; e : m.entrySet()) {
+            K key = e.getKey();
+            V value = e.getValue();
+            putVal(hash(key), key, value, false, evict);
+        }
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="hash函数">Hash函数</h2>
+<ul>
+<li>
+<p>Hash值：</p>
+<ul>
+<li>
+<p>计算：</p>
+<ul>
+<li>首先获得key对应的hash值</li>
+<li>将hash值和无符号右移16位后的结果异或（扰动，低位相同概率较大，将数据均匀分布）</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-java">// jdk7和8有变化
+static final int hash(Object key) {
+    int h;
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="get方法">get方法</h2>
+<ul>
+<li>
+<p>get思路：</p>
+<ul>
+<li>获得key的hash然后根据hash和key按照插入时候的思路去查找get。</li>
+<li>如果数组位置为NULL则直接返回 NULL。</li>
+<li>如果数组位置不为NULL则先直接看数组位置是否符合。</li>
+<li>如果数组位置有类型说红黑树类型，则按照红黑树类型查找返回。</li>
+<li>如果数组有next，则按照遍历链表的方式查找返回。</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-java">final HashMap.Node&lt;K, V&gt; getNode(int hash, Object key) {
+    HashMap.Node&lt;K, V&gt;[] tab;
+    HashMap.Node&lt;K, V&gt; first, e;
+    int n;
+    K k;
+    // 如果table不为空并且有长度。即有数据
+    if ((tab = table) != null &amp;&amp; (n = tab.length) &gt; 0 &amp;&amp;
+        (first = tab[(n - 1) &amp; hash]) != null) {	// 根据hash函数获取头节点，头节点不为null
+        if (first.hash == hash &amp;&amp; // 检测第一个节点的hash
+            ((k = first.key) == key || (key != null &amp;&amp; key.equals(k))))	// 先判断第一个是否为要获取的值，先等于判断，然后再equals判断
+            return first;
+        if ((e = first.next) != null) {	
+            if (first instanceof HashMap.TreeNode)	// 如果下一个节点还有值，并且是红黑树节点就按照红黑树查找
+                return ((HashMap.TreeNode&lt;K, V&gt;) first).getTreeNode(hash, key);
+            do { // 链表查找
+                if (e.hash == hash &amp;&amp;
+                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
+                    return e;
+            } while ((e = e.next) != null);
+        }
+    }
+    return null;
+}
+</code></pre>
+</li>
+<li>
+<p>红黑树查找思路（find方法）：</p>
+<ul>
+<li>
+<p>先比较当前节点的hash值和要查找节点的hash值。如果的当前节点的值大，则向左查找，当前节点的值小，则向右查找。否则两个哈希值相等。在判断两个的key是否相等相等<strong>直接返回</strong></p>
+</li>
+<li>
+<p>如果两个的key不相等，看左右节点是否为null，那边为null就向另一边查找。</p>
+</li>
+<li>
+<p>如果两边都不为null，判断当前节点是否可以比较的（继承了Comparable&lt;当前节点类型&gt;接口），然后标识向那边查找</p>
+</li>
+<li>
+<p>如果不能比较，递归调用往右边查找，查找到了<strong>直接返回</strong></p>
+</li>
+<li>
+<p>否则向左边查找</p>
+</li>
+<li>
+<p>如果查找到了最后的位置都没查找到，<strong>返回null</strong></p>
+</li>
+<li>
+<pre><code class="language-java">final TreeNode&lt;K,V&gt; getTreeNode(int h, Object k) {
+    return ((parent != null) ? root() : this).find(h, k, null);
+}
+
+
+final TreeNode&lt;K,V&gt; find(int h, Object k, Class&lt;?&gt; kc) {
+    TreeNode&lt;K,V&gt; p = this;	// 根节点
+    do {
+        int ph, dir; K pk;
+        TreeNode&lt;K,V&gt; pl = p.left, pr = p.right, q;
+        if ((ph = p.hash) &gt; h)	// 根据hash值来判断是在左边找还是在右边找
+            p = pl;
+        else if (ph &lt; h)
+            p = pr;
+        else if ((pk = p.key) == k || (k != null &amp;&amp; k.equals(pk)))
+            return p;	// 找到了直接返回
+        // 到此处的方法查找的哈希和根节点的hash相同
+        else if (pl == null)	// 左边为null遍历右边
+            p = pr;
+        else if (pr == null)	// 右边为null遍历左边
+            p = pl;
+        else if ((kc != null ||
+                  (kc = comparableClassFor(k)) != null) &amp;&amp;	// 查看key是否可以比较，kc为key的Class类型
+                 (dir = compareComparables(kc, k, pk)) != 0)	// 如果可以比较，则将key（k）和根节点的key（pk）比较
+            p = (dir &lt; 0) ? pl : pr;
+        else if ((q = pr.find(h, k, kc)) != null)	// 如果不能比较，尝试找右节点
+            return q;
+      else
+            p = pl;	// 找左节点
+    } while (p != null);
+    return null;
+}
+</code></pre>
+</li>
+<li>
+<pre><code class="language-java">// 如果x是String类型或者实现了Comparable&lt;C&gt;就返回，否则返回null
+static Class&lt;?&gt; comparableClassFor(Object x) {
+    if (x instanceof Comparable) {
+        Class&lt;?&gt; c; Type[] ts, as; ParameterizedType p;
+        if ((c = x.getClass()) == String.class) // 如果key是个字符串，直接返回String.class
+            return c;
+        // 如果不是字符串类型，遍历实现的接口
+        if ((ts = c.getGenericInterfaces()) != null) {
+            for (Type t : ts) {	// 遍历接口数组，
+                if ((t instanceof ParameterizedType) &amp;&amp;	// 如果当前接口是一个泛型接口
+                    ((p = (ParameterizedType) t).getRawType() ==
+                     Comparable.class) &amp;&amp;	// 如果当前接口是Comparable接口
+                    (as = p.getActualTypeArguments()) != null &amp;&amp;	// 如果定义了泛型参数，并且泛型参数只有一个
+                    as.length == 1 &amp;&amp; as[0] == c) // 如果泛型参数x的Class那么就返沪x的Class
+                    return c;
+            }
+        }
+    }
+    return null;
+}
+</code></pre>
+</li>
+<li>
+<pre><code class="language-java">/**
+ * kc是key对应的class，k为目标值，x为当前值
+ * 如果x和k是一个类型的并且不为null就比较。否则返回0
+ */
+static int compareComparables(Class&lt;?&gt; kc, Object k, Object x) {
+    return (x == null || x.getClass() != kc ? 0 :
+            ((Comparable)k).compareTo(x));
+}
+</code></pre>
+</li>
+<li>
+<p>https://sowhat.blog.csdn.net/article/details/105000051#2__put_212</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="put方法">put方法</h2>
+<ul>
+<li>
+<p>put思路：</p>
+<ul>
+<li>
+<p>如果哈希表为空或者哈希表的长度为0，调用resize方法建立哈希表</p>
+</li>
+<li>
+<p>根据hash值计算位置，如果计算出来的位置为空（没有hash冲突），直接插入</p>
+</li>
+<li>
+<p>如果发生了hash冲突，并且第一个节点的key和要插入的key相等，则用e做个标记</p>
+</li>
+<li>
+<p>如果不相等，则判断当前节点类型，如果是链表，则按照链表方式查找，如果是红黑树，按照红黑树方式查找。如果查找到了节点用e做个标记</p>
+</li>
+<li>
+<p>在查找的过程中，如果没有查找到值，则会创建一个新的节点，然后插入数据（如果为链表方式插入时候还会判断是否要转换成红黑树）</p>
+</li>
+<li>
+<p>如果查找到了相等的值的话e为查找到的值，否则为空，然后就可以根据e来替换值了。并且返回旧值</p>
+</li>
+<li>
+<pre><code class="language-java">final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+               boolean evict) {
+    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;
+    if ((tab = table) == null || (n = tab.length) == 0)	// 如果没有初始化table或者长度为0，则调用resize初始化
+        n = (tab = resize()).length;
+    if ((p = tab[i = (n - 1) &amp; hash]) == null)
+        tab[i] = newNode(hash, key, value, null);	// 如果目标位置为空直接放入数据
+    else {
+        Node&lt;K,V&gt; e; K k;
+        if (p.hash == hash &amp;&amp;
+            ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
+            e = p;	// 存在和当前插入的节点key相同的节点
+        else if (p instanceof TreeNode)	// 如果节点是红黑树节点，按照红黑树方式查找
+            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);
+        else {
+          	// 链表方式查找
+            for (int binCount = 0; ; ++binCount) {
+                if ((e = p.next) == null) {	// 如果到尾都没找到相同的元素，则创造一个新节点
+                    p.next = newNode(hash, key, value, null);
+                    if (binCount &gt;= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                        treeifyBin(tab, hash);	// 如果大于了转换树阈值（8），则转换成红黑树
+                    break;
+                }
+                if (e.hash == hash &amp;&amp;	// 存在和当前插入的节点key相同的节点
+                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
+                    break;
+                p = e;
+            }
+        }
+        if (e != null) { // 如果e不为null则表明存在key相同的节点，替换value并返回原来的数据
+            V oldValue = e.value;
+            if (!onlyIfAbsent || oldValue == null)
+                e.value = value;
+            afterNodeAccess(e);
+            return oldValue;
+        }
+    }	
+    ++modCount;	// 更新版本，当版本不匹时候抛出异常
+    if (++size &gt; threshold)	// 当前大小+1，执行到此处还没返回证明是被插入值的。
+        resize();	// 如果当前大小大于了扩容阈值，则进行扩容
+    afterNodeInsertion(evict);	// 用于LinkedHashMap
+    return null;
+}
+</code></pre>
+</li>
+<li>
+<pre><code class="language-java">/**
+     * 当存在Hash碰撞的元素大于8个时，会用红黑树将这些元素组织起来
+     * @param map 当前节点所在的hashMap对象
+     * @param tab Hashmap的table数组
+     * @param h 指定key的hash值
+     * @param k 指定的key
+     * @param v 要写入的值
+     * @return
+     */
+final HashMap.TreeNode&lt;K,V&gt; putTreeVal(HashMap&lt;K,V&gt; map, HashMap.Node&lt;K,V&gt;[] tab,
+                                       int h, K k, V v) {
+    Class&lt;?&gt; kc = null;	// key的class对象
+    boolean searched = false;	// 标识是否已经遍历过一次树
+    HashMap.TreeNode&lt;K,V&gt; root = (parent != null) ? root() : this;	// 获取根节点（如果父节点不为空，则当前节点不是根节点）
+    for (HashMap.TreeNode&lt;K,V&gt; p = root;;) {	// 从根节点开始遍历
+        int dir, ph; K pk;	// 方向，当前节点的hash值，当前节点的key
+        if ((ph = p.hash) &gt; h)	// 如果当前节点的hash值大于指定key的hash值
+            dir = -1;	// 指定的key将会被放在左边
+        else if (ph &lt; h)	// 如果当前节点的hash值小于指定key的hash值
+            dir = 1;	// 指定的key会被放在右边
+        else if ((pk = p.key) == k || (k != null &amp;&amp; k.equals(pk)))
+            return p;	// 如果当前节点的key和要插入节点的key相等，那么返回当前节点，将在外层被替换
+        else if ((kc == null &amp;&amp;	// 如果key可以比较
+                  (kc = comparableClassFor(k)) == null) ||
+                 (dir = compareComparables(kc, k, pk)) == 0) {
+            if (!searched) {	// 如果还没遍历过二叉树开始搜索
+                HashMap.TreeNode&lt;K,V&gt; q, ch;
+                searched = true;
+                if (((ch = p.left) != null &amp;&amp;	// 分别向左和向右搜索
+                     (q = ch.find(h, k, kc)) != null) ||
+                    ((ch = p.right) != null &amp;&amp;
+                     (q = ch.find(h, k, kc)) != null))
+                    return q;	// 搜索到了节点就返回
+            }
+            dir = tieBreakOrder(k, pk);	// 重新判断一下两个对象的大小（通过identityHashCode计算）
+        }
+		// 目前p还是当前节点，xp也是当前节点
+        HashMap.TreeNode&lt;K,V&gt; xp = p;
+        // 根据dir判断插入的数据在当前节点的那一边，并且只有为null的时候才执行插入
+        // 此处创造了一个新节点，然后将新节点插入到了当前节点和当前节点的下一个之间(对于双向链表而言)，并且将新节点插入到了当前节点的孩子节点（对于红黑树而言，具体是左孩子还是右孩子取决于dir）
+        if ((p = (dir &lt;= 0) ? p.left : p.right) == null) {
+            // p为当前节点的左边节点或右边节点（p为null）
+            HashMap.Node&lt;K,V&gt; xpn = xp.next;
+            HashMap.TreeNode&lt;K,V&gt; x = map.newTreeNode(h, k, v, xpn); 
+            if (dir &lt;= 0)	
+                xp.left = x;
+            else
+                xp.right = x;
+            xp.next = x;
+            x.parent = x.prev = xp;
+            if (xpn != null)
+                ((HashMap.TreeNode&lt;K,V&gt;)xpn).prev = x;
+            // 将root节点移动到双向链表的最前面
+            moveRootToFront(tab, balanceInsertion(root, x));
+            return null;
+      }
+    }
+}
+</code></pre>
+</li>
+<li>
+<pre><code class="language-java">/**
+     * 根据阈值（大于64）来判断是否将链表转换为红黑树，首先将单向链表转换为双向链表，再调用treeify以头节点构造红黑树
+     * @param tab 元素数组
+     * @param hash  要增加的key的hash值
+     */
+final void treeifyBin(Node&lt;K,V&gt;[] tab, int hash) {
+    int n, index; Node&lt;K,V&gt; e;
+    if (tab == null || (n = tab.length) &lt; MIN_TREEIFY_CAPACITY)	// 如果元素数组为空或数组容量&lt;64，则进行扩容，否则进行红黑树转换（在此方法之前还要判断哈希冲突的节点&gt;8）
+        resize();
+    else if ((e = tab[index = (n - 1) &amp; hash]) != null) {
+        TreeNode&lt;K,V&gt; hd = null, tl = null;
+        do {
+            TreeNode&lt;K,V&gt; p = replacementTreeNode(e, null);
+            if (tl == null)
+                hd = p;
+            else {
+                p.prev = tl;
+                tl.next = p;
+            }
+            tl = p;
+        } while ((e = e.next) != null);
+        if ((tab[index] = hd) != null)
+            hd.treeify(tab);
+    }
+}
+
+// 构造红黑树
+final void treeify(Node&lt;K,V&gt;[] tab) {
+    TreeNode&lt;K,V&gt; root = null;
+    for (TreeNode&lt;K,V&gt; x = this, next; x != null; x = next) {
+        next = (TreeNode&lt;K,V&gt;)x.next;
+        x.left = x.right = null;
+        if (root == null) {
+            x.parent = null;
+            x.red = false;
+            root = x;
+        }
+        else {
+            K k = x.key;
+            int h = x.hash;
+            Class&lt;?&gt; kc = null;
+            for (TreeNode&lt;K,V&gt; p = root;;) {
+                int dir, ph;
+                K pk = p.key;
+                if ((ph = p.hash) &gt; h)
+                    dir = -1;
+                else if (ph &lt; h)
+                    dir = 1;
+                else if ((kc == null &amp;&amp;
+                          (kc = comparableClassFor(k)) == null) ||
+                         (dir = compareComparables(kc, k, pk)) == 0)
+                    dir = tieBreakOrder(k, pk);
+
+                TreeNode&lt;K,V&gt; xp = p;
+                if ((p = (dir &lt;= 0) ? p.left : p.right) == null) {
+                    x.parent = xp;
+                    if (dir &lt;= 0)
+                        xp.left = x;
+                    else
+                        xp.right = x;
+                    root = balanceInsertion(root, x);
+                    break;
+                }
+            }
+        }
+    }
+    moveRootToFront(tab, root);
+}
+// 将红黑树的root节点移动到table的first节点
+static &lt;K,V&gt; void moveRootToFront(Node&lt;K,V&gt;[] tab, TreeNode&lt;K,V&gt; root) {
+    int n;
+    if (root != null &amp;&amp; tab != null &amp;&amp; (n = tab.length) &gt; 0) {
+        int index = (n - 1) &amp; root.hash;
+        TreeNode&lt;K,V&gt; first = (TreeNode&lt;K,V&gt;)tab[index];
+        if (root != first) {
+            Node&lt;K,V&gt; rn;
+            tab[index] = root;
+            TreeNode&lt;K,V&gt; rp = root.prev;
+            if ((rn = root.next) != null)
+                ((TreeNode&lt;K,V&gt;)rn).prev = rp;
+            if (rp != null)
+                rp.next = rn;
+            if (first != null)
+                first.prev = root;
+            root.next = first;
+            root.prev = null;
+        }
+        assert checkInvariants(root);
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="resize方法">resize方法</h2>
+<ul>
+<li>
+<p>resize思路：</p>
+<ul>
+<li>
+<p>首先获取当前哈希表的长度和当前的阈值</p>
+</li>
+<li>
+<p>如果当前哈希表的大于0 ，并且长度大于最大允许长度了，就直接返回当前哈希表。</p>
+</li>
+<li>
+<p>如果当前哈希表长度大于0，则新哈希表长度为当前的两倍，如果新哈希表的长度在16-最大值之间，新阈值是扩大为原来的两倍</p>
+</li>
+<li>
+<p>如果哈希表长度小于等于0，但是当前阈值大于0（证明初始化的时候设置了初始容量，并且是第一次resize），则新的哈希表长度为当前的阈值</p>
+</li>
+<li>
+<p>否则哈希表的长度为默认值（16），新的阈值为<code>默认容量 * 默认负载因子</code>（12）</p>
+</li>
+<li>
+<p>如果新的阈值等于0（当前哈希表数组大小为1-15之间的值，或者初始化的时候设置了初始容量，并且是第一次resize）。将新阈值设置成 <code>新哈希表容量 * 加载因子</code>。（如果新的哈希表大小或者阈值超过了限制值，则新阈值为int的最大值）</p>
+</li>
+<li>
+<p>根据新阈值和新哈希表长度重建哈希表。</p>
+<ul>
+<li>
+<p><code>(e.hash &amp; oldCap)</code>：如果为0，则当前元素在新数组位置不会变化；如果不为0 ，则在新数组的位置是原下标 + 原数组长度。<strong><u>保证这个方式计算新位置正确的前提是：哈希表的大小为2的次幂</u></strong></p>
+<blockquote>
+<p>示例1：<br>
+e.hash= 10 0000 1010<br>
+oldCap=16 0001 0000<br>
+&amp; =0 0000 0000 比较高位的第一位 0<br>
+结论：元素位置在扩容后数组中的位置没有发生改变<br>
+示例2：<br>
+e.hash= 17 0001 0001<br>
+oldCap=16 0001 0000<br>
+&amp; =1 0001 0000 比较高位的第一位 1<br>
+结论：元素位置在扩容后数组中的位置发生了改变，新的下标位置是原下标位置+原数组长度</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-java">final Node&lt;K,V&gt;[] resize() {
+    Node&lt;K,V&gt;[] oldTab = table;
+    int oldCap = (oldTab == null) ? 0 : oldTab.length;	// 原来数组的长度
+    int oldThr = threshold;	// 原来的阈值
+    int newCap, newThr = 0;
+    if (oldCap &gt; 0) {	// 如果原来的数组长度大于0
+        if (oldCap &gt;= MAXIMUM_CAPACITY) {	// 如果原来的数组长度已经超过了最大长度，则指改变阈值
+            threshold = Integer.MAX_VALUE;
+            return oldTab;
+        }
+        else if ((newCap = oldCap &lt;&lt; 1) &lt; MAXIMUM_CAPACITY &amp;&amp;	// 将数组的大小扩大为原来的两倍
+                 oldCap &gt;= DEFAULT_INITIAL_CAPACITY)
+            newThr = oldThr &lt;&lt; 1; // double threshold	// 如果以前数组的大小大于默认初始容量（16）则将阈值也扩大为原来的两倍
+    }
+    else if (oldThr &gt; 0) // 如果原来的阈值大于0（当初始化完hashMap，并且初始化时候设置了默认初始容量，就会进入此处）
+        newCap = oldThr;	// 新数组长度为原来的阈值大小
+    else {               // 当原来数组长度和阈值都为0的时候（当初始化完hashMap，并且初始化时候没有设置默认初始容量，就会进入此处）
+        newCap = DEFAULT_INITIAL_CAPACITY;
+        newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);	// 大小为初始容量 * 负载因子
+    }
+    if (newThr == 0) {	// 当哈希表数组大小为1-15任意值 或者 初始化hashmap时候设置了默认容量。无论如何此时newCap是有值的
+        // 注：当哈希表数组大小为536870912时也可能进入此方法，但是条件太苛刻，不讨论此情况
+        float ft = (float)newCap * loadFactor;
+        newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; (float)MAXIMUM_CAPACITY ?
+                  (int)ft : Integer.MAX_VALUE);
+    }
+    threshold = newThr;
+    @SuppressWarnings({&quot;rawtypes&quot;,&quot;unchecked&quot;})
+    Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])new Node[newCap];	// 初始化新的哈希表
+    table = newTab;
+    // 重建哈希表
+    if (oldTab != null) {
+        for (int j = 0; j &lt; oldCap; ++j) {	// 遍历哈希表的每个节点
+            Node&lt;K,V&gt; e;
+            if ((e = oldTab[j]) != null) {
+                oldTab[j] = null;
+                if (e.next == null)	// 对于没有哈希冲突的节点直接放入新的哈希表的对应位置中
+                    newTab[e.hash &amp; (newCap - 1)] = e;
+                else if (e instanceof TreeNode)	// 如果当前节点是树节点，按照树的方式重建
+                    ((TreeNode&lt;K,V&gt;)e).split(this, newTab, j, oldCap);
+                else { // preserve order	// 否则按照链表方式重建
+                    // e为哈希表当前位置头节点
+                    Node&lt;K,V&gt; loHead = null, loTail = null;
+                    Node&lt;K,V&gt; hiHead = null, hiTail = null;
+                    Node&lt;K,V&gt; next;
+                    do {
+                        next = e.next;
+                        /**
+                         * 如果等于0，则该头节点放到新数组时的索引位置等于其在旧数组时的索引位置
+                         * 如果不等于0，则该头节点放到新数组时的索引位置等于其在旧数组时的索引位置再加上旧数组的长度
+                         * https://www.pianshen.com/article/51361404471/
+                         */
+                        if ((e.hash &amp; oldCap) == 0) {	// 在新数组中索引位置不变的节点
+                            if (loTail == null)
+                                loHead = e;
+                            else
+                                loTail.next = e;
+                            loTail = e;
+                        }
+                        else {	// 在新数组中索引位置变化的节点
+                            if (hiTail == null)
+                                hiHead = e;
+                            else
+                                hiTail.next = e;
+                            hiTail = e;
+                        }
+                    } while ((e = next) != null);
+                    if (loTail != null) {
+                        loTail.next = null;
+                        newTab[j] = loHead;
+                    }
+                    if (hiTail != null) {
+                        hiTail.next = null;
+                        newTab[j + oldCap] = hiHead;
+                    }
+                }
+            }
+        }
+  }
+    return newTab;
+}
+</code></pre>
+</li>
+<li>
+<p>验证JDK8 resize改进后，不需要重新计算hash值，resize后的新位置通过<code>hash &amp; (tabCap - 1)</code>也能正确获取</p>
+<ul>
+<li>
+<pre><code class="language-java">public static void main(String[] args){
+
+    int before = 4;
+    int after = 8;
+    Random r = new Random();
+    for (int i = 0; i &lt; 100; i++) {
+        // 随机哈希值
+        int hashCode = r.nextInt(1000000000) + 1000000000;
+        System.out.println(&quot;获取的哈希值为：&quot; + hashCode);
+        // 在原来哈希表中的位置
+        int beforeIndex = hashCode &amp; (before - 1);
+        System.out.println(&quot;原来该放的位置为：&quot; + beforeIndex);
+        // resize后转移到哈希表中的新位置
+        int resizeIndex = (hashCode &amp; before) == 0 ? beforeIndex : before + beforeIndex;
+        System.out.println(&quot;Resize位置为：&quot; + resizeIndex);
+        int afterIndex = (hashCode &amp; (after - 1));
+        System.out.println(&quot;新放的位置为：&quot; + afterIndex);
+        if(afterIndex != resizeIndex){
+            System.out.println(&quot;resize后导致无法正确获取位置&quot;);
+        }
+    }
+}
+</code></pre>
+</li>
+<li></li>
+</ul>
+</li>
+</ul>
+<h2 id="remove方法">remove方法</h2>
+<ul>
+<li>
+<p>删除思路：</p>
+<ul>
+<li>首先判断哈希表不为空，并且判断要删除的节点在哈希表的位置不为null，如果为null则直接返回null</li>
+<li>否则判断第一个节点的键和要删除的键是否相等。如果相等，用node记录当前节点。</li>
+<li>如果不相等判断是否是红黑树节点，如果是红黑树节点按照红黑树方式查找，否则按照链表方式查找。如果找到了使用node记录当前节点</li>
+<li>如果找到了节点，然后看是否还要匹配value，如果都通过匹配了那么就开始删除了</li>
+<li>如果是红黑树节点，按照红黑树方式删除节点，如果是第一个节点，直接将下一个作为头节点，否则链表删除。然后更新版本号和大小</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-java">/**
+     * 移除节点，不能被复写，子类可以通过复写afterNodeRemoval来增加逻辑
+     * @param hash  要移除的key的hash
+     * @param key 要删除的key
+     * @param value 要删除的value，只有当matchValue为true的时候才有用
+     * @param matchValue 是否要将value也作为删除判断的依据
+     * @param movable 删除之后是否移动节点，如果为false则不移动
+     * @return 如果删除了返回被删除对象，否则返回null
+     */
+final HashMap.Node&lt;K,V&gt; removeNode(int hash, Object key, Object value,
+                                   boolean matchValue, boolean movable) {
+    HashMap.Node&lt;K,V&gt;[] tab; HashMap.Node&lt;K,V&gt; p; int n, index;
+    if ((tab = table) != null &amp;&amp; (n = tab.length) &gt; 0 &amp;&amp;
+        (p = tab[index = (n - 1) &amp; hash]) != null) {	// 确保哈希表不为空，并且通过哈希表获取得到值。否则直接返回
+        HashMap.Node&lt;K,V&gt; node = null, e; K k; V v;
+        if (p.hash == hash &amp;&amp;
+            ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
+            node = p;	// 如果头节点（或根节点）的键和查找的键相等
+        else if ((e = p.next) != null) {	// 如果有哈希冲突的节点
+            if (p instanceof HashMap.TreeNode)	// 如果是一个红黑树的节点，按照红黑树的方式获取节点
+                node = ((HashMap.TreeNode&lt;K,V&gt;)p).getTreeNode(hash, key);
+            else {	// 否则按照链表的方式查找节点
+                do {
+                    if (e.hash == hash &amp;&amp;
+                        ((k = e.key) == key ||
+                         (key != null &amp;&amp; key.equals(k)))) {
+                        node = e;
+                        break;
+                    }
+                    p = e;
+                } while ((e = e.next) != null);
+            }
+        }
+        if (node != null &amp;&amp; (!matchValue || (v = node.value) == value ||	// 如果查找到了节点，再判断一下是否还需要通过value判断
+                             (value != null &amp;&amp; value.equals(v)))) {
+            // 进入此处的节点，那么这个节点就确定是要删除的了
+            if (node instanceof HashMap.TreeNode)	// 如果是红黑树节点，按照红黑树的方式删除
+                ((HashMap.TreeNode&lt;K,V&gt;)node).removeTreeNode(this, tab, movable);
+            else if (node == p)	// 如果node == p，则证明要删除的节点是头节点（不是根节点，根节点会进入上一个if）
+                tab[index] = node.next;
+            else	// 否则链表方式删除节点
+                p.next = node.next;
+            ++modCount;	// 更新版本号，便于后续抛出异常
+            --size;	// 减小大小
+            afterNodeRemoval(node);
+            return node;	// 返回删除的节点
+        }
+    }
+    // 如果没有查找到节点的话就返回null
+    return null;
+}
+</code></pre>
+</li>
+</ul>
+<h2 id="hashmap死环">HashMap死环</h2>
+<ul>
+<li>
+<p>jdk7中定位新位置的transfer方法。使用头插法</p>
+<ul>
+<li>
+<pre><code class="language-java">void transfer(Entry[] newTable, boolean rehash) {
+    //新数组的长度
+    int newCapacity = newTable.length;
+    //遍历旧数组
+    for (Entry&lt;K,V&gt; e : table) {
+        while(null != e) {
+            Entry&lt;K,V&gt; next = e.next;
+            if (rehash) {
+                //重新计算hash值
+                e.hash = null == e.key ? 0 : hash(e.key);
+            }
+            //这里根据刚刚得到的新hash重新调用indexFor方法计算下标索引
+            int i = indexFor(e.hash, newCapacity);
+            //假设当前数组中某个位置的链表结构为a-&gt;b-&gt;c;women 
+            //（1）当为原链表中的第一个结点的时候：e.next=null;newTable[i]=e;e=e.next
+            //（2）当遍历到原链表中的后续节点的时候：e.next=head;newTable[i]=e（这里将头节点设置为新插入的结点，即头插法）;e=e.next
+            //（3）这里也是导致扩容后，链表顺序反转的原理（代码就是这样写的，链表反转，当然前提是计算的新下标还是相同的）
+            e.next = newTable[i]; 
+            newTable[i] = e;
+            e = next;
+        }
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>在jdk7中使用头插法可能会导致出现死环（a.next = b，b.next = a）。导致在put的时候一直获取不到数据。</p>
+<ul>
+<li>两个线程同时对一个hashMap resize。线程a执行到<code>Entry&lt;K,V&gt; next = e.next;</code>被阻塞了，线程b执行完了resize，此时a再继续执行时，可能会导致死环。</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[SpringCache支持模糊匹配]]></title>
+        <id>https://mxecy.cn/post/spring-cache-pattern/</id>
+        <link href="https://mxecy.cn/post/spring-cache-pattern/">
+        </link>
+        <updated>2021-01-24T03:35:09.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>
+<p>在开发中如果是使用SpringCache来控制缓存的话，经常会遇到需要清除缓存的情况。我们希望其清除缓存时能支持模糊匹配，但是Spring自带的CacheManage是不支持模糊匹配的。</p>
+</li>
+<li>
+<p>使用Redis为例。常用的缓存注解有：</p>
+<ul>
+<li><code>@CachePut</code></li>
+<li><code>@Cacheable</code></li>
+<li><code>@CacheEvict</code></li>
+</ul>
+</li>
+<li>
+<p>其中<code>@CacheEvict</code>是用于清除缓存的。但是其并不支持模糊匹配。这几个注解的功能是由类<code>RedisCache</code>提供的。而清除缓存的功能是由<code>evict</code>方法提供的。</p>
+</li>
+<li>
+<pre><code class="language-java">@Override
+public void evict(Object key) {
+    cacheWriter.remove(name, createAndConvertCacheKey(key));
+}
+</code></pre>
+</li>
+<li>
+<p>很明显这个并不支持模糊匹配。</p>
+</li>
+<li>
+<p>这时我们注意到了其中的<code>clear</code>方法</p>
+</li>
+<li>
+<pre><code class="language-java">@Override
+public void clear() {
+
+    byte[] pattern = conversionService.convert(createCacheKey(&quot;*&quot;), byte[].class);
+    cacheWriter.clean(name, pattern);
+}
+</code></pre>
+</li>
+<li>
+<p><code>clear</code>方法清除缓存的方法是通过模糊匹配清除的。这证明SpringCache是支持模糊匹配清除缓存的。而想调用<code>clear</code>方法需要使用注解<code>@CacheEvict(allEntries = true)</code></p>
+</li>
+<li>
+<p>我们可以通过重写<code>evict</code>方法来使得清除缓存支持模糊匹配。</p>
+</li>
+</ul>
+<h1 id="代码">代码</h1>
+<h2 id="重写rediscache">重写RedisCache</h2>
+<pre><code class="language-java">/**
+     * 重写RedisCache使其支持模糊匹配
+     */
+private static final class CustomizedRedisCache extends RedisCache{
+    private final String name;
+    private final RedisCacheWriter cacheWriter;
+    private final ConversionService conversionService;
+    protected CustomizedRedisCache(String name, RedisCacheWriter cacheWriter, RedisCacheConfiguration cacheConfig) {
+        super(name, cacheWriter, cacheConfig);
+        this.name = name;
+        this.cacheWriter = cacheWriter;
+        this.conversionService = cacheConfig.getConversionService();
+    }
+
+    @Override
+    public void evict(Object key) {
+        byte[] pattern = this.conversionService.convert(this.createCacheKey(key), byte[].class);
+        this.cacheWriter.clean(this.name, pattern);
+    }
+}
+</code></pre>
+<h2 id="重写rediscachemanager">重写RedisCacheManager</h2>
+<ul>
+<li>
+<p>由于<code>RedisCacheManage</code>中默认创建的是<code>RedisCache</code></p>
+</li>
+<li>
+<pre><code class="language-java">protected RedisCache createRedisCache(String name, @Nullable RedisCacheConfiguration cacheConfig) {
+    return new RedisCache(name, cacheWriter, cacheConfig != null ? cacheConfig : defaultCacheConfig);
+}
+</code></pre>
+</li>
+<li>
+<p>所以我们需要重写<code>RedisCacheManager</code>来注入我们自己的RedisCache</p>
+</li>
+<li>
+<p>在创建CacheManager的时候记得换成我们自己定义的CacheManager</p>
+</li>
+</ul>
+<pre><code class="language-java">/**
+     * 重写RedisCacheManager，使得CustomizedRedisCache能够替换RedisCache
+     */
+private static final class CustomizedRedisCacheManager extends RedisCacheManager{
+
+    private final RedisCacheWriter cacheWriter;
+    private final RedisCacheConfiguration defaultCacheConfig;
+    private final Map&lt;String, RedisCacheConfiguration&gt; initialCaches = new LinkedHashMap&lt;&gt;();
+    private boolean enableTransactions;
+
+
+    public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration) {
+        super(cacheWriter, defaultCacheConfiguration);
+        this.cacheWriter = cacheWriter;
+        this.defaultCacheConfig = defaultCacheConfiguration;
+    }
+
+    public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, String... initialCacheNames) {
+        super(cacheWriter, defaultCacheConfiguration, initialCacheNames);
+        this.cacheWriter = cacheWriter;
+        this.defaultCacheConfig = defaultCacheConfiguration;
+    }
+
+    public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, boolean allowInFlightCacheCreation, String... initialCacheNames) {
+        super(cacheWriter, defaultCacheConfiguration, allowInFlightCacheCreation, initialCacheNames);
+        this.cacheWriter = cacheWriter;
+        this.defaultCacheConfig = defaultCacheConfiguration;
+    }
+
+    public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, Map&lt;String, RedisCacheConfiguration&gt; initialCacheConfigurations) {
+        super(cacheWriter, defaultCacheConfiguration, initialCacheConfigurations);
+        this.cacheWriter = cacheWriter;
+        this.defaultCacheConfig = defaultCacheConfiguration;
+    }
+
+    public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, Map&lt;String, RedisCacheConfiguration&gt; initialCacheConfigurations, boolean allowInFlightCacheCreation) {
+        super(cacheWriter, defaultCacheConfiguration, initialCacheConfigurations, allowInFlightCacheCreation);
+        this.cacheWriter = cacheWriter;
+        this.defaultCacheConfig = defaultCacheConfiguration;
+    }
+
+    /**
+         * 这个构造方法最重要
+         **/
+    public CustomizedRedisCacheManager(RedisConnectionFactory redisConnectionFactory, RedisCacheConfiguration cacheConfiguration) {
+        this(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory),cacheConfiguration);
+    }
+
+    //覆盖父类创建RedisCache
+    @Override
+    protected RedisCache createRedisCache(String name, @Nullable RedisCacheConfiguration cacheConfig) {
+        return new CustomizedRedisCache(name, cacheWriter, cacheConfig != null ? cacheConfig : defaultCacheConfig);
+    }
+
+    @Override
+    public Map&lt;String, RedisCacheConfiguration&gt; getCacheConfigurations() {
+        Map&lt;String, RedisCacheConfiguration&gt; configurationMap = new HashMap&lt;&gt;(getCacheNames().size());
+        getCacheNames().forEach(it -&gt; {
+            RedisCache cache = CustomizedRedisCache.class.cast(lookupCache(it));
+            configurationMap.put(it, cache != null ? cache.getCacheConfiguration() : null);
+        });
+        return Collections.unmodifiableMap(configurationMap);
+    }
+}
+</code></pre>
+<h1 id="完整代码">完整代码</h1>
+<pre><code class="language-java">package cn.gloduck.onlinetest.config;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.interceptor.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.data.redis.cache.RedisCache;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.*;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.lang.Nullable;
+
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.*;
+
+public class CacheConfig extends CachingConfigurerSupport {
+    @Autowired
+    private RedisConnectionFactory factory;
+    @Autowired
+    private CacheManager cacheManager;
+
+    /**
+     * 初始化redis
+     *
+     * @param redisConnectionFactory
+     * @return
+     */
+    @Bean(name = &quot;redisTemplate&quot;)
+    public RedisTemplate&lt;String, Object&gt; redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate&lt;String, Object&gt; redisTemplate = new RedisTemplate&lt;&gt;();
+
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setKeySerializer(keySerializer());
+        redisTemplate.setHashKeySerializer(keySerializer());
+        redisTemplate.setValueSerializer(valueSerializer());
+        redisTemplate.setHashValueSerializer(valueSerializer());
+        return redisTemplate;
+    }
+
+
+    @Bean
+    @Override
+    public CacheErrorHandler errorHandler() {
+        // 用于捕获从Cache中进行CRUD时的异常的回调处理器。
+        return new SimpleCacheErrorHandler();
+    }
+
+
+    @Bean
+    @Override
+    public CacheManager cacheManager() {
+        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.
+                defaultCacheConfig()
+                .disableCachingNullValues()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()));
+        return new CustomizedRedisCacheManager(factory, cacheConfiguration);
+    }
+
+    @Bean
+    @Override
+    @DependsOn(&quot;cacheManager&quot;)
+    public CacheResolver cacheResolver() {
+        return new SimpleCacheResolver(cacheManager);
+    }
+
+    @Bean(&quot;customizedKeyGenerator&quot;)
+    public CustomizedKeyGenerator myKeyGenerator(){
+        return new CustomizedKeyGenerator();
+    }
+
+    /**
+     * Redis键序列化器
+     * @return
+     */
+    private RedisSerializer keySerializer(){
+        return new StringRedisSerializer();
+    }
+
+    /**
+     * Redis值序列化器
+     * @return
+     */
+    private RedisSerializer valueSerializer(){
+        return new Jackson2JsonRedisSerializer&lt;Serializable&gt;(Serializable.class);
+    }
+
+    /**
+     * 自定义Redis的KeyGenerator，取代自带的SimpleKeyGenerator
+     */
+    private static final class CustomizedKeyGenerator implements KeyGenerator{
+        @Override
+        public Object generate(Object target, Method method, Object... params) {
+            if(params.length == 0){
+                return &quot;defaultKey&quot;;
+            }
+            int length = params.length - 1;
+            StringBuilder keyBuilder = new StringBuilder();
+            for (int i = 0; i &lt; length; i++) {
+                keyBuilder.append(params[i]).append(&quot;-&quot;);
+            }
+            keyBuilder.append(params[length]);
+            return keyBuilder.toString();
+        }
+
+    }
+
+    /**
+     * 重写RedisCache使其支持模糊匹配
+     */
+    private static final class CustomizedRedisCache extends RedisCache{
+        private final String name;
+        private final RedisCacheWriter cacheWriter;
+        private final ConversionService conversionService;
+        protected CustomizedRedisCache(String name, RedisCacheWriter cacheWriter, RedisCacheConfiguration cacheConfig) {
+            super(name, cacheWriter, cacheConfig);
+            this.name = name;
+            this.cacheWriter = cacheWriter;
+            this.conversionService = cacheConfig.getConversionService();
+        }
+
+        @Override
+        public void evict(Object key) {
+            byte[] pattern = this.conversionService.convert(this.createCacheKey(key), byte[].class);
+            this.cacheWriter.clean(this.name, pattern);
+        }
+    }
+    /**
+     * 重写RedisCacheManager，使得CustomizedRedisCache能够替换RedisCache
+     */
+    private static final class CustomizedRedisCacheManager extends RedisCacheManager{
+
+        private final RedisCacheWriter cacheWriter;
+        private final RedisCacheConfiguration defaultCacheConfig;
+        private final Map&lt;String, RedisCacheConfiguration&gt; initialCaches = new LinkedHashMap&lt;&gt;();
+        private boolean enableTransactions;
+
+
+        public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration) {
+            super(cacheWriter, defaultCacheConfiguration);
+            this.cacheWriter = cacheWriter;
+            this.defaultCacheConfig = defaultCacheConfiguration;
+        }
+
+        public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, String... initialCacheNames) {
+            super(cacheWriter, defaultCacheConfiguration, initialCacheNames);
+            this.cacheWriter = cacheWriter;
+            this.defaultCacheConfig = defaultCacheConfiguration;
+        }
+
+        public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, boolean allowInFlightCacheCreation, String... initialCacheNames) {
+            super(cacheWriter, defaultCacheConfiguration, allowInFlightCacheCreation, initialCacheNames);
+            this.cacheWriter = cacheWriter;
+            this.defaultCacheConfig = defaultCacheConfiguration;
+        }
+
+        public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, Map&lt;String, RedisCacheConfiguration&gt; initialCacheConfigurations) {
+            super(cacheWriter, defaultCacheConfiguration, initialCacheConfigurations);
+            this.cacheWriter = cacheWriter;
+            this.defaultCacheConfig = defaultCacheConfiguration;
+        }
+
+        public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, Map&lt;String, RedisCacheConfiguration&gt; initialCacheConfigurations, boolean allowInFlightCacheCreation) {
+            super(cacheWriter, defaultCacheConfiguration, initialCacheConfigurations, allowInFlightCacheCreation);
+            this.cacheWriter = cacheWriter;
+            this.defaultCacheConfig = defaultCacheConfiguration;
+        }
+
+        /**
+         * 这个构造方法最重要
+         **/
+        public CustomizedRedisCacheManager(RedisConnectionFactory redisConnectionFactory, RedisCacheConfiguration cacheConfiguration) {
+            this(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory),cacheConfiguration);
+        }
+
+        //覆盖父类创建RedisCache
+        @Override
+        protected RedisCache createRedisCache(String name, @Nullable RedisCacheConfiguration cacheConfig) {
+            return new CustomizedRedisCache(name, cacheWriter, cacheConfig != null ? cacheConfig : defaultCacheConfig);
+        }
+
+        @Override
+        public Map&lt;String, RedisCacheConfiguration&gt; getCacheConfigurations() {
+            Map&lt;String, RedisCacheConfiguration&gt; configurationMap = new HashMap&lt;&gt;(getCacheNames().size());
+            getCacheNames().forEach(it -&gt; {
+                RedisCache cache = CustomizedRedisCache.class.cast(lookupCache(it));
+                configurationMap.put(it, cache != null ? cache.getCacheConfiguration() : null);
+            });
+            return Collections.unmodifiableMap(configurationMap);
+        }
+    }
+}
+
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[SpringBoot Xss过滤]]></title>
+        <id>https://mxecy.cn/post/springboot-xss-filter/</id>
+        <link href="https://mxecy.cn/post/springboot-xss-filter/">
+        </link>
+        <updated>2021-01-23T03:35:09.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>
+<p>在互联网项目中常见的攻击方式有SQL注入，XSS攻击，以及CSRF。</p>
+</li>
+<li>
+<blockquote>
+<p>XSS攻击通常指的是通过利用网页开发时留下的漏洞，通过巧妙的方法注入恶意指令代码到网页，使用户加载并执行攻击者恶意制造的网页程序。这些恶意网页程序通常是JavaScript，但实际上也可以包括Java、 VBScript、ActiveX、 Flash 或者甚至是普通的HTML。攻击成功后，攻击者可能得到包括但不限于更高的权限（如执行一些操作）、私密网页内容、会话和cookie等各种内容。</p>
+</blockquote>
+</li>
+<li>
+<p>防范XSS攻击的主要方式是对参数进行过滤。即：将提交的非法参数中的一些字符转义后再传送到后台。然后请求的时候再由前端转义。</p>
+</li>
+<li>
+<p>由于前端不一定可靠，存在破解的风险，所以后端也需要进行一次过滤。</p>
+</li>
+<li>
+<p>为了防止XSS攻击，主要利用两个类，一个是Servlet的<code>Filter</code>，用于过滤请求。还有一个是<code>HttpServletRequestWrapper</code>用于包装Request</p>
+</li>
+</ul>
+<h1 id="代码">代码</h1>
+<ul>
+<li>注意：
+<ul>
+<li>很多博文转义HTML使用的是<code>common-lang</code>的<code>StringUtils</code>。但是事实上<code>StringUtils</code>会将中文也随之转义了。其实使用SpringMvc自带的<code>HtmlUtils</code>就行了</li>
+<li>对于Post发送的Json数据是无法通过<code>Request.getParameters</code>获取的，只能通过读取<code>InputStream</code>来获取。所以需要单独过滤</li>
+<li><strong>为了使Filter生效，SpringBoot启动类上添加一个<code>ServletComponentScan</code>的注解</strong></li>
+<li>Filter最好不要全匹配，因为不是所有的请求都需要XSS过滤</li>
+</ul>
+</li>
+</ul>
+<h2 id="filter">Filter</h2>
+<pre><code class="language-java">// filter
+package cn.gloduck.onlinetest.security.xss;
+
+import org.springframework.stereotype.Component;
+
+import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
+
+
+/**
+ * @author Gloduck
+ */
+@WebFilter(&quot;/**&quot;)
+@Component
+public class XSSFilter implements Filter {
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        chain.doFilter(new XssHttpServletRequestWrapper(httpServletRequest),response);
+    }
+
+}
+</code></pre>
+<h2 id="httpservletrequestwrapper">HttpServletRequestWrapper</h2>
+<pre><code class="language-java">package cn.gloduck.onlinetest.security.xss;
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.web.util.HtmlUtils;
+
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author Gloduck
+ */
+public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
+    public XssHttpServletRequestWrapper(HttpServletRequest request) {
+        super(request);
+    }
+
+    @Override
+    public String getHeader(String name) {
+        String target = super.getHeader(name);
+        return target == null ? null : HtmlUtils.htmlEscape(target);
+    }
+
+    @Override
+    public String getQueryString() {
+        String target = super.getQueryString();
+        return target == null ? null : HtmlUtils.htmlEscape(target);
+    }
+
+    @Override
+    public String getParameter(String name) {
+        String target = super.getParameter(name);
+        return target == null ? null : HtmlUtils.htmlEscape(target);
+    }
+
+    @Override
+    public String[] getParameterValues(String name) {
+        String[] values = super.getParameterValues(name);
+        if(values != null) {
+            int length = values.length;
+            String[] escapseValues = new String[length];
+            for(int i = 0; i &lt; length; i++){
+                escapseValues[i] = HtmlUtils.htmlEscape(values[i]);
+            }
+            return escapseValues;
+        }
+        return values;
+    }
+
+    @Override
+    public ServletInputStream getInputStream() throws IOException {
+        String str=getRequestBody(super.getInputStream());
+        Map&lt;String,Object&gt; map= objectMapper.readValue(str, Map.class);
+        Map&lt;String,Object&gt; resultMap=new HashMap&lt;&gt;(map.size());
+        for(String key:map.keySet()){
+            Object val=map.get(key);
+            if(map.get(key) instanceof String){
+                resultMap.put(key,HtmlUtils.htmlEscape(val.toString()));
+            }else{
+                resultMap.put(key,val);
+            }
+        }
+
+        str=objectMapper.writeValueAsString(resultMap);
+        final ByteArrayInputStream bais = new ByteArrayInputStream(str.getBytes());
+        return new ServletInputStream() {
+            @Override
+            public int read() throws IOException {
+                return bais.read();
+            }
+            @Override
+            public boolean isFinished() {
+                return false;
+            }
+            @Override
+            public boolean isReady() {
+                return false;
+            }
+            @Override
+            public void setReadListener(ReadListener listener) {
+            }
+        };
+    }
+
+    private String getRequestBody(InputStream stream) {
+        String line = &quot;&quot;;
+        StringBuilder body = new StringBuilder();
+        int counter = 0;
+
+        // 读取POST提交的数据内容
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        try {
+            while ((line = reader.readLine()) != null) {
+                body.append(line);
+                counter++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return body.toString();
+    }
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[JRebel配置]]></title>
+        <id>https://mxecy.cn/post/idea-jrebel/</id>
+        <link href="https://mxecy.cn/post/idea-jrebel/">
+        </link>
+        <updated>2021-01-19T03:35:09.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>JRebel是一款热部署插件，相对于SpringBoot自带的Dev插件来说好太多了。</li>
+</ul>
+<h1 id="安装">安装</h1>
+<p>安装插件</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswljt15fj30tk0b2751.jpg" alt="Idea插件" loading="lazy"></figure>
+<p>在线生成GUIDS</p>
+<p><a href="https://www.guidgen.com/">在线生成GUIDS</a></p>
+<p>服务器地址：https://jrebel.qekang.com/{GUID}</p>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswrr5nf5j30zl0nt413.jpg" alt="" loading="lazy"></figure>
+<p>输入服务器地址和邮箱，然后点击激活即可。</p>
+<h1 id="配置">配置</h1>
+<h2 id="设置离线模式">设置离线模式</h2>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswubmsf2j30v80k776c.jpg" alt="" loading="lazy"></figure>
+<h2 id="设置自动编译">设置自动编译</h2>
+<p>由于JRebel是实时监控class文件的变化来实现热部署的，所以在idea环境下需要打开自动变异功能才能实现随时修改，随时生效。</p>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswv9ntw2j30v00jgjuc.jpg" alt="" loading="lazy"></figure>
+<h2 id="设置compilerautomakeallowwhenapprunning">设置compiler.automake.allow.when.app.running</h2>
+<p>快捷键ctrl+shift+A，搜索：registry<br>
+或者<br>
+按快捷键 Ctrl+Shift+Alt+/ ，选择 Registry</p>
+<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmsww78w9xj30a802y745.jpg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswwhunoij30ne0iftar.jpg" alt="" loading="lazy"></figure>
+<h1 id="使用">使用</h1>
+<p>运行项目时要点击图中红框中的按钮，即可运行：</p>
+<figure data-type="image" tabindex="7"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswwvv3xsj30mj027749.jpg" alt="" loading="lazy"></figure>
+<p>第一个按钮是Run，第二个按钮是Debug。</p>
+<p>修改代码（只测试了Java代码的修改）后，按快捷键 Ctrl + Shift + F9，运行后会提示有变化是否重新加载，选yes。完成加载以后，就已经实现了热更新效果。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Ubuntu调教日志]]></title>
+        <id>https://mxecy.cn/post/ubuntu-install/</id>
+        <link href="https://mxecy.cn/post/ubuntu-install/">
+        </link>
+        <updated>2021-01-14T06:45:59.000Z</updated>
+        <summary type="html"><![CDATA[<h1 id="前言">前言</h1>
+<ul>
+<li>此记录为Linux的一个调教记录，方便以后查看</li>
+</ul>
+<h1 id="基本篇">基本篇</h1>
+<h2 id="设置软件源">设置软件源</h2>
+<ul>
+<li>由于Ubuntu自带的源是国外的，所以同步的时候会比较慢。因此一般都需要修改源。由于Ubuntu自带gedit，所以就不用vi来编辑了。</li>
+</ul>
+<pre><code class="language-shell"> sudo gedit /etc/apt/sources.list
+</code></pre>
+<p>然后注释原来的源。添加阿里的源。</p>
+<pre><code>deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+</code></pre>
+<p>因为以后需要添加Deepin的软件。所以多添加一个deepin的源。</p>
+<pre><code>deb http://packages.deepin.com/deepin stable main contrib non-free
+#deb-src http://packages.deepin.com/deepin stable main contrib non-free
+</code></pre>
+<p>添加完成后保存退出。</p>
+<pre><code class="language-shell">sudo apt update
+</code></pre>
+<p>等待更新完成。</p>
+<h1 id="环境篇">环境篇</h1>
+<ul>
+<li>由于大部分的环境能直接apt安装。我就不自己配置了。</li>
+</ul>
+<h2 id="java">Java</h2>
+<p>以下是apt支持的Java版本。直接输入后就能安装了（注：是openjdk不是Hotpot的JDK）。</p>
+<pre><code class="language-shell">sudo apt install default-jre              # version 2:1.11-72, or
+sudo apt install openjdk-11-jre-headless  # version 11.0.7+10-3ubuntu1
+sudo apt install openjdk-13-jre-headless  # version 13.0.3+3-1ubuntu2
+sudo apt install openjdk-14-jre-headless  # version 14.0.1+7-1ubuntu1
+sudo apt install openjdk-8-jre-headless   # version 8u252-b09-1ubuntu1
+</code></pre>
+<h2 id="mysql">Mysql</h2>
+<p>终端中输入命令：</p>
+<pre><code class="language-shell">sudo apt install mysql-server
+</code></pre>
+<h3 id="mysql的常见路径">Mysql的常见路径</h3>
+<pre><code>/usr/bin                 客户端程序和脚本  
+/usr/sbin                mysqld 服务器  
+/var/lib/mysql           日志文件，数据库  ［重点要知道这个］  
+/usr/share/doc/packages  文档  
+/usr/include/mysql       包含( 头) 文件  
+/usr/lib/mysql           库  
+/usr/share/mysql         错误消息和字符集文件  
+/usr/share/sql-bench     基准程序  
+</code></pre>
+<h3 id="无法访问">无法访问</h3>
+<ul>
+<li>出现类似<code>ERROR 1045 (28000): Access denied for user 'gloduck'@'localhost' (using password: NO)</code>的提示。一是设置密码（默认没有密码），二是跳过密码验证</li>
+</ul>
+<p>跳过密码验证：<br>
+进入配置文件</p>
+<pre><code class="language-shell">sudo gedit /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre>
+<p>[mysqld]下添加skip-grant-tables</p>
+<pre><code class="language-ini">#
+# The MySQL database server configuration file.
+#
+# One can use all long options that the program supports.
+# Run program with --help to get a list of available options and with
+# --print-defaults to see which it would actually understand and use.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+
+# Here is entries for some specific programs
+# The following values assume you have at least 32M ram
+
+[mysqld]
+skip-grant-tables
+#
+# * Basic Settings
+#
+user		= mysql
+# pid-file	= /var/run/mysqld/mysqld.pid
+# socket	= /var/run/mysqld/mysqld.sock
+# port		= 3306
+# datadir	= /var/lib/mysql
+
+
+# If MySQL is running as a replication slave, this should be
+# changed. Ref https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_tmpdir
+# tmpdir		= /tmp
+#
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+bind-address		= 127.0.0.1
+mysqlx-bind-address	= 127.0.0.1
+#
+# * Fine Tuning
+#
+key_buffer_size		= 16M
+# max_allowed_packet	= 64M
+# thread_stack		= 256K
+
+# thread_cache_size       = -1
+
+# This replaces the startup script and checks MyISAM tables if needed
+# the first time they are touched
+myisam-recover-options  = BACKUP
+
+# max_connections        = 151
+
+# table_open_cache       = 4000
+
+#
+# * Logging and Replication
+#
+# Both location gets rotated by the cronjob.
+#
+# Log all queries
+# Be aware that this log type is a performance killer.
+# general_log_file        = /var/log/mysql/query.log
+# general_log             = 1
+#
+# Error log - should be very few entries.
+#
+log_error = /var/log/mysql/error.log
+#
+# Here you can see queries with especially long duration
+# slow_query_log		= 1
+# slow_query_log_file	= /var/log/mysql/mysql-slow.log
+# long_query_time = 2
+# log-queries-not-using-indexes
+#
+# The following can be used as easy to replay backup logs or for replication.
+# note: if you are setting up a replication slave, see README.Debian about
+#       other settings you may need to change.
+# server-id		= 1
+# log_bin			= /var/log/mysql/mysql-bin.log
+# binlog_expire_logs_seconds	= 2592000
+max_binlog_size   = 100M
+# binlog_do_db		= include_database_name
+# binlog_ignore_db	= include_database_name
+</code></pre>
+<p>重启mysql</p>
+<pre><code class="language-shell">sudo service mysql stop</code></pre>
+]]></summary>
+        <content type="html"><![CDATA[<h1 id="前言">前言</h1>
+<ul>
+<li>此记录为Linux的一个调教记录，方便以后查看</li>
+</ul>
+<h1 id="基本篇">基本篇</h1>
+<h2 id="设置软件源">设置软件源</h2>
+<ul>
+<li>由于Ubuntu自带的源是国外的，所以同步的时候会比较慢。因此一般都需要修改源。由于Ubuntu自带gedit，所以就不用vi来编辑了。</li>
+</ul>
+<pre><code class="language-shell"> sudo gedit /etc/apt/sources.list
+</code></pre>
+<p>然后注释原来的源。添加阿里的源。</p>
+<pre><code>deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+</code></pre>
+<p>因为以后需要添加Deepin的软件。所以多添加一个deepin的源。</p>
+<pre><code>deb http://packages.deepin.com/deepin stable main contrib non-free
+#deb-src http://packages.deepin.com/deepin stable main contrib non-free
+</code></pre>
+<p>添加完成后保存退出。</p>
+<pre><code class="language-shell">sudo apt update
+</code></pre>
+<p>等待更新完成。</p>
+<h1 id="环境篇">环境篇</h1>
+<ul>
+<li>由于大部分的环境能直接apt安装。我就不自己配置了。</li>
+</ul>
+<h2 id="java">Java</h2>
+<p>以下是apt支持的Java版本。直接输入后就能安装了（注：是openjdk不是Hotpot的JDK）。</p>
+<pre><code class="language-shell">sudo apt install default-jre              # version 2:1.11-72, or
+sudo apt install openjdk-11-jre-headless  # version 11.0.7+10-3ubuntu1
+sudo apt install openjdk-13-jre-headless  # version 13.0.3+3-1ubuntu2
+sudo apt install openjdk-14-jre-headless  # version 14.0.1+7-1ubuntu1
+sudo apt install openjdk-8-jre-headless   # version 8u252-b09-1ubuntu1
+</code></pre>
+<h2 id="mysql">Mysql</h2>
+<p>终端中输入命令：</p>
+<pre><code class="language-shell">sudo apt install mysql-server
+</code></pre>
+<h3 id="mysql的常见路径">Mysql的常见路径</h3>
+<pre><code>/usr/bin                 客户端程序和脚本  
+/usr/sbin                mysqld 服务器  
+/var/lib/mysql           日志文件，数据库  ［重点要知道这个］  
+/usr/share/doc/packages  文档  
+/usr/include/mysql       包含( 头) 文件  
+/usr/lib/mysql           库  
+/usr/share/mysql         错误消息和字符集文件  
+/usr/share/sql-bench     基准程序  
+</code></pre>
+<h3 id="无法访问">无法访问</h3>
+<ul>
+<li>出现类似<code>ERROR 1045 (28000): Access denied for user 'gloduck'@'localhost' (using password: NO)</code>的提示。一是设置密码（默认没有密码），二是跳过密码验证</li>
+</ul>
+<p>跳过密码验证：<br>
+进入配置文件</p>
+<pre><code class="language-shell">sudo gedit /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre>
+<p>[mysqld]下添加skip-grant-tables</p>
+<pre><code class="language-ini">#
+# The MySQL database server configuration file.
+#
+# One can use all long options that the program supports.
+# Run program with --help to get a list of available options and with
+# --print-defaults to see which it would actually understand and use.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+
+# Here is entries for some specific programs
+# The following values assume you have at least 32M ram
+
+[mysqld]
+skip-grant-tables
+#
+# * Basic Settings
+#
+user		= mysql
+# pid-file	= /var/run/mysqld/mysqld.pid
+# socket	= /var/run/mysqld/mysqld.sock
+# port		= 3306
+# datadir	= /var/lib/mysql
+
+
+# If MySQL is running as a replication slave, this should be
+# changed. Ref https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_tmpdir
+# tmpdir		= /tmp
+#
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+bind-address		= 127.0.0.1
+mysqlx-bind-address	= 127.0.0.1
+#
+# * Fine Tuning
+#
+key_buffer_size		= 16M
+# max_allowed_packet	= 64M
+# thread_stack		= 256K
+
+# thread_cache_size       = -1
+
+# This replaces the startup script and checks MyISAM tables if needed
+# the first time they are touched
+myisam-recover-options  = BACKUP
+
+# max_connections        = 151
+
+# table_open_cache       = 4000
+
+#
+# * Logging and Replication
+#
+# Both location gets rotated by the cronjob.
+#
+# Log all queries
+# Be aware that this log type is a performance killer.
+# general_log_file        = /var/log/mysql/query.log
+# general_log             = 1
+#
+# Error log - should be very few entries.
+#
+log_error = /var/log/mysql/error.log
+#
+# Here you can see queries with especially long duration
+# slow_query_log		= 1
+# slow_query_log_file	= /var/log/mysql/mysql-slow.log
+# long_query_time = 2
+# log-queries-not-using-indexes
+#
+# The following can be used as easy to replay backup logs or for replication.
+# note: if you are setting up a replication slave, see README.Debian about
+#       other settings you may need to change.
+# server-id		= 1
+# log_bin			= /var/log/mysql/mysql-bin.log
+# binlog_expire_logs_seconds	= 2592000
+max_binlog_size   = 100M
+# binlog_do_db		= include_database_name
+# binlog_ignore_db	= include_database_name
+</code></pre>
+<p>重启mysql</p>
+<pre><code class="language-shell">sudo service mysql stop
+&lt;!-- more --&gt;
+
+sudo service mysql start
+</code></pre>
+<h2 id="redis">Redis</h2>
+<p>终端输入命令：</p>
+<pre><code class="language-shell">sudo apt install redis-server
+</code></pre>
+<p>通过<code>redis-cli</code>进入</p>
+<h1 id="常用软件">常用软件</h1>
+<h2 id="v2ray">v2ray</h2>
+<p>v2核心：https://github.com/v2fly/v2ray-core<br>
+v2GUI：https://github.com/Qv2ray/Qv2ray/releases</p>
+<h2 id="深度截图">深度截图</h2>
+<p>注：需要先添加deepin源</p>
+<pre><code class="language-shell">sudo apt install deepin-screenshot
+</code></pre>
+<p>添加快捷键：设置 - 键盘快捷键 - +（最下面）</p>
+<h2 id="qq-tim-微信-迅雷-百度网盘">QQ、TIM、微信、迅雷、百度网盘</h2>
+<p>注：需先添加deepin源</p>
+<ul>
+<li>包名：
+<ul>
+<li>TIM：deepin.com.qq.office</li>
+<li>QQ：deepin.com.qq.im</li>
+<li>QQ轻聊版：deepin.com.qq.im.light</li>
+<li>微信：deepin.com.wechat</li>
+<li>百度网盘：deepin.com.baidu.pan</li>
+<li>迅雷极速版：deepin.com.thunderspeed</li>
+<li>WinRAR：deepin.cn.com.winrar</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-shell">sudo apt install 包名
+</code></pre>
+<h3 id="更新">更新</h3>
+<p>软件一般安装在<code>/home/gloduck/.deepinwine</code><br>
+如百度网盘，进入<code>/home/gloduck/.deepinwine/Deepin-BaiduNetDisk/drive_c/Program Files/baidu/BaiduNetdisk</code>，然后在Windows下安装最新版本覆盖。</p>
+<h3 id="tim无法加载图片">Tim无法加载图片</h3>
+<pre><code class="language-shell">sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1
+</code></pre>
+<h3 id="添加小图标">添加小图标</h3>
+<p>下载chrome-gnome-shell</p>
+<pre><code class="language-shell">sudo apt-get install chrome-gnome-shell
+</code></pre>
+<p>在chrome应用商店搜索并安装 GNOME Shell integration<br>
+接着<a href="https://extensions.gnome.org/extension/1674/topiconsfix/">跳转</a>到此网页<br>
+将右上角的off按钮切换为on<br>
+在Installed extensions页面应用该扩展</p>
+<h2 id="idea">Idea</h2>
+<ul>
+<li>下载Idea：https://www.jetbrains.com/idea/download/</li>
+<li>解压到指定路径（推荐opt）。</li>
+<li>为<code>bin/idea.sh</code><a href="#%E5%88%9B%E5%BB%BA%E6%A1%8C%E9%9D%A2%E5%9B%BE%E6%A0%87">创建快捷方式</a></li>
+</ul>
+<h3 id="导出配置">导出配置</h3>
+<p>配置直接导出然后导入。<br>
+插件：<br>
++ 进入Idea路径。<br>
++ windows：<code>C://Users/Gloduck/AppData/Roaming/JetBrains/IntelliJIdea2020.2/plugins</code><br>
++ 复制文件到：<code>/home/gloduck/.local/share/JetBrains/IntelliJIdea2020.3</code>（注：没有plugins，直接复制）</p>
+<h1 id="常用操作">常用操作</h1>
+<h2 id="root打开文件夹">root打开文件夹：</h2>
+<pre><code class="language-shell">sudo nautilus
+</code></pre>
+<h2 id="span-id创建桌面图标创建桌面图标span"><span id="创建桌面图标">创建桌面图标</span></h2>
+<pre><code class="language-shell">touch 图标名称.desktop
+sudo gedit 图标名称.desktop
+</code></pre>
+<p>然后复制以下内容：</p>
+<pre><code> [Desktop Entry]
+ Encoding=UTF-8
+ Name=应用名称 
+ Comment=应用描述
+ Exec=应用执行文件
+ Icon=应用图标
+ Terminal=false
+ StartupNotify=true
+ Type=Application
+ Categories=Application;Development; // 应用分类
+</code></pre>
+<p>然后将图标移动到<code>/usr/share/applications</code>文件夹下</p>
+<pre><code class="language-shell">sudo mv 图标名称.desktop /usr/share/applications
+</code></pre>
+<h2 id="文件管理器输入路径">文件管理器输入路径</h2>
+<p>按下Ctrl+L</p>
+<h2 id="root打开文件夹-2">root打开文件夹</h2>
+<p>安装nautilus-admin</p>
+<pre><code class="language-shell">sudo apt install nautilus-admin
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java的方法传值]]></title>
+        <id>https://mxecy.cn/post/yQnjeLQxQ/</id>
+        <link href="https://mxecy.cn/post/yQnjeLQxQ/">
+        </link>
+        <updated>2020-12-02T08:40:18.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>首先先声明结论，Java的方法传递的是值。对于Java的对象来说传递的是对象引用的副本。</li>
+<li>具体还得从局部变量表说起
+<ul>
+<li>局部变量表定义：局部变量表(Local Variable Table)是一组变量值存储空间，用于存放方法参数和方法内定义的局部变量。局部变量表的容量以变量槽(Variable Slot)为最小单位。</li>
+<li>对于局部变量表的每一个变量槽。都能存放一个boolean、byte、char、short、int、float、reference或returnAddress类型的数据。<strong>而其中reference就是代表的一个对象的引用（数组也是引用类型）</strong>。</li>
+<li>如果执行的是实例方法，那么<strong>局部变量表中0位索引的变量槽默认是用于传递方法所属对象实例的应用（this）</strong>，其余参数按照参数表顺序排列。再根据方法体内部定义的变量顺序和作用域分配其余变量槽</li>
+</ul>
+</li>
+<li>也就是说，参数传入到局部变量表里的实际上是一个引用。那为什么说Java是按值传递的呢？因为这个引用实际上是一个传入对象的引用的一个副本，而非是对象真正的引用。关于这方面可以参考微软对引用的定义。<a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/language-reference/keywords/ref#passing-an-argument-by-reference">地址</a></li>
+<li>对于对象进行修改操作，是可以直接反应到对象上的（如：传入的是一个map对象，调用put方法）。而对于对象的赋值操作，则不会反应到对象上（如：传入了一个对象，并在方法内把它指向null<code>传入的方法 = null</code>）。<br>
+首先，定义一个对象，作为测试使用</li>
+</ul>
+<pre><code class="language-java">class MyObject {
+    public int number;
+}
+</code></pre>
+<p>然后定义一个swap方法，用于交换两个对象。</p>
+<pre><code class="language-java">public static void swap(MyObject a, MyObject b) {
+    MyObject c = a;
+    a = b;
+    b = c;
+}
+</code></pre>
+<p>定义main方法进行测试。</p>
+<pre><code class="language-java">public static void main(String[] args){
+    MyObject a = new MyObject();
+    MyObject b = new MyObject();
+    a.number = 10;
+    b.number = 20;
+    swap(a, b);
+    System.out.println(a.number + &quot; &quot; + b.number);
+}
+</code></pre>
+<p>结果显而易见，10和20</p>
+<pre><code class="language-shell">[0.030s][info][gc] Using G1
+10 20
+
+Process finished with exit code 0
+</code></pre>
+<p>接着，我们在swap后对a进行一个a.number++的操作。</p>
+<pre><code class="language-java">public static void swap(MyObject a, MyObject b) {
+    MyObject c = a;
+    a = b;
+    b = c;
+    a.number++;
+}
+</code></pre>
+<pre><code class="language-shell">[0.030s][info][gc] Using G1
+10 21
+
+Process finished with exit code 0
+</code></pre>
+<p>此时，打印出来的结果是10 和 21。<br>
+因为在交换后，局部变量a的指向地址已经是调用者b的指向地址了。所以修改的值对于调用者来说是修改的b的值。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java HashMap源码分析]]></title>
+        <id>https://mxecy.cn/post/java-hashmap-code/</id>
+        <link href="https://mxecy.cn/post/java-hashmap-code/">
+        </link>
+        <updated>2020-11-28T06:49:49.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="hashmap">HashMap</h1>
+<h2 id="基本">基本</h2>
+<ul>
+<li>
+<p>HashMap基本特性：</p>
+</li>
+<li>
+<p>HashMap的Key和Value均允许为null</p>
+</li>
+<li>
+<p>HashMap的存取是没有顺序的</p>
+<ul>
+<li>JDK8的底层是数组 + 链表 + 红黑树，JDK7是数组 + 链表</li>
+</ul>
+</li>
+<li>
+<p>初始容量和装载因子会决定性能。</p>
+<ul>
+<li>HashMap的table数组是<strong>懒汉式创建的，只有在put数据的时候才会创建</strong></li>
+<li>HashMap转换成红黑树的时候会先变化成双向链表最终转化为红黑树</li>
+<li>链表转换为红黑树后会将红黑树的root节点和链表的头节点和table[i]节点融合成同一个</li>
+<li>在删除的时候会先判断删除节点的红黑树是否需要转化成链表，如果不转链表就找个合适的节点来填充删除的节点</li>
+<li>红黑树的根节点不一定和table[i]也就是链表的头节点是同一个，三者的同步是靠MoveRootToFront实现的。而HashIterator.remove()会在调用removeNode的时候movable=false。</li>
+</ul>
+</li>
+<li>
+<p><strong>计算下标是通过<code>(n - 1) &amp; hash</code>来计算的，在n为2的N次幂的情况下，等同于<code>hash % n</code></strong></p>
+</li>
+<li>
+<p>resize通过<code>(e.hash &amp; oldCap) == 0 ? 原来位置 : 原来位置+原来哈希表大小</code>来计算新位置。</p>
+</li>
+<li>
+<p>哈希表容量是2的次幂的原因</p>
+<ul>
+<li>capacity 为 2的整数次幂的话，计算桶的位置 h&amp;(length-1) 就相当于对 length 取模，提升了计算效率</li>
+<li>capacity 为 2 的整数次幂的话，便保证了 h&amp;(capacity-1) 的结果可能是0也可能是1，保证了散列的均匀性</li>
+<li>capacity 为 2 的整数次幂可以使得在resize的时候不用重新计算hash值。而通过<code>(e.hash &amp; oldCap) == 0 ? 原来位置 : 原来位置+原来哈希表大小</code>就能算出在新哈希表的正确位置（能通过<code>(n - 1) &amp; hash</code>正确获取元素）</li>
+</ul>
+</li>
+</ul>
+<h2 id="节点">节点</h2>
+<ul>
+<li>
+<p>HashMap中的节点</p>
+<ul>
+<li>
+<p><code>java.util.Map.Entry</code>：定义了一些比较接口的方法。</p>
+</li>
+<li>
+<p><code>java.util.HashMap.Node</code>：一个kv节点。链表节点</p>
+<ul>
+<li>
+<pre><code class="language-java">static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {
+   final int hash;	// key的hash值，防止重复计算
+   final K key;
+   V value;
+   Node&lt;K,V&gt; next;	// 单链表，指向下一个节点
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>java.util.LinkedHashMap.Enrty</code>：LinkedHashMap的一个静态内部类</p>
+<ul>
+<li>
+<pre><code class="language-java">static class Entry&lt;K,V&gt; extends HashMap.Node&lt;K,V&gt; {
+    Entry&lt;K,V&gt; before, after;
+    Entry(int hash, K key, V value, Node&lt;K,V&gt; next) {
+        super(hash, key, value, next);
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>java.util.HashMap.TreeNode</code>：继承了LinkedHashMap的Entry，红黑树节点。</p>
+<ul>
+<li>
+<pre><code class="language-java">static final class TreeNode&lt;K,V&gt; extends LinkedHashMap.Entry&lt;K,V&gt; {
+    TreeNode&lt;K,V&gt; parent;  // red-black tree links
+    TreeNode&lt;K,V&gt; left;
+    TreeNode&lt;K,V&gt; right;
+    TreeNode&lt;K,V&gt; prev;    // needed to unlink next upon deletion
+    boolean red;
+    TreeNode(int hash, K key, V val, Node&lt;K,V&gt; next) {
+        super(hash, key, val, next);
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="参数">参数</h2>
+<ul>
+<li>
+<p>静态参数：</p>
+</li>
+<li>
+<p><code>static final int DEFAULT_INITIAL_CAPACITY = 1 &lt;&lt; 4</code>：初始容量，默认为16。如果太少会很容易触发扩容，如果太多会导致遍历哈希表比较慢</p>
+<ul>
+<li><code>static final int MAXIMUM_CAPACITY = 1 &lt;&lt; 30</code>：数组的最大容量</li>
+<li><code>static final float DEFAULT_LOAD_FACTOR = 0.75f</code>：默认的负载因子。当存储的节点数大于了 <code>初始容量 * 负载因子</code>就会触发扩容。较高的值可以降低空间开销，但是会提高查找成本。</li>
+<li><code>static final int TREEIFY_THRESHOLD = 8</code>：转换树阀值，表示当某个桶的数据的数量大于了这个值时，可能会转化为红黑树。</li>
+<li><code>static final int UNTREEIFY_THRESHOLD = 6</code>：退化树阀值，在哈希表扩容时，如果发现链表长度&lt;=6，会由红黑树重新退化成链表</li>
+<li><code>static final int MIN_TREEIFY_CAPACITY = 64</code>：链表转换树最小大小，在变换成红黑树之前还会有一次判断。只有数组长度大于64才会转换。这是为了避免在哈希表建立初期，多个键值对恰好被放入了同一个链表中而导致不必要的转化。</li>
+</ul>
+</li>
+<li>
+<p>动态参数：</p>
+<ul>
+<li><code>transient Node&lt;K,V&gt;[] table</code>：HashMap的链表数组，扩容的时候总是2的次幂</li>
+<li><code>transient Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet</code>：表示HashMap中的Entry的Set集合</li>
+<li><code>transient int size</code>：表示HashMap中存放的键值对的个数</li>
+<li><code>transient int modCount</code>：凡是我们做的增删改都会引发modCount值的变化，跟版本控制功能类似，可以理解成version，在特定的操作下需要对version进行检查。
+<ul>
+<li>在java的集合类中存在一种Fail-Fast的错误检测机制，当多个线程对同一集合的内容进行操作时，可能就会产生此类异常。比如当A通过iterator去遍历某集合的过程中，其他线程修改了此集合，此时会抛出ConcurrentModificationException异常。此类机制就是通过modCount实现的，在迭代器初始化时，会赋值expectedModCount，在迭代过程中判断modCount和expectedModCount是否一致。</li>
+</ul>
+</li>
+<li><code>int threshold</code>：扩容阀值，<code>初始容量 * 负载因子</code>。这个是在resize改变的，构造方法只会赋个初始容量。</li>
+</ul>
+</li>
+<li>
+<p><code>final float loadFactor</code>：自定义负载因子。一般都是用的自带的0.75</p>
+</li>
+</ul>
+<h2 id="构造方法">构造方法</h2>
+<ul>
+<li>
+<p>构造方法：其中使用了tableSizeFor将initialCapacity调整为离initialCapacity最小的2次幂</p>
+<ul>
+<li>
+<pre><code class="language-java">public HashMap() {
+    this.loadFactor = DEFAULT_LOAD_FACTOR; // 只设置负载因子为0.75，阈值（threshold）将会在第一次put resize的时候初始化为12
+}
+public HashMap(int initialCapacity, float loadFactor) {
+    if (initialCapacity &lt; 0)
+        throw new IllegalArgumentException(&quot;Illegal initial capacity: &quot; +
+                                           initialCapacity);
+    if (initialCapacity &gt; MAXIMUM_CAPACITY)
+        initialCapacity = MAXIMUM_CAPACITY;
+    if (loadFactor &lt;= 0 || Float.isNaN(loadFactor))
+        throw new IllegalArgumentException(&quot;Illegal load factor: &quot; +
+                                           loadFactor);
+    // 前面是进行参数检查
+    this.loadFactor = loadFactor;
+    // 调整阀值，将当前阈值为输入阈值的最小的2的次幂，并且此处相当于初始化容量，在第一次put resize的时候会初始化为 当前值 * 负载因子
+    this.threshold = tableSizeFor(initialCapacity);
+}
+
+// jdk8版本，让最高位1后面的位全部变为1，然后让结果+1。得到2的整数次幂
+// 减一是为了让找到的目标值大于或等于原值。否则如果输入为8不减一的话得到的结果就是16了
+static final int tableSizeFor(int c) {
+    int n = c - 1;
+    n |= n &gt;&gt;&gt; 1;
+    n |= n &gt;&gt;&gt; 2;
+    n |= n &gt;&gt;&gt; 4;
+    n |= n &gt;&gt;&gt; 8;
+    n |= n &gt;&gt;&gt; 16;
+    return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+}
+
+// jdk11版本
+static final int tableSizeFor(int cap) {
+    int n = -1 &gt;&gt;&gt; Integer.numberOfLeadingZeros(cap - 1);
+    return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+}
+
+// 通过Map集合来构造HashMap
+public HashMap(Map&lt;? extends K, ? extends V&gt; m) {
+    this.loadFactor = DEFAULT_LOAD_FACTOR;
+    putMapEntries(m, false);
+}
+
+final void putMapEntries(Map&lt;? extends K, ? extends V&gt; m, boolean evict) {
+    int s = m.size();
+    if (s &gt; 0) {
+        if (table == null) { // pre-size
+            float ft = ((float)s / loadFactor) + 1.0F; // 向上取整反推容器的大小
+            int t = ((ft &lt; (float)MAXIMUM_CAPACITY) ? // 如果推断出来的容器大小大于最大容量就设置成最大容量。
+                     (int)ft : MAXIMUM_CAPACITY);
+            if (t &gt; threshold) // 重新计算扩容阀值
+                threshold = tableSizeFor(t);
+        }
+        else if (s &gt; threshold)
+            resize();
+        for (Map.Entry&lt;? extends K, ? extends V&gt; e : m.entrySet()) {
+            K key = e.getKey();
+            V value = e.getValue();
+            putVal(hash(key), key, value, false, evict);
+        }
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="hash函数">Hash函数</h2>
+<ul>
+<li>
+<p>Hash值：</p>
+<ul>
+<li>
+<p>计算：</p>
+<ul>
+<li>首先获得key对应的hash值</li>
+<li>将hash值和无符号右移16位后的结果异或（扰动，低位相同概率较大，将数据均匀分布）</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-java">// jdk7和8有变化
+static final int hash(Object key) {
+    int h;
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="get方法">get方法</h2>
+<ul>
+<li>
+<p>get思路：</p>
+<ul>
+<li>获得key的hash然后根据hash和key按照插入时候的思路去查找get。</li>
+<li>如果数组位置为NULL则直接返回 NULL。</li>
+<li>如果数组位置不为NULL则先直接看数组位置是否符合。</li>
+<li>如果数组位置有类型说红黑树类型，则按照红黑树类型查找返回。</li>
+<li>如果数组有next，则按照遍历链表的方式查找返回。</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-java">final HashMap.Node&lt;K, V&gt; getNode(int hash, Object key) {
+    HashMap.Node&lt;K, V&gt;[] tab;
+    HashMap.Node&lt;K, V&gt; first, e;
+    int n;
+    K k;
+    // 如果table不为空并且有长度。即有数据
+    if ((tab = table) != null &amp;&amp; (n = tab.length) &gt; 0 &amp;&amp;
+        (first = tab[(n - 1) &amp; hash]) != null) {	// 根据hash函数获取头节点，头节点不为null
+        if (first.hash == hash &amp;&amp; // 检测第一个节点的hash
+            ((k = first.key) == key || (key != null &amp;&amp; key.equals(k))))	// 先判断第一个是否为要获取的值，先等于判断，然后再equals判断
+            return first;
+        if ((e = first.next) != null) {	
+            if (first instanceof HashMap.TreeNode)	// 如果下一个节点还有值，并且是红黑树节点就按照红黑树查找
+                return ((HashMap.TreeNode&lt;K, V&gt;) first).getTreeNode(hash, key);
+            do { // 链表查找
+                if (e.hash == hash &amp;&amp;
+                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
+                    return e;
+            } while ((e = e.next) != null);
+        }
+    }
+    return null;
+}
+</code></pre>
+</li>
+<li>
+<p>红黑树查找思路（find方法）：</p>
+<ul>
+<li>
+<p>先比较当前节点的hash值和要查找节点的hash值。如果的当前节点的值大，则向左查找，当前节点的值小，则向右查找。否则两个哈希值相等。在判断两个的key是否相等相等<strong>直接返回</strong></p>
+</li>
+<li>
+<p>如果两个的key不相等，看左右节点是否为null，那边为null就向另一边查找。</p>
+</li>
+<li>
+<p>如果两边都不为null，判断当前节点是否可以比较的（继承了Comparable&lt;当前节点类型&gt;接口），然后标识向那边查找</p>
+</li>
+<li>
+<p>如果不能比较，递归调用往右边查找，查找到了<strong>直接返回</strong></p>
+</li>
+<li>
+<p>否则向左边查找</p>
+</li>
+<li>
+<p>如果查找到了最后的位置都没查找到，<strong>返回null</strong></p>
+</li>
+<li>
+<pre><code class="language-java">final TreeNode&lt;K,V&gt; getTreeNode(int h, Object k) {
+    return ((parent != null) ? root() : this).find(h, k, null);
+}
+
+
+final TreeNode&lt;K,V&gt; find(int h, Object k, Class&lt;?&gt; kc) {
+    TreeNode&lt;K,V&gt; p = this;	// 根节点
+    do {
+        int ph, dir; K pk;
+        TreeNode&lt;K,V&gt; pl = p.left, pr = p.right, q;
+        if ((ph = p.hash) &gt; h)	// 根据hash值来判断是在左边找还是在右边找
+            p = pl;
+        else if (ph &lt; h)
+            p = pr;
+        else if ((pk = p.key) == k || (k != null &amp;&amp; k.equals(pk)))
+            return p;	// 找到了直接返回
+        // 到此处的方法查找的哈希和根节点的hash相同
+        else if (pl == null)	// 左边为null遍历右边
+            p = pr;
+        else if (pr == null)	// 右边为null遍历左边
+            p = pl;
+        else if ((kc != null ||
+                  (kc = comparableClassFor(k)) != null) &amp;&amp;	// 查看key是否可以比较，kc为key的Class类型
+                 (dir = compareComparables(kc, k, pk)) != 0)	// 如果可以比较，则将key（k）和根节点的key（pk）比较
+            p = (dir &lt; 0) ? pl : pr;
+        else if ((q = pr.find(h, k, kc)) != null)	// 如果不能比较，尝试找右节点
+            return q;
+      else
+            p = pl;	// 找左节点
+    } while (p != null);
+    return null;
+}
+</code></pre>
+</li>
+<li>
+<pre><code class="language-java">// 如果x是String类型或者实现了Comparable&lt;C&gt;就返回，否则返回null
+static Class&lt;?&gt; comparableClassFor(Object x) {
+    if (x instanceof Comparable) {
+        Class&lt;?&gt; c; Type[] ts, as; ParameterizedType p;
+        if ((c = x.getClass()) == String.class) // 如果key是个字符串，直接返回String.class
+            return c;
+        // 如果不是字符串类型，遍历实现的接口
+        if ((ts = c.getGenericInterfaces()) != null) {
+            for (Type t : ts) {	// 遍历接口数组，
+                if ((t instanceof ParameterizedType) &amp;&amp;	// 如果当前接口是一个泛型接口
+                    ((p = (ParameterizedType) t).getRawType() ==
+                     Comparable.class) &amp;&amp;	// 如果当前接口是Comparable接口
+                    (as = p.getActualTypeArguments()) != null &amp;&amp;	// 如果定义了泛型参数，并且泛型参数只有一个
+                    as.length == 1 &amp;&amp; as[0] == c) // 如果泛型参数x的Class那么就返沪x的Class
+                    return c;
+            }
+        }
+    }
+    return null;
+}
+</code></pre>
+</li>
+<li>
+<pre><code class="language-java">/**
+ * kc是key对应的class，k为目标值，x为当前值
+ * 如果x和k是一个类型的并且不为null就比较。否则返回0
+ */
+static int compareComparables(Class&lt;?&gt; kc, Object k, Object x) {
+    return (x == null || x.getClass() != kc ? 0 :
+            ((Comparable)k).compareTo(x));
+}
+</code></pre>
+</li>
+<li>
+<p>https://sowhat.blog.csdn.net/article/details/105000051#2__put_212</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="put方法">put方法</h2>
+<ul>
+<li>
+<p>put思路：</p>
+<ul>
+<li>
+<p>如果哈希表为空或者哈希表的长度为0，调用resize方法建立哈希表</p>
+</li>
+<li>
+<p>根据hash值计算位置，如果计算出来的位置为空（没有hash冲突），直接插入</p>
+</li>
+<li>
+<p>如果发生了hash冲突，并且第一个节点的key和要插入的key相等，则用e做个标记</p>
+</li>
+<li>
+<p>如果不相等，则判断当前节点类型，如果是链表，则按照链表方式查找，如果是红黑树，按照红黑树方式查找。如果查找到了节点用e做个标记</p>
+</li>
+<li>
+<p>在查找的过程中，如果没有查找到值，则会创建一个新的节点，然后插入数据（如果为链表方式插入时候还会判断是否要转换成红黑树）</p>
+</li>
+<li>
+<p>如果查找到了相等的值的话e为查找到的值，否则为空，然后就可以根据e来替换值了。并且返回旧值</p>
+</li>
+<li>
+<pre><code class="language-java">final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+               boolean evict) {
+    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;
+    if ((tab = table) == null || (n = tab.length) == 0)	// 如果没有初始化table或者长度为0，则调用resize初始化
+        n = (tab = resize()).length;
+    if ((p = tab[i = (n - 1) &amp; hash]) == null)
+        tab[i] = newNode(hash, key, value, null);	// 如果目标位置为空直接放入数据
+    else {
+        Node&lt;K,V&gt; e; K k;
+        if (p.hash == hash &amp;&amp;
+            ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
+            e = p;	// 存在和当前插入的节点key相同的节点
+        else if (p instanceof TreeNode)	// 如果节点是红黑树节点，按照红黑树方式查找
+            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);
+        else {
+          	// 链表方式查找
+            for (int binCount = 0; ; ++binCount) {
+                if ((e = p.next) == null) {	// 如果到尾都没找到相同的元素，则创造一个新节点
+                    p.next = newNode(hash, key, value, null);
+                    if (binCount &gt;= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                        treeifyBin(tab, hash);	// 如果大于了转换树阈值（8），则转换成红黑树
+                    break;
+                }
+                if (e.hash == hash &amp;&amp;	// 存在和当前插入的节点key相同的节点
+                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
+                    break;
+                p = e;
+            }
+        }
+        if (e != null) { // 如果e不为null则表明存在key相同的节点，替换value并返回原来的数据
+            V oldValue = e.value;
+            if (!onlyIfAbsent || oldValue == null)
+                e.value = value;
+            afterNodeAccess(e);
+            return oldValue;
+        }
+    }	
+    ++modCount;	// 更新版本，当版本不匹时候抛出异常
+    if (++size &gt; threshold)	// 当前大小+1，执行到此处还没返回证明是被插入值的。
+        resize();	// 如果当前大小大于了扩容阈值，则进行扩容
+    afterNodeInsertion(evict);	// 用于LinkedHashMap
+    return null;
+}
+</code></pre>
+</li>
+<li>
+<pre><code class="language-java">/**
+     * 当存在Hash碰撞的元素大于8个时，会用红黑树将这些元素组织起来
+     * @param map 当前节点所在的hashMap对象
+     * @param tab Hashmap的table数组
+     * @param h 指定key的hash值
+     * @param k 指定的key
+     * @param v 要写入的值
+     * @return
+     */
+final HashMap.TreeNode&lt;K,V&gt; putTreeVal(HashMap&lt;K,V&gt; map, HashMap.Node&lt;K,V&gt;[] tab,
+                                       int h, K k, V v) {
+    Class&lt;?&gt; kc = null;	// key的class对象
+    boolean searched = false;	// 标识是否已经遍历过一次树
+    HashMap.TreeNode&lt;K,V&gt; root = (parent != null) ? root() : this;	// 获取根节点（如果父节点不为空，则当前节点不是根节点）
+    for (HashMap.TreeNode&lt;K,V&gt; p = root;;) {	// 从根节点开始遍历
+        int dir, ph; K pk;	// 方向，当前节点的hash值，当前节点的key
+        if ((ph = p.hash) &gt; h)	// 如果当前节点的hash值大于指定key的hash值
+            dir = -1;	// 指定的key将会被放在左边
+        else if (ph &lt; h)	// 如果当前节点的hash值小于指定key的hash值
+            dir = 1;	// 指定的key会被放在右边
+        else if ((pk = p.key) == k || (k != null &amp;&amp; k.equals(pk)))
+            return p;	// 如果当前节点的key和要插入节点的key相等，那么返回当前节点，将在外层被替换
+        else if ((kc == null &amp;&amp;	// 如果key可以比较
+                  (kc = comparableClassFor(k)) == null) ||
+                 (dir = compareComparables(kc, k, pk)) == 0) {
+            if (!searched) {	// 如果还没遍历过二叉树开始搜索
+                HashMap.TreeNode&lt;K,V&gt; q, ch;
+                searched = true;
+                if (((ch = p.left) != null &amp;&amp;	// 分别向左和向右搜索
+                     (q = ch.find(h, k, kc)) != null) ||
+                    ((ch = p.right) != null &amp;&amp;
+                     (q = ch.find(h, k, kc)) != null))
+                    return q;	// 搜索到了节点就返回
+            }
+            dir = tieBreakOrder(k, pk);	// 重新判断一下两个对象的大小（通过identityHashCode计算）
+        }
+		// 目前p还是当前节点，xp也是当前节点
+        HashMap.TreeNode&lt;K,V&gt; xp = p;
+        // 根据dir判断插入的数据在当前节点的那一边，并且只有为null的时候才执行插入
+        // 此处创造了一个新节点，然后将新节点插入到了当前节点和当前节点的下一个之间(对于双向链表而言)，并且将新节点插入到了当前节点的孩子节点（对于红黑树而言，具体是左孩子还是右孩子取决于dir）
+        if ((p = (dir &lt;= 0) ? p.left : p.right) == null) {
+            // p为当前节点的左边节点或右边节点（p为null）
+            HashMap.Node&lt;K,V&gt; xpn = xp.next;
+            HashMap.TreeNode&lt;K,V&gt; x = map.newTreeNode(h, k, v, xpn); 
+            if (dir &lt;= 0)	
+                xp.left = x;
+            else
+                xp.right = x;
+            xp.next = x;
+            x.parent = x.prev = xp;
+            if (xpn != null)
+                ((HashMap.TreeNode&lt;K,V&gt;)xpn).prev = x;
+            // 将root节点移动到双向链表的最前面
+            moveRootToFront(tab, balanceInsertion(root, x));
+            return null;
+      }
+    }
+}
+</code></pre>
+</li>
+<li>
+<pre><code class="language-java">/**
+     * 根据阈值（大于64）来判断是否将链表转换为红黑树，首先将单向链表转换为双向链表，再调用treeify以头节点构造红黑树
+     * @param tab 元素数组
+     * @param hash  要增加的key的hash值
+     */
+final void treeifyBin(Node&lt;K,V&gt;[] tab, int hash) {
+    int n, index; Node&lt;K,V&gt; e;
+    if (tab == null || (n = tab.length) &lt; MIN_TREEIFY_CAPACITY)	// 如果元素数组为空或数组容量&lt;64，则进行扩容，否则进行红黑树转换（在此方法之前还要判断哈希冲突的节点&gt;8）
+        resize();
+    else if ((e = tab[index = (n - 1) &amp; hash]) != null) {
+        TreeNode&lt;K,V&gt; hd = null, tl = null;
+        do {
+            TreeNode&lt;K,V&gt; p = replacementTreeNode(e, null);
+            if (tl == null)
+                hd = p;
+            else {
+                p.prev = tl;
+                tl.next = p;
+            }
+            tl = p;
+        } while ((e = e.next) != null);
+        if ((tab[index] = hd) != null)
+            hd.treeify(tab);
+    }
+}
+
+// 构造红黑树
+final void treeify(Node&lt;K,V&gt;[] tab) {
+    TreeNode&lt;K,V&gt; root = null;
+    for (TreeNode&lt;K,V&gt; x = this, next; x != null; x = next) {
+        next = (TreeNode&lt;K,V&gt;)x.next;
+        x.left = x.right = null;
+        if (root == null) {
+            x.parent = null;
+            x.red = false;
+            root = x;
+        }
+        else {
+            K k = x.key;
+            int h = x.hash;
+            Class&lt;?&gt; kc = null;
+            for (TreeNode&lt;K,V&gt; p = root;;) {
+                int dir, ph;
+                K pk = p.key;
+                if ((ph = p.hash) &gt; h)
+                    dir = -1;
+                else if (ph &lt; h)
+                    dir = 1;
+                else if ((kc == null &amp;&amp;
+                          (kc = comparableClassFor(k)) == null) ||
+                         (dir = compareComparables(kc, k, pk)) == 0)
+                    dir = tieBreakOrder(k, pk);
+
+                TreeNode&lt;K,V&gt; xp = p;
+                if ((p = (dir &lt;= 0) ? p.left : p.right) == null) {
+                    x.parent = xp;
+                    if (dir &lt;= 0)
+                        xp.left = x;
+                    else
+                        xp.right = x;
+                    root = balanceInsertion(root, x);
+                    break;
+                }
+            }
+        }
+    }
+    moveRootToFront(tab, root);
+}
+// 将红黑树的root节点移动到table的first节点
+static &lt;K,V&gt; void moveRootToFront(Node&lt;K,V&gt;[] tab, TreeNode&lt;K,V&gt; root) {
+    int n;
+    if (root != null &amp;&amp; tab != null &amp;&amp; (n = tab.length) &gt; 0) {
+        int index = (n - 1) &amp; root.hash;
+        TreeNode&lt;K,V&gt; first = (TreeNode&lt;K,V&gt;)tab[index];
+        if (root != first) {
+            Node&lt;K,V&gt; rn;
+            tab[index] = root;
+            TreeNode&lt;K,V&gt; rp = root.prev;
+            if ((rn = root.next) != null)
+                ((TreeNode&lt;K,V&gt;)rn).prev = rp;
+            if (rp != null)
+                rp.next = rn;
+            if (first != null)
+                first.prev = root;
+            root.next = first;
+            root.prev = null;
+        }
+        assert checkInvariants(root);
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="resize方法">resize方法</h2>
+<ul>
+<li>
+<p>resize思路：</p>
+<ul>
+<li>
+<p>首先获取当前哈希表的长度和当前的阈值</p>
+</li>
+<li>
+<p>如果当前哈希表的大于0 ，并且长度大于最大允许长度了，就直接返回当前哈希表。</p>
+</li>
+<li>
+<p>如果当前哈希表长度大于0，则新哈希表长度为当前的两倍，如果新哈希表的长度在16-最大值之间，新阈值是扩大为原来的两倍</p>
+</li>
+<li>
+<p>如果哈希表长度小于等于0，但是当前阈值大于0（证明初始化的时候设置了初始容量，并且是第一次resize），则新的哈希表长度为当前的阈值</p>
+</li>
+<li>
+<p>否则哈希表的长度为默认值（16），新的阈值为<code>默认容量 * 默认负载因子</code>（12）</p>
+</li>
+<li>
+<p>如果新的阈值等于0（当前哈希表数组大小为1-15之间的值，或者初始化的时候设置了初始容量，并且是第一次resize）。将新阈值设置成 <code>新哈希表容量 * 加载因子</code>。（如果新的哈希表大小或者阈值超过了限制值，则新阈值为int的最大值）</p>
+</li>
+<li>
+<p>根据新阈值和新哈希表长度重建哈希表。</p>
+<ul>
+<li>
+<p><code>(e.hash &amp; oldCap)</code>：如果为0，则当前元素在新数组位置不会变化；如果不为0 ，则在新数组的位置是原下标 + 原数组长度。<strong><u>保证这个方式计算新位置正确的前提是：哈希表的大小为2的次幂</u></strong></p>
+<blockquote>
+<p>示例1：<br>
+e.hash= 10 0000 1010<br>
+oldCap=16 0001 0000<br>
+&amp; =0 0000 0000 比较高位的第一位 0<br>
+结论：元素位置在扩容后数组中的位置没有发生改变<br>
+示例2：<br>
+e.hash= 17 0001 0001<br>
+oldCap=16 0001 0000<br>
+&amp; =1 0001 0000 比较高位的第一位 1<br>
+结论：元素位置在扩容后数组中的位置发生了改变，新的下标位置是原下标位置+原数组长度</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-java">final Node&lt;K,V&gt;[] resize() {
+    Node&lt;K,V&gt;[] oldTab = table;
+    int oldCap = (oldTab == null) ? 0 : oldTab.length;	// 原来数组的长度
+    int oldThr = threshold;	// 原来的阈值
+    int newCap, newThr = 0;
+    if (oldCap &gt; 0) {	// 如果原来的数组长度大于0
+        if (oldCap &gt;= MAXIMUM_CAPACITY) {	// 如果原来的数组长度已经超过了最大长度，则指改变阈值
+            threshold = Integer.MAX_VALUE;
+            return oldTab;
+        }
+        else if ((newCap = oldCap &lt;&lt; 1) &lt; MAXIMUM_CAPACITY &amp;&amp;	// 将数组的大小扩大为原来的两倍
+                 oldCap &gt;= DEFAULT_INITIAL_CAPACITY)
+            newThr = oldThr &lt;&lt; 1; // double threshold	// 如果以前数组的大小大于默认初始容量（16）则将阈值也扩大为原来的两倍
+    }
+    else if (oldThr &gt; 0) // 如果原来的阈值大于0（当初始化完hashMap，并且初始化时候设置了默认初始容量，就会进入此处）
+        newCap = oldThr;	// 新数组长度为原来的阈值大小
+    else {               // 当原来数组长度和阈值都为0的时候（当初始化完hashMap，并且初始化时候没有设置默认初始容量，就会进入此处）
+        newCap = DEFAULT_INITIAL_CAPACITY;
+        newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);	// 大小为初始容量 * 负载因子
+    }
+    if (newThr == 0) {	// 当哈希表数组大小为1-15任意值 或者 初始化hashmap时候设置了默认容量。无论如何此时newCap是有值的
+        // 注：当哈希表数组大小为536870912时也可能进入此方法，但是条件太苛刻，不讨论此情况
+        float ft = (float)newCap * loadFactor;
+        newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; (float)MAXIMUM_CAPACITY ?
+                  (int)ft : Integer.MAX_VALUE);
+    }
+    threshold = newThr;
+    @SuppressWarnings({&quot;rawtypes&quot;,&quot;unchecked&quot;})
+    Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])new Node[newCap];	// 初始化新的哈希表
+    table = newTab;
+    // 重建哈希表
+    if (oldTab != null) {
+        for (int j = 0; j &lt; oldCap; ++j) {	// 遍历哈希表的每个节点
+            Node&lt;K,V&gt; e;
+            if ((e = oldTab[j]) != null) {
+                oldTab[j] = null;
+                if (e.next == null)	// 对于没有哈希冲突的节点直接放入新的哈希表的对应位置中
+                    newTab[e.hash &amp; (newCap - 1)] = e;
+                else if (e instanceof TreeNode)	// 如果当前节点是树节点，按照树的方式重建
+                    ((TreeNode&lt;K,V&gt;)e).split(this, newTab, j, oldCap);
+                else { // preserve order	// 否则按照链表方式重建
+                    // e为哈希表当前位置头节点
+                    Node&lt;K,V&gt; loHead = null, loTail = null;
+                    Node&lt;K,V&gt; hiHead = null, hiTail = null;
+                    Node&lt;K,V&gt; next;
+                    do {
+                        next = e.next;
+                        /**
+                         * 如果等于0，则该头节点放到新数组时的索引位置等于其在旧数组时的索引位置
+                         * 如果不等于0，则该头节点放到新数组时的索引位置等于其在旧数组时的索引位置再加上旧数组的长度
+                         * https://www.pianshen.com/article/51361404471/
+                         */
+                        if ((e.hash &amp; oldCap) == 0) {	// 在新数组中索引位置不变的节点
+                            if (loTail == null)
+                                loHead = e;
+                            else
+                                loTail.next = e;
+                            loTail = e;
+                        }
+                        else {	// 在新数组中索引位置变化的节点
+                            if (hiTail == null)
+                                hiHead = e;
+                            else
+                                hiTail.next = e;
+                            hiTail = e;
+                        }
+                    } while ((e = next) != null);
+                    if (loTail != null) {
+                        loTail.next = null;
+                        newTab[j] = loHead;
+                    }
+                    if (hiTail != null) {
+                        hiTail.next = null;
+                        newTab[j + oldCap] = hiHead;
+                    }
+                }
+            }
+        }
+  }
+    return newTab;
+}
+</code></pre>
+</li>
+<li>
+<p>验证JDK8 resize改进后，不需要重新计算hash值，resize后的新位置通过<code>hash &amp; (tabCap - 1)</code>也能正确获取</p>
+<ul>
+<li>
+<pre><code class="language-java">public static void main(String[] args){
+
+    int before = 4;
+    int after = 8;
+    Random r = new Random();
+    for (int i = 0; i &lt; 100; i++) {
+        // 随机哈希值
+        int hashCode = r.nextInt(1000000000) + 1000000000;
+        System.out.println(&quot;获取的哈希值为：&quot; + hashCode);
+        // 在原来哈希表中的位置
+        int beforeIndex = hashCode &amp; (before - 1);
+        System.out.println(&quot;原来该放的位置为：&quot; + beforeIndex);
+        // resize后转移到哈希表中的新位置
+        int resizeIndex = (hashCode &amp; before) == 0 ? beforeIndex : before + beforeIndex;
+        System.out.println(&quot;Resize位置为：&quot; + resizeIndex);
+        int afterIndex = (hashCode &amp; (after - 1));
+        System.out.println(&quot;新放的位置为：&quot; + afterIndex);
+        if(afterIndex != resizeIndex){
+            System.out.println(&quot;resize后导致无法正确获取位置&quot;);
+        }
+    }
+}
+</code></pre>
+</li>
+<li></li>
+</ul>
+</li>
+</ul>
+<h2 id="remove方法">remove方法</h2>
+<ul>
+<li>
+<p>删除思路：</p>
+<ul>
+<li>首先判断哈希表不为空，并且判断要删除的节点在哈希表的位置不为null，如果为null则直接返回null</li>
+<li>否则判断第一个节点的键和要删除的键是否相等。如果相等，用node记录当前节点。</li>
+<li>如果不相等判断是否是红黑树节点，如果是红黑树节点按照红黑树方式查找，否则按照链表方式查找。如果找到了使用node记录当前节点</li>
+<li>如果找到了节点，然后看是否还要匹配value，如果都通过匹配了那么就开始删除了</li>
+<li>如果是红黑树节点，按照红黑树方式删除节点，如果是第一个节点，直接将下一个作为头节点，否则链表删除。然后更新版本号和大小</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-java">/**
+     * 移除节点，不能被复写，子类可以通过复写afterNodeRemoval来增加逻辑
+     * @param hash  要移除的key的hash
+     * @param key 要删除的key
+     * @param value 要删除的value，只有当matchValue为true的时候才有用
+     * @param matchValue 是否要将value也作为删除判断的依据
+     * @param movable 删除之后是否移动节点，如果为false则不移动
+     * @return 如果删除了返回被删除对象，否则返回null
+     */
+final HashMap.Node&lt;K,V&gt; removeNode(int hash, Object key, Object value,
+                                   boolean matchValue, boolean movable) {
+    HashMap.Node&lt;K,V&gt;[] tab; HashMap.Node&lt;K,V&gt; p; int n, index;
+    if ((tab = table) != null &amp;&amp; (n = tab.length) &gt; 0 &amp;&amp;
+        (p = tab[index = (n - 1) &amp; hash]) != null) {	// 确保哈希表不为空，并且通过哈希表获取得到值。否则直接返回
+        HashMap.Node&lt;K,V&gt; node = null, e; K k; V v;
+        if (p.hash == hash &amp;&amp;
+            ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
+            node = p;	// 如果头节点（或根节点）的键和查找的键相等
+        else if ((e = p.next) != null) {	// 如果有哈希冲突的节点
+            if (p instanceof HashMap.TreeNode)	// 如果是一个红黑树的节点，按照红黑树的方式获取节点
+                node = ((HashMap.TreeNode&lt;K,V&gt;)p).getTreeNode(hash, key);
+            else {	// 否则按照链表的方式查找节点
+                do {
+                    if (e.hash == hash &amp;&amp;
+                        ((k = e.key) == key ||
+                         (key != null &amp;&amp; key.equals(k)))) {
+                        node = e;
+                        break;
+                    }
+                    p = e;
+                } while ((e = e.next) != null);
+            }
+        }
+        if (node != null &amp;&amp; (!matchValue || (v = node.value) == value ||	// 如果查找到了节点，再判断一下是否还需要通过value判断
+                             (value != null &amp;&amp; value.equals(v)))) {
+            // 进入此处的节点，那么这个节点就确定是要删除的了
+            if (node instanceof HashMap.TreeNode)	// 如果是红黑树节点，按照红黑树的方式删除
+                ((HashMap.TreeNode&lt;K,V&gt;)node).removeTreeNode(this, tab, movable);
+            else if (node == p)	// 如果node == p，则证明要删除的节点是头节点（不是根节点，根节点会进入上一个if）
+                tab[index] = node.next;
+            else	// 否则链表方式删除节点
+                p.next = node.next;
+            ++modCount;	// 更新版本号，便于后续抛出异常
+            --size;	// 减小大小
+            afterNodeRemoval(node);
+            return node;	// 返回删除的节点
+        }
+    }
+    // 如果没有查找到节点的话就返回null
+    return null;
+}
+</code></pre>
+</li>
+</ul>
+<h2 id="hashmap死环">HashMap死环</h2>
+<ul>
+<li>
+<p>jdk7中定位新位置的transfer方法。使用头插法</p>
+<ul>
+<li>
+<pre><code class="language-java">void transfer(Entry[] newTable, boolean rehash) {
+    //新数组的长度
+    int newCapacity = newTable.length;
+    //遍历旧数组
+    for (Entry&lt;K,V&gt; e : table) {
+        while(null != e) {
+            Entry&lt;K,V&gt; next = e.next;
+            if (rehash) {
+                //重新计算hash值
+                e.hash = null == e.key ? 0 : hash(e.key);
+            }
+            //这里根据刚刚得到的新hash重新调用indexFor方法计算下标索引
+            int i = indexFor(e.hash, newCapacity);
+            //假设当前数组中某个位置的链表结构为a-&gt;b-&gt;c;women 
+            //（1）当为原链表中的第一个结点的时候：e.next=null;newTable[i]=e;e=e.next
+            //（2）当遍历到原链表中的后续节点的时候：e.next=head;newTable[i]=e（这里将头节点设置为新插入的结点，即头插法）;e=e.next
+            //（3）这里也是导致扩容后，链表顺序反转的原理（代码就是这样写的，链表反转，当然前提是计算的新下标还是相同的）
+            e.next = newTable[i]; 
+            newTable[i] = e;
+            e = next;
+        }
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>在jdk7中使用头插法可能会导致出现死环（a.next = b，b.next = a）。导致在put的时候一直获取不到数据。</p>
+<ul>
+<li>两个线程同时对一个hashMap resize。线程a执行到<code>Entry&lt;K,V&gt; next = e.next;</code>被阻塞了，线程b执行完了resize，此时a再继续执行时，可能会导致死环。</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java实现动态部署]]></title>
+        <id>https://mxecy.cn/post/java-dynamic-call/</id>
+        <link href="https://mxecy.cn/post/java-dynamic-call/">
+        </link>
+        <updated>2020-11-16T10:00:51.000Z</updated>
+        <content type="html"><![CDATA[<p>最近看深入理解Java虚拟机的时候，第九章给了一个实战-手写一个远程执行功能，觉得是一个对JVM类加载机制以及类文件结构的一个很不错的总结。</p>
+<h1 id="原文内容">原文内容</h1>
+<blockquote>
+<p>首先，在实现“在服务端执行临时代码”这个需求之前，先来明确一下本次实战的具体目标，我们<br>
+希望最终的产品是这样的：</p>
+<ul>
+<li>不依赖某个JDK版本才加入的特性（包括JVMTI），能在目前还被普遍使用的JDK中部署，只要<br>
+是使用JDK 1.4以上的JDK都可以运行。</li>
+<li>不改变原有服务端程序的部署，不依赖任何第三方类库。</li>
+<li>不侵入原有程序，即无须改动原程序的任何代码。也不会对原有程序的运行带来任何影响。</li>
+<li>考虑到BeanShell Script或JavaScript等脚本与Java对象交互起来不太方便，“临时代码”应该直接支持Java语言。</li>
+<li>“临时代码”应当具备足够的自由度，不需要依赖特定的类或实现特定的接口。这里写的是“不需要”而不是“不可以”，当“临时代码”需要引用其他类库时也没有限制，只要服务端程序能使用的类型和接口，临时代码都应当能直接引用。</li>
+<li>“临时代码”的执行结果能返回到客户端，执行结果可以包括程序中输出的信息及抛出的异常等。</li>
+</ul>
+<p>看完上面列出的目标，读者觉得完成这个需求需要做多少工作量呢？也许答案比大多数人所想的都要简单一些：5个类，250行代码（含注释），大约一个半小时左右的开发时间就可以了，现在就开始编写程序吧！</p>
+</blockquote>
+<blockquote>
+<p>在程序实现的过程中，我们需要解决以下3个问题：</p>
+<ul>
+<li>
+<p>如何编译提交到服务器的Java代码？</p>
+</li>
+<li>
+<p>如何执行编译之后的Java代码？</p>
+</li>
+<li>
+<p>如何收集Java代码的执行结果？</p>
+</li>
+</ul>
+<p>对于第一个问题，我们有两种方案可以选择。一种在服务器上编译，在JDK 6以后可以使用Compiler API，在JDK 6以前可以使用tools.jar包（在JAVA_HOME/lib目录下）中的com.sun.tools.Javac.Main类来编译Java文件，它们其实和直接使用Javac命令来编译是一样的。这种思路的缺点是引入了额外的依赖，而且把程序绑死在特定的JDK上了，要部署到其他公司的JDK中还得把tools.jar带上（虽然JRockit和J9虚拟机也有这个JAR包，但它总不是标准所规定必须存在的）。</p>
+<p>另外一种思路是直接在客户端编译好，把字节码而不是Java代码传到服务端，这听起来好像有点投机取巧，<br>
+一般来说确实不应该假定客户端一定具有编译代码的能力，也不能假定客户端就有编译出产品所需的<br>
+依赖项。但是既然程序员会写Java代码去给服务端排查问题，那么很难想象他的机器上会连编译Java程<br>
+序的环境都没有。<br>
+对于第二个问题：要执行编译后的Java代码，让类加载器加载这个类生成一个Class对象，然后反射调用一下某个方法就可以了（因为不实现任何接口，我们可以借用一下Java中约定俗成的“main()”方法）。但我们还应该考虑得更周全些：一段程序往往不是编写、运行一次就能达到效果，同一个类可能要被反复地修改、提交、执行。另外，提交上去的类要能访问到服务端的其他类库才行。还有就是既然提交的是临时代码，那提交的Java类在执行完后就应当能被卸载回收掉。<br>
+最后一个问题，我们想把程序往标准输出（System.out）和标准错误输出（System.err）中打印的信息收集起来。但标准输出设备是整个虚拟机进程全局共享的资源，如果使用System.setOut()/System.setErr()方法把输出流重定向到自己定义的PrintStream对象上固然可以收集到输出信息，但也会对原有程序产生影响：会把其他线程向标准输出中打印的信息也收集了。虽然这些并不是不能解决的问题，不过为了达到完全不影响原程序的目的，我们可以采用另外一种办法：直接在执行的类中把对System.out的符号引用替换为我们准备的PrintStream的符号引用，依赖前面学习到的知识，做到这一点并不困难。</p>
+</blockquote>
+<h1 id="代码实现">代码实现</h1>
+<ul>
+<li>
+<p>自定义类加载器：自定义类加载器用于开放defineClass方法，来将二进制流转换成Class对象，被虚拟机加载。其中指定了父类加载器<code>super(HotSwapClassLoader.class.getClassLoader());</code>用于委托加载其他的类</p>
+<ul>
+<li>
+<pre><code class="language-java">package hotswap;
+
+/**
+ * 为了多次载入执行类而加入的加载器
+ * 把defineClass方法开放出来，只有外部显式调用的时候才会使用到loadByte方法
+ * 由虚拟机调用时，仍然按照原有的双亲委派规则使用loadClass方法进行类加载
+ *
+ * @author zzm
+ */
+public class HotSwapClassLoader extends ClassLoader {
+    public HotSwapClassLoader() {
+        super(HotSwapClassLoader.class.getClassLoader());
+    }
+
+    public Class loadByte(byte[] classByte) {
+        return defineClass(null, classByte, 0, classByte.length);
+    }
+    
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>修改二进制流文件：为了实现文章上说的把System.out替换成自己准备的PrintStream功能，此处是对常量池进行修改，将System的符号引用替换成自定义System（HackSystem）的符号引用。这样加载热部署的类的时候就会把System对象给替换成HackSystem对象</p>
+<ul>
+<li>
+<pre><code class="language-java">package hotswap;
+
+/**
+ * 修改Class文件，暂时只提供修改常量池常量的功能
+ *
+ * @author zzm
+ */
+public class ClassModifier {
+    /**
+     * Class文件中常量池的起始偏移
+     */
+    private static final int CONSTANT_POOL_COUNT_INDEX = 8;
+    /**
+     * CONSTANT_Utf8_info常量的tag标志
+     */
+    private static final int CONSTANT_Utf8_info = 1;
+    /**
+     * 常量池中11种常量所占的长度，CONSTANT_Utf8_info型常量除外，因为它不是定长的
+     */
+    private static final int[] CONSTANT_ITEM_LENGTH = {-1, -1, -1, 5, 5, 9, 9, 3, 3, 5, 5, 5, 5};
+    private static final int u1 = 1;
+    private static final int u2 = 2;
+    private byte[] classByte;
+
+    public ClassModifier(byte[] classByte) {
+        this.classByte = classByte;
+    }
+
+    /**
+     * 修改常量池中CONSTANT_Utf8_info常量的内容
+     *
+     * @param oldStr 修改前的字符串
+     * @param newStr 修改后的字符串
+     * @return 修改结果
+     */
+    public byte[] modifyUTF8Constant(String oldStr, String newStr) {
+        //获取常量池的长度
+        int cpc = getConstantPoolCount();
+        // u2为常量池长度
+        int offset = CONSTANT_POOL_COUNT_INDEX + u2;
+        for (int i = 0; i &lt; cpc; i++) {
+            // 获取单个tag
+            int tag = ByteUtils.bytes2Int(classByte, offset, u1);
+            if (tag == CONSTANT_Utf8_info) {
+                // 如果tag是utf8类型，则获取字符长度
+                int len = ByteUtils.bytes2Int(classByte, offset + u1, u2);
+                // offset往后移u1+u2两位
+                offset += (u1 + u2);
+                // 获取字符的值
+                String str = ByteUtils.bytes2String(classByte, offset, len);
+                if (str.equalsIgnoreCase(oldStr)) {
+                    // 如果找到了目标类，即java.lang.System
+                    byte[] strBytes = ByteUtils.string2Bytes(newStr);
+                    byte[] strLen = ByteUtils.int2Bytes(newStr.length(), u2);
+                    // 将本来的utf8长度换成新的utf8长度
+                    classByte = ByteUtils.bytesReplace(classByte, offset - u2, u2, strLen);
+                    // 将本来的字符串替换为新的字符串
+                    classByte = ByteUtils.bytesReplace(classByte, offset, len, strBytes);
+                    return classByte;
+                } else {
+                    // 如果没找到目标类则跳过
+                    offset += len;
+                }
+            } else {
+                offset += CONSTANT_ITEM_LENGTH[tag];
+            }
+        }
+        return classByte;
+    }
+
+    /**
+     * 获取常量池中常量的数量
+     *
+     * @return 常量池数量
+     */
+    public int getConstantPoolCount() {
+        return ByteUtils.bytes2Int(classByte, CONSTANT_POOL_COUNT_INDEX, u2);
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>HackSystem：自定义的System对象，主要作用是重定义System.out的流对象，其他方法委托给System处理</p>
+<ul>
+<li>
+<pre><code class="language-java">package hotswap;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+
+/**
+ * 为Javaclass劫持java.lang.System提供支持
+ * 除了out和err外，其余的都直接转发给System处理
+ *
+ * @author zzm
+ */
+public class HackSystem {
+    public final static InputStream in = System.in;
+    private static ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    public final static PrintStream out = new PrintStream(buffer);
+    public final static PrintStream err = out;
+
+    public static String getBufferString() {
+        return buffer.toString();
+    }
+
+    public static void clearBuffer() {
+        buffer.reset();
+    }
+
+    public static void setSecurityManager(final SecurityManager s) {
+        System.setSecurityManager(s);
+    }
+
+    public static SecurityManager getSecurityManager() {
+        return System.getSecurityManager();
+    }
+
+    public static long currentTimeMillis() {
+        return System.currentTimeMillis();
+    }
+
+    public static void arraycopy(Object src, int srcPos, Object dest, int destPos, int length) {
+        System.arraycopy(src, srcPos, dest, destPos, length);
+    }
+
+    public static int identityHashCode(Object x) {
+        return System.identityHashCode(x);
+    }
+// 下面所有的方法都与java.lang.System的名称一样
+// 实现都是字节转调System的对应方法
+// 因版面原因，省略了其他方法
+}
+
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>ByteUtils：ClassModifier用到的一些Byte相关的方法</p>
+<ul>
+<li>
+<pre><code class="language-java">package hotswap;
+
+/**
+ * Bytes数组处理工具
+ *
+ * @author
+ */
+public class ByteUtils {
+    public static int bytes2Int(byte[] b, int start, int len) {
+        int sum = 0;
+        int end = start + len;
+        for (int i = start; i &lt; end; i++) {
+            int n = ((int) b[i]) &amp; 0xff;
+            n &lt;&lt;= (--len) * 8;
+            sum = n + sum;
+        }
+        return sum;
+    }
+
+    public static byte[] int2Bytes(int value, int len) {
+        byte[] b = new byte[len];
+        for (int i = 0; i &lt; len; i++) {
+            b[len - i - 1] = (byte) ((value &gt;&gt; 8 * i) &amp; 0xff);
+        }
+        return b;
+    }
+
+    public static String bytes2String(byte[] b, int start, int len) {
+        return new String(b, start, len);
+    }
+
+    public static byte[] string2Bytes(String str) {
+        return str.getBytes();
+    }
+
+    public static byte[] bytesReplace(byte[] originalBytes, int offset, int len, byte[] replaceBytes) {
+        byte[] newBytes = new byte[originalBytes.length + (replaceBytes.length - len)];
+        System.arraycopy(originalBytes, 0, newBytes, 0, offset);
+        System.arraycopy(replaceBytes, 0, newBytes, offset, replaceBytes.length);
+        System.arraycopy(originalBytes, offset + len, newBytes, offset + replaceBytes.length, originalBytes.length - offset - len);
+        return newBytes;
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>测试类：用于测试上面的代码</p>
+<ul>
+<li>
+<pre><code class="language-java">package hotswap;
+
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URLClassLoader;
+import java.util.Scanner;
+
+public class App {
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        String input;
+        byte[] classBytes = null;
+        while ((input = in.nextLine()) != &quot;#&quot;) {
+            /**
+             * 一个ClassLoader不能重复加载同一个类否则会抛出异常
+             * Exception in thread &quot;main&quot; java.lang.LinkageError: loader hotswap.HotSwapClassLoader @3dd3bcd
+             * attempted duplicate class definition for hotswap.HotSwapClassA. (hotswap.HotSwapClassA is in
+             * unnamed module of loader hotswap.HotSwapClassLoader @3dd3bcd, parent loader 'app')
+             */
+            InputStream inputStream ;
+
+            HotSwapClassLoader classLoader = new HotSwapClassLoader();
+            try {
+                inputStream = new FileInputStream(new File(input));
+                classBytes = new byte[inputStream.available()];
+                inputStream.read(classBytes);
+            } catch (IOException e){
+                System.out.println(&quot;读取Class文件出错，重写输入！&quot;);
+                continue;
+            }
+
+            ClassModifier modifier = new ClassModifier(classBytes);
+            classBytes = modifier.modifyUTF8Constant(&quot;java/lang/System&quot;,&quot;hotswap/HackSystem&quot;);
+            Class hotSwapClass = classLoader.loadByte(classBytes);
+            HackSystem.clearBuffer();
+/*            Constructor constructor = hotSwapClass.getConstructor();
+            Object object = constructor.newInstance();
+            Method method = hotSwapClass.getMethod(&quot;hotSwapMethod&quot;, null);
+            method.invoke(object, null);*/
+            Method method = null;
+            try {
+                method = hotSwapClass.getMethod(&quot;hotSwapStaticMethod&quot;);
+                method.invoke(null);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            System.out.println(HackSystem.getBufferString());
+        }
+
+
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>测试动态调用类</p>
+<pre><code class="language-java">package hotswap;
+
+public class HotSwapClassA {
+    public HotSwapClassA(){}
+    public void hotSwapMethod() {
+        System.out.println(&quot;A的热调用方法&quot;);
+    }
+    public static void hotSwapStaticMethod(){
+        System.out.println(&quot;A的热调用静态方法&quot;);
+    }
+}
+
+</code></pre>
+</li>
+<li>
+<p>如果还想实现动态编译的功能可以直接使用jdk1.6提供的<code>StringSourceCompiler</code>类，来对字符串代码进行编译。</p>
+</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[设计模式-状态模式]]></title>
+        <id>https://mxecy.cn/post/designpartten-state/</id>
+        <link href="https://mxecy.cn/post/designpartten-state/">
+        </link>
+        <updated>2020-10-28T11:25:13.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="定义">定义</h1>
+<ul>
+<li>
+<p>Allow an object to alter its behavior when its internal state changes.The object will appear to change its class.（当一个对象内在状态改变时允许其改变行为，这个对象看起来像改变了其类。）</p>
+</li>
+<li>
+<p>角色</p>
+<ul>
+<li>State抽象状态角色：接口或抽象类，负责对象状态定义，并且封装环境角色以实现状态切换。</li>
+<li>ConcreteState具体状态角色：每一个具体状态必须完成两个职责：本状态的行为管理以及趋向状态处理，通俗地说， 就是本状态下要做的事情，以及本状态如何过渡到其他状态。</li>
+<li>Context环境角色：定义客户端需要的接口，并且负责具体状态的切换。</li>
+</ul>
+</li>
+<li>
+<p>通用类图：</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gk5aeio2a0j313r0qk796.jpg" alt="状态模式通用类图" loading="lazy"></figure>
+</li>
+</ul>
+<h1 id="优点">优点</h1>
+<ul>
+<li>结构清晰：避免了过多的switch...case或者if...else语句的使用，避免了程序的复杂性,提高系统的可维护性</li>
+<li>很好地体现了开闭原则和单一职责原则：每个状态都是一个子类，要增加状态就要增加子类，要修改状态，只修改一个子类就可以了。</li>
+<li>封装性非常好：这也是状态模式的基本要求，状态变换放置到类的内部来实现，外部的调用不用知道类内部如何实现状态和行为的变换</li>
+</ul>
+<h1 id="缺点">缺点</h1>
+<ul>
+<li>子类会太多，也就是类膨胀。</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<ul>
+<li>场景：
+<ul>
+<li>行为随状态改变而改变的场景：这也是状态模式的根本出发点，例如权限设计，人员的状态不同即使执行相同的行为结果也会不同，在这种情况下需要考虑使用状态模式</li>
+<li>条件、分支判断语句的替代者：在程序中大量使用switch语句或者if判断语句会导致程序结构不清晰，逻辑混乱，使用状态模式可以很好地避免这一问题，它通过扩展子类实现了条件的判断处理。</li>
+</ul>
+</li>
+</ul>
+<h1 id="代码">代码</h1>
+<h2 id="状态模式">状态模式</h2>
+<h3 id="代码-2">代码</h3>
+<pre><code class="language-Java">package com.pattern.state;
+
+public class StatePartten {
+    public static void main(String[] args) {
+
+    }
+}
+
+/**
+ * 抽象环境角色
+ */
+abstract class State {
+    //定义一个环境角色，提供子类访问
+    protected Context context;
+
+    //设置环境角色
+    public void setContext(Context _context) {
+        this.context = _context;
+    }
+
+    //行为1
+    public abstract void handle1();
+
+    //行为2
+    public abstract void handle2();
+}
+
+class ConcreteState1 extends State {
+    @Override
+    public void handle1() {
+        //本状态下必须处理的逻辑
+    }
+
+    @Override
+    public void handle2() {
+        //设置当前状态为stat2
+        super.context.setCurrentState(Context.STATE2);
+        //过渡到state2状态，由Context实现
+        super.context.handle2();
+    }
+}
+
+class ConcreteState2 extends State {
+    @Override
+    public void handle1() {
+        //设置当前状态为state1
+        super.context.setCurrentState(Context.STATE1);
+        //过渡到state1状态，由Context实现
+        super.context.handle1();
+    }
+
+    @Override
+    public void handle2() {
+        //本状态下必须处理的逻辑
+    }
+}
+
+/**
+ * 具体环境角色
+ */
+class Context {
+    //定义状态
+    public final static State STATE1 = new ConcreteState1();
+    public final static State STATE2 = new ConcreteState2();
+    //当前状态
+    private State CurrentState;
+
+    //获得当前状态
+    public State getCurrentState() {
+        return CurrentState;
+    }
+
+    //设置当前状态
+    public void setCurrentState(State currentState) {
+        this.CurrentState = currentState;
+//切换状态
+        this.CurrentState.setContext(this);
+    }
+
+    //行为委托
+    public void handle1() {
+        this.CurrentState.handle1();
+    }
+
+    public void handle2() {
+        this.CurrentState.handle2();
+    }
+}
+</code></pre>
+<h1 id="注意">注意</h1>
+<ul>
+<li>把状态对象声明为静态常量，有几个状态对象就声明几个静态常量</li>
+<li>环境角色具有状态抽象角色定义的所有行为，具体执行使用委托方式。</li>
+<li>状态模式适用于当某个对象在它的状态发生改变时，它的行为也随着发生比较大的变化，也就是说在行为受状态约束的情况下可以使用状态模式，而且使用时对象的状态最好不要超过5个。</li>
+</ul>
+]]></content>
+    </entry>
+</feed>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>设计模式-适配器模式 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="设计模式-适配器模式 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="设计模式-适配器模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/designpartten-adapter/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>设计模式-适配器模式</h1>
+    <span class="meta">
+      Posted on
+      2020-09-24，7 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="定义">定义</h1>
+<ul>
+<li>Convert the interface of a class into another interface clients expect.Adapter lets classes work together that couldn't otherwise because of incompatible interfaces.（将一个类的接口变换成客户端所期待的另一种接口，从而使原本因接口不匹配而无法在一起工作的两个类能够在一起工作。）</li>
+<li>适配器模式就是把一个接口或类转换成其他的接口或类</li>
+<li>分类：由于Java只支持单继承，所以适配器模式也分为类适配器和对象适配器。</li>
+<li>类适配器：使用类间继承，只能通过复写原角色的方法进行扩展。</li>
+<li>对象适配器：使用类间关联进行耦合，设计时候比较灵活</li>
+<li>组成：
+<ul>
+<li>Target目标角色：该角色定义把其他类转换为何种接口，也就是我们的期望接口</li>
+<li>Adaptee原角色：想把谁转换成目标角色，这个&quot;谁&quot;就是源角色，它是已经存在的、运行良好的类或对象，结果适配器角色的包装，它会成为 一个新的角色</li>
+<li>Adapter适配器角色：把原角色转换为目标角色，通过继承或是类的关联</li>
+</ul>
+</li>
+<li>通用类图</li>
+</ul>
+<p>类适配器类图</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj1hq3fd0vj314m0tdwk7.jpg" alt="适配器模式通用类图" loading="lazy"></figure>
+<p>对象适配器通用类图</p>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj1mib2lngj31bi0jojwb.jpg" alt="对象适配器通用类图" loading="lazy"></figure>
+<h1 id="优点">优点</h1>
+<ul>
+<li>适配器模式可以让两个没有任何关系的类在一起运行。</li>
+<li>增加了类的透明性：我们访问的Target目标角色，但是具体的实现都委托给了源角色，而这些对高层次模块是透明的，也是它不需要关心的</li>
+<li>提高了类的复用度：源角色在原有的系统中还是可以正常使用，而在目标角色中也可以充当新的演员</li>
+<li>灵活性非常好：如果突然不想要适配器，没问题，删除掉这个适配器就可以了，其他的代码都不用修改，基本上就类似一个灵活的构件，想用就用，不想就卸载</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<ul>
+<li>场景：
+<ul>
+<li>有动机修改一个已经投产中的接口：比如系统扩展，需要要使用一个已有或新建立的类，但这个类又不符合系统的接口，就可以使用适配器模式</li>
+</ul>
+</li>
+</ul>
+<h1 id="代码">代码</h1>
+<p>适配器模式是在后期维护的时候考虑的设计模式，而不是在设计的时候考虑的设计模式。同时根据应用场景，适配器模式需要进行灵活的扩展，下面是适配器模式的一个基本框架</p>
+<p>由于Java不支持多继承。如果一个原角色的用户类的各个信息是分开的（如：用户基本信息一个接口一个类，用户家庭信息一个接口一个类。符合单一职责原则），那么类适配器就不适用了，此时应该使用对象适配器来解决。</p>
+<h2 id="类适配器">类适配器</h2>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj1igzud04j30fr063t8r.jpg" alt="类适配器本实例类图" loading="lazy"></figure>
+<h3 id="代码-2">代码</h3>
+<p>被转换角色（<strong>普通类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.adapter.classadapter.adaptee;
+
+/**
+ * 类适配器
+ * 原角色，需要被转换的角色
+ */
+public class ClassAdaptee {
+    public void AdapteeMethod(){
+        System.out.println(&quot;原角色的方法&quot;);
+    }
+}
+
+</code></pre>
+<p>目标角色接口（<strong>接口</strong>）</p>
+<pre><code class="language-Java">package com.pattern.adapter.classadapter.target;
+
+/**
+ * 类适配器
+ * 目标角色接口，需要被转换成的角色接口
+ */
+public interface ClassAdapterTarget {
+    // 目标角色自己的方法
+    void TargetMethod();
+}
+
+</code></pre>
+<p>具体目标角色（<strong>实现目标角色接口</strong>）</p>
+<pre><code class="language-Java">package com.pattern.adapter.classadapter.target;
+/**
+ * 类适配器
+ * 目标角色，需要被转换成的角色
+ */
+public class ConcreteClassAdapterTarget implements ClassAdapterTarget {
+    @Override
+    public void TargetMethod() {
+        System.out.println(&quot;具体的目标角色的方法&quot;);
+    }
+}
+
+</code></pre>
+<p>适配器（<strong>普通类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.adapter.classadapter;
+
+import com.pattern.adapter.classadapter.adaptee.ClassAdaptee;
+import com.pattern.adapter.classadapter.target.ClassAdapterTarget;
+
+/**
+ * 类适配器
+ * 适配器角色，用于转换
+ */
+public class ClassAdapter extends ClassAdaptee implements ClassAdapterTarget {
+    @Override
+    public void TargetMethod() {
+        super.AdapteeMethod();
+    }
+}
+
+</code></pre>
+<h3 id="测试代码">测试代码</h3>
+<pre><code class="language-Java">package com.pattern;
+
+import com.pattern.adapter.classadapter.ClassAdapter;
+import com.pattern.adapter.classadapter.adaptee.ClassAdaptee;
+import com.pattern.adapter.classadapter.target.ConcreteClassAdapterTarget;
+import com.pattern.adapter.classadapter.target.ClassAdapterTarget;
+import com.pattern.adapter.objectadapter.ObjectAdapter;
+import com.pattern.adapter.objectadapter.adaptee.IObjectAdapteeInf;
+import com.pattern.adapter.objectadapter.adaptee.IObjectAdapteeName;
+import com.pattern.adapter.objectadapter.adaptee.impl.ObjectAdapteeInf;
+import com.pattern.adapter.objectadapter.adaptee.impl.ObjectAdapteeName;
+import com.pattern.adapter.objectadapter.target.ObjectAdapterTarget;
+import org.junit.Test;
+
+public class AdapterTest {
+    /**
+     * 类适配器测试
+     */
+    @Test
+    public void classAdapterTest(){
+        System.out.println(&quot;-------定义一个原角色-------&quot;);
+        ClassAdaptee adaptee = new ClassAdaptee();
+        adaptee.AdapteeMethod();
+        System.out.println(&quot;-------定义一个目标角色-------&quot;);
+        ClassAdapterTarget target = new ConcreteClassAdapterTarget();
+        target.TargetMethod();
+        System.out.println(&quot;-------定义由原角色转换来的目标角色-------&quot;);
+        ClassAdapter adapter = new ClassAdapter();
+        adapter.AdapteeMethod();
+    }
+
+}
+
+</code></pre>
+<h3 id="结果">结果</h3>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj1igzoesjj30fn07gwel.jpg" alt="适配器模式运行结果" loading="lazy"></figure>
+<h2 id="对象适配器">对象适配器</h2>
+<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj1nrr1z7sj30ox0aawf2.jpg" alt="对象适配器本实例类图" loading="lazy"></figure>
+<h3 id="代码-3">代码</h3>
+<p>被转换角色名字接口（<strong>接口</strong>）</p>
+<pre><code class="language-Java">package com.pattern.adapter.objectadapter.adaptee;
+
+public interface IObjectAdapteeName {
+     String getName();
+}
+
+</code></pre>
+<p>被转换角色名字实现（<strong>实现被转换角色名字接口</strong>）</p>
+<pre><code class="language-Java">package com.pattern.adapter.objectadapter.adaptee.impl;
+
+import com.pattern.adapter.objectadapter.adaptee.IObjectAdapteeName;
+
+public class ObjectAdapteeName implements IObjectAdapteeName {
+    @Override
+    public String getName() {
+        return &quot;Name&quot;;
+    }
+}
+
+</code></pre>
+<p>被转换角色信息接口（<strong>接口</strong>）</p>
+<pre><code class="language-Java">package com.pattern.adapter.objectadapter.adaptee;
+
+public interface IObjectAdapteeInf {
+    String getInformation();
+}
+
+</code></pre>
+<p>被转换角色信息实现（<strong>实现被转换角色名字接口</strong>）</p>
+<pre><code class="language-Java">package com.pattern.adapter.objectadapter.adaptee.impl;
+
+import com.pattern.adapter.objectadapter.adaptee.IObjectAdapteeInf;
+
+public class ObjectAdapteeInf implements IObjectAdapteeInf {
+    @Override
+    public String getInformation() {
+        return &quot;Information&quot;;
+    }
+}
+
+</code></pre>
+<p>目标角色接口（<strong>接口</strong>）</p>
+<pre><code class="language-Java">package com.pattern.adapter.objectadapter.target;
+
+public interface ObjectAdapterTarget {
+    String getName();
+    String getInformation();
+}
+
+</code></pre>
+<p>适配器（<strong>实现目标角色接口</strong>）</p>
+<pre><code class="language-Java">package com.pattern.adapter.objectadapter;
+
+import com.pattern.adapter.objectadapter.adaptee.IObjectAdapteeInf;
+import com.pattern.adapter.objectadapter.adaptee.IObjectAdapteeName;
+import com.pattern.adapter.objectadapter.target.ObjectAdapterTarget;
+
+public class ObjectAdapter implements ObjectAdapterTarget {
+    private IObjectAdapteeName objectAdapteeName;
+    private IObjectAdapteeInf objectAdapteeInf;
+
+    public ObjectAdapter(IObjectAdapteeName objectAdapteeName, IObjectAdapteeInf objectAdapteeInf) {
+        this.objectAdapteeName = objectAdapteeName;
+        this.objectAdapteeInf = objectAdapteeInf;
+    }
+
+    @Override
+    public String getName() {
+        return this.objectAdapteeName.getName();
+    }
+
+    @Override
+    public String getInformation() {
+        return this.objectAdapteeInf.getInformation();
+    }
+}
+
+</code></pre>
+<h3 id="测试代码-2">测试代码</h3>
+<pre><code class="language-Java">package com.pattern;
+
+import com.pattern.adapter.classadapter.ClassAdapter;
+import com.pattern.adapter.classadapter.adaptee.ClassAdaptee;
+import com.pattern.adapter.classadapter.target.ConcreteClassAdapterTarget;
+import com.pattern.adapter.classadapter.target.ClassAdapterTarget;
+import com.pattern.adapter.objectadapter.ObjectAdapter;
+import com.pattern.adapter.objectadapter.adaptee.IObjectAdapteeInf;
+import com.pattern.adapter.objectadapter.adaptee.IObjectAdapteeName;
+import com.pattern.adapter.objectadapter.adaptee.impl.ObjectAdapteeInf;
+import com.pattern.adapter.objectadapter.adaptee.impl.ObjectAdapteeName;
+import com.pattern.adapter.objectadapter.target.ObjectAdapterTarget;
+import org.junit.Test;
+
+public class AdapterTest {
+    /**
+     * 对象适配器测试
+     */
+    @Test
+    public void objectAdapterTest(){
+        System.out.println(&quot;-------定义一个原角色的信息-------&quot;);
+        IObjectAdapteeName objectAdapteeName = new ObjectAdapteeName();
+        IObjectAdapteeInf objectAdapteeInf = new ObjectAdapteeInf();
+        System.out.println(&quot;-------定义一个目标角色-------&quot;);
+        ObjectAdapterTarget target = new ObjectAdapter(objectAdapteeName,objectAdapteeInf);
+        System.out.println(&quot;-------打印目标角色信息-------&quot;);
+        System.out.println(target.getName());
+        System.out.println(target.getInformation());
+
+    }
+}
+
+</code></pre>
+<h3 id="结果-2">结果</h3>
+<figure data-type="image" tabindex="6"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj1nrqsp6uj30fh0750sv.jpg" alt="对象适配器运行结果" loading="lazy"></figure>
+<h1 id="注意">注意</h1>
+<ul>
+<li>在装饰者模式中，必然有一个最基本、最核心、最原始的接口或抽象充当Component抽象构件</li>
+<li>原始方法和装饰方法的执行顺序在具体的装饰类是固定的，可以通过方法重载实现多种执行顺序</li>
+<li>适配器模式是一种补救模式，通常用来解决接口不相容的问题。在设计中是不可能用到的</li>
+<li>对象适配器较类适配器更为灵活，项目中更常使用对象适配器</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
+<ul>
+<li><a href="#%E7%B1%BB%E9%80%82%E9%85%8D%E5%99%A8">类适配器</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AF%B9%E8%B1%A1%E9%80%82%E9%85%8D%E5%99%A8">对象适配器</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81-3">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-2">测试代码</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C-2">结果</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/designpartten-Chain-of-Responsibility/">
+              <span class="post-title">
+                设计模式-责任链模式&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/designpartten-adapter/" class="leancloud_visitors"
+              data-flag-title="设计模式-适配器模式">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>设计模式-建造者模式 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="设计模式-建造者模式 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="设计模式-建造者模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/designpartten-builder/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>设计模式-建造者模式</h1>
+    <span class="meta">
+      Posted on
+      2020-08-29，8 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="定义">定义</h1>
+<ul>
+<li>Separate the construction of a complex object from its representation so that the saame construction process can create different representations.（将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。）</li>
+<li>建筑者模式通常有四个角色
+<ul>
+<li>Product产品类：通常是实现了模板方法模式，也就是有模板方法和基本方法</li>
+<li>Builder抽象建造者：规范产品的组建，一般是由子类实现</li>
+<li>ConcreteBuilder具体建造者：实现抽象类定义的所有方法，并返回一个组建好的对象。</li>
+<li>Director导演类：负责安排已有模块的顺序，然后告诉Builder开始建造。</li>
+</ul>
+</li>
+</ul>
+<h1 id="优点">优点</h1>
+<ul>
+<li>封装性：使用建造者模式可以使客户端不必知道产品内部的组成细节</li>
+<li>建造者独立，容易扩展。</li>
+<li>方便用户自由的创建复杂的对象</li>
+<li>便于控制细节风险：由于具体的建造者是独立的，因此可以对建造过程逐步细化，并不对其他模块产生任何影响。</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<ul>
+<li>场景：
+<ul>
+<li>相同的方法，不同的执行顺序，产生不同的事件结果时，可以使用建造者模式</li>
+<li>多个零件或部件，都可以装配到一个对象中，但是产生的运行结果又不相同时，可以使用建造者模式</li>
+<li>产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能</li>
+<li>在对象创建过程中会使用到系统中的一些其他对象，这些对象在产品对象的创建过程中不易得到时。（注意：这种方法只适用于维护阶段，因为一个对象不容易获得，这应该是在设计阶段考虑的问题，通过建造者模式来柔化创建过程，本来就违反了设计的最初目标）</li>
+</ul>
+</li>
+</ul>
+<h1 id="代码">代码</h1>
+<h2 id="通用类图">通用类图</h2>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0l7m19cdj30vi0dxdij.jpg" alt="建造者模式通用类图" loading="lazy"></figure>
+<h2 id="基本的建造者模式">基本的建造者模式</h2>
+<h3 id="类图">类图</h3>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gi7rcy412xj30hl0gyq3y.jpg" alt="建造者模式基本类图" loading="lazy"></figure>
+<h3 id="代码-2">代码</h3>
+<p>产品类代码</p>
+<pre><code class="language-Java">package com.pattern.builder.products;
+
+import java.util.List;
+
+/**
+ * 建造者模式的产品
+ */
+public class Product {
+    // 产品名称
+    private String productName;
+    // 产品的组成部分
+    private List&lt;String&gt; productParts;
+
+    // 添加产品的组成部分
+    public void addProductPart(String part) {
+        this.productParts.add(part);
+    }
+
+    public Product(){}
+    public Product(String productName,List&lt;String&gt; productParts){
+        this.productName = productName;
+        this.productParts = productParts;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public List&lt;String&gt; getProductParts() {
+        return productParts;
+    }
+
+    public void setProductParts(List&lt;String&gt; productParts) {
+        this.productParts = productParts;
+    }
+
+    @Override
+    public String toString() {
+        return &quot;Product [productName=&quot; + productName + &quot;, productParts=&quot; + productParts + &quot;]&quot;;
+    }
+    
+}
+</code></pre>
+<p>建造者（<strong>抽象类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.builder.template;
+
+import com.pattern.builder.products.Product;
+
+public abstract class TemplateBuilder {
+    // 产品
+    protected Product product = new Product();
+    public abstract void addPart(String part);
+    public abstract void setName(String name);
+    // 生产产品
+    public Product create(){
+        return this.product;
+    }
+    // 清理场景，用于清理上次的场景，防止数据出错
+    public void clear(){
+        product = new Product();
+    }
+}
+</code></pre>
+<p>具体的建造者（<strong>继承自建造者</strong>）</p>
+<pre><code class="language-Java">package com.pattern.builder.template;
+
+import java.util.ArrayList;
+
+/**
+ * 具体的建造者实现类
+ */
+public class TemplateConcreteBuilder extends TemplateBuilder{
+
+    @Override
+    public void addPart(String part) {
+        // 如果产品ProductParts没有初始化则初始化
+        if(super.product.getProductParts() == null){
+            super.product.setProductParts(new ArrayList&lt;String&gt;());
+        }
+        super.product.addProductPart(part);
+    }
+
+    @Override
+    public void setName(String name) {
+        super.product.setProductName(name);
+    }
+    
+}
+</code></pre>
+<p>导演类（用于指导建造者创建，可有可无）</p>
+<pre><code class="language-Java">package com.pattern.builder.template;
+
+/**
+ * 导演类，用于指导建造，即通过模板建造预定好的产品
+ */
+
+import com.pattern.builder.products.Product;
+
+public class TemplateDirector {
+    private TemplateBuilder builder;
+
+    public TemplateDirector(TemplateBuilder builder) {
+        this.builder = builder;
+    }
+
+    // 预定好的产品模板1
+    public Product getProduct1() {
+        // 显示调用一次清理方法清理上一次可能残留下来的产品
+        builder.clear();
+        builder.setName(&quot;汽车&quot;);
+        builder.addPart(&quot;发动机&quot;);
+        builder.addPart(&quot;轮胎&quot;);
+        builder.addPart(&quot;引擎&quot;);
+        return builder.create();
+    }
+
+    // 预定好的产品模板2
+    public Product getProduct2() {
+        // 显示调用一次清理方法清理上一次可能残留下来的产品
+        builder.clear();
+        builder.setName(&quot;自行车&quot;);
+        builder.addPart(&quot;车龙头&quot;);
+        builder.addPart(&quot;轮胎&quot;);
+        builder.addPart(&quot;车链&quot;);
+        return builder.create();
+    }
+}
+</code></pre>
+<h3 id="测试代码">测试代码</h3>
+<pre><code class="language-Java">package com.pattern;
+
+import com.pattern.builder.extend.SimpleBuilder;
+import com.pattern.builder.products.Product;
+import com.pattern.builder.template.TemplateBuilder;
+import com.pattern.builder.template.TemplateConcreteBuilder;
+import com.pattern.builder.template.TemplateDirector;
+
+import org.junit.Test;
+
+public class BuilderTest {
+    // 通用建造者模式测试
+    @Test
+    public void TemplateBuilderTest() {
+        System.out.println(&quot;-----------创建一个建造者对象-------------&quot;);
+        TemplateBuilder builder = new TemplateConcreteBuilder();
+        System.out.println(&quot;-----------创建一个导演对象-------------&quot;);
+        TemplateDirector director = new TemplateDirector(builder);
+        System.out.println(&quot;-----------创建一个预定的产品：汽车-------------&quot;);
+        Product car = director.getProduct1();
+        System.out.println(car.toString());
+        System.out.println(&quot;-----------创建一个预定产品：自行车-------------&quot;);
+        Product bike = director.getProduct2();
+        System.out.println(bike.toString());
+    }
+}
+</code></pre>
+<h3 id="结果">结果</h3>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gi7rcyb5pdj30ho04taah.jpg" alt="基本建造者模式执行结果" loading="lazy"></figure>
+<h2 id="简化的建造者模式">简化的建造者模式</h2>
+<p><strong>简化后的建造者模式在开源框架中的使用较多，如httpclient的MultipartEntityBuilder</strong></p>
+<h3 id="类图-2">类图</h3>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gi7rcyipidj30a70dzgm0.jpg" alt="简化的建造者模式类图" loading="lazy"></figure>
+<h3 id="代码-3">代码</h3>
+<p>产品类（<strong>同上</strong>）<br>
+简化后的建造者</p>
+<pre><code class="language-Java">package com.pattern.builder.extend;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.pattern.builder.products.Product;
+
+/**
+ * 建造者模式的一个简化版，使得构建的过程比较明了清晰。
+ */
+public class SimpleBuilder {
+    private String productName;
+    private List&lt;String&gt; productParts;
+    // 返回一个建筑者对象
+    public static SimpleBuilder create(){
+        return new SimpleBuilder();
+    }
+    // 添加产品名字
+    public SimpleBuilder setProductName(String productName){
+        this.productName = productName;
+        return this;
+    }
+    // 添加产品组成部分
+    public SimpleBuilder addProductPart(String part){
+        if(this.productParts == null){
+            this.productParts = new ArrayList&lt;String&gt;();
+        }
+        this.productParts.add(part);
+        return this;
+    }
+    // 清理场景
+    public void clear(){
+        this.productName = null;
+        this.productParts.clear();;
+    }
+    // 创建产品
+    public Product build(){
+        Product product = new Product(this.productName, this.productParts);
+        return product;
+    }
+}
+</code></pre>
+<h3 id="测试代码-2">测试代码</h3>
+<pre><code class="language-Java">package com.pattern;
+
+import com.pattern.builder.extend.SimpleBuilder;
+import com.pattern.builder.products.Product;
+import com.pattern.builder.template.TemplateBuilder;
+import com.pattern.builder.template.TemplateConcreteBuilder;
+import com.pattern.builder.template.TemplateDirector;
+
+import org.junit.Test;
+
+public class BuilderTest {
+    // 简化的建造者模式测试
+    @Test
+    public void SimpleBuilderTest() {
+        System.out.println(&quot;-----------通过静态方法创建一个建造者对象-------------&quot;);
+        SimpleBuilder builder = SimpleBuilder.create();
+        System.out.println(&quot;-----------创建一个预定的产品：汽车-------------&quot;);
+        Product car = builder.setProductName(&quot;汽车&quot;).addProductPart(&quot;发动机&quot;).addProductPart(&quot;轮胎&quot;).addProductPart(&quot;引擎&quot;)
+                .build();
+        System.out.println(car.toString());
+        System.out.println(&quot;-----------要用同一个建筑者对象创建一个新的产品需要先清理前一个场景-------------&quot;);
+        builder.clear();
+        System.out.println(&quot;-----------创建一个预定产品：自行车-------------&quot;);
+        Product bike = builder.setProductName(&quot;自行车&quot;).addProductPart(&quot;车龙头&quot;).addProductPart(&quot;轮胎&quot;).addProductPart(&quot;车链&quot;)
+                .build();
+        System.out.println(bike.toString());
+    }
+}
+</code></pre>
+<h3 id="运行结果">运行结果</h3>
+<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gi7rd00nevj30hs04kaak.jpg" alt="简化的建造者模式执行结果" loading="lazy"></figure>
+<h1 id="注意">注意</h1>
+<ul>
+<li>如果一个建造者要建造多个不同的对象，请注意调用clear来清理场景。顺带一提：如果ArrayList和HashMap定义为类的成员变量，那在方法中的调用一定要做一个clear动作防止数据混乱。</li>
+<li>建造者模式关注的是零件类型和装配顺序，这是它与工厂方法模式最大的不同。虽然同为创建类模式，但是注重点不同。</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
+<ul>
+<li><a href="#%E9%80%9A%E7%94%A8%E7%B1%BB%E5%9B%BE">通用类图</a></li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E7%9A%84%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F">基本的建造者模式</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9B%BE">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
+</ul>
+</li>
+<li><a href="#%E7%AE%80%E5%8C%96%E7%9A%84%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F">简化的建造者模式</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9B%BE-2">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-3">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-2">测试代码</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C">运行结果</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/designpartten-template/">
+              <span class="post-title">
+                设计模式-模板方法设计模式&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/designpartten-builder/" class="leancloud_visitors"
+              data-flag-title="设计模式-建造者模式">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

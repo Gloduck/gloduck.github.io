@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>Java实现动态部署 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="Java实现动态部署 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="Java实现动态部署" />
+  <meta property="og:url" content="https://mxecy.cn/post/java-dynamic-call/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>Java实现动态部署</h1>
+    <span class="meta">
+      Posted on
+      2020-11-16，11 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p>最近看深入理解Java虚拟机的时候，第九章给了一个实战-手写一个远程执行功能，觉得是一个对JVM类加载机制以及类文件结构的一个很不错的总结。</p>
+<h1 id="原文内容">原文内容</h1>
+<blockquote>
+<p>首先，在实现“在服务端执行临时代码”这个需求之前，先来明确一下本次实战的具体目标，我们<br>
+希望最终的产品是这样的：</p>
+<ul>
+<li>不依赖某个JDK版本才加入的特性（包括JVMTI），能在目前还被普遍使用的JDK中部署，只要<br>
+是使用JDK 1.4以上的JDK都可以运行。</li>
+<li>不改变原有服务端程序的部署，不依赖任何第三方类库。</li>
+<li>不侵入原有程序，即无须改动原程序的任何代码。也不会对原有程序的运行带来任何影响。</li>
+<li>考虑到BeanShell Script或JavaScript等脚本与Java对象交互起来不太方便，“临时代码”应该直接支持Java语言。</li>
+<li>“临时代码”应当具备足够的自由度，不需要依赖特定的类或实现特定的接口。这里写的是“不需要”而不是“不可以”，当“临时代码”需要引用其他类库时也没有限制，只要服务端程序能使用的类型和接口，临时代码都应当能直接引用。</li>
+<li>“临时代码”的执行结果能返回到客户端，执行结果可以包括程序中输出的信息及抛出的异常等。</li>
+</ul>
+<p>看完上面列出的目标，读者觉得完成这个需求需要做多少工作量呢？也许答案比大多数人所想的都要简单一些：5个类，250行代码（含注释），大约一个半小时左右的开发时间就可以了，现在就开始编写程序吧！</p>
+</blockquote>
+<blockquote>
+<p>在程序实现的过程中，我们需要解决以下3个问题：</p>
+<ul>
+<li>
+<p>如何编译提交到服务器的Java代码？</p>
+</li>
+<li>
+<p>如何执行编译之后的Java代码？</p>
+</li>
+<li>
+<p>如何收集Java代码的执行结果？</p>
+</li>
+</ul>
+<p>对于第一个问题，我们有两种方案可以选择。一种在服务器上编译，在JDK 6以后可以使用Compiler API，在JDK 6以前可以使用tools.jar包（在JAVA_HOME/lib目录下）中的com.sun.tools.Javac.Main类来编译Java文件，它们其实和直接使用Javac命令来编译是一样的。这种思路的缺点是引入了额外的依赖，而且把程序绑死在特定的JDK上了，要部署到其他公司的JDK中还得把tools.jar带上（虽然JRockit和J9虚拟机也有这个JAR包，但它总不是标准所规定必须存在的）。</p>
+<p>另外一种思路是直接在客户端编译好，把字节码而不是Java代码传到服务端，这听起来好像有点投机取巧，<br>
+一般来说确实不应该假定客户端一定具有编译代码的能力，也不能假定客户端就有编译出产品所需的<br>
+依赖项。但是既然程序员会写Java代码去给服务端排查问题，那么很难想象他的机器上会连编译Java程<br>
+序的环境都没有。<br>
+对于第二个问题：要执行编译后的Java代码，让类加载器加载这个类生成一个Class对象，然后反射调用一下某个方法就可以了（因为不实现任何接口，我们可以借用一下Java中约定俗成的“main()”方法）。但我们还应该考虑得更周全些：一段程序往往不是编写、运行一次就能达到效果，同一个类可能要被反复地修改、提交、执行。另外，提交上去的类要能访问到服务端的其他类库才行。还有就是既然提交的是临时代码，那提交的Java类在执行完后就应当能被卸载回收掉。<br>
+最后一个问题，我们想把程序往标准输出（System.out）和标准错误输出（System.err）中打印的信息收集起来。但标准输出设备是整个虚拟机进程全局共享的资源，如果使用System.setOut()/System.setErr()方法把输出流重定向到自己定义的PrintStream对象上固然可以收集到输出信息，但也会对原有程序产生影响：会把其他线程向标准输出中打印的信息也收集了。虽然这些并不是不能解决的问题，不过为了达到完全不影响原程序的目的，我们可以采用另外一种办法：直接在执行的类中把对System.out的符号引用替换为我们准备的PrintStream的符号引用，依赖前面学习到的知识，做到这一点并不困难。</p>
+</blockquote>
+<h1 id="代码实现">代码实现</h1>
+<ul>
+<li>
+<p>自定义类加载器：自定义类加载器用于开放defineClass方法，来将二进制流转换成Class对象，被虚拟机加载。其中指定了父类加载器<code>super(HotSwapClassLoader.class.getClassLoader());</code>用于委托加载其他的类</p>
+<ul>
+<li>
+<pre><code class="language-java">package hotswap;
+
+/**
+ * 为了多次载入执行类而加入的加载器
+ * 把defineClass方法开放出来，只有外部显式调用的时候才会使用到loadByte方法
+ * 由虚拟机调用时，仍然按照原有的双亲委派规则使用loadClass方法进行类加载
+ *
+ * @author zzm
+ */
+public class HotSwapClassLoader extends ClassLoader {
+    public HotSwapClassLoader() {
+        super(HotSwapClassLoader.class.getClassLoader());
+    }
+
+    public Class loadByte(byte[] classByte) {
+        return defineClass(null, classByte, 0, classByte.length);
+    }
+    
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>修改二进制流文件：为了实现文章上说的把System.out替换成自己准备的PrintStream功能，此处是对常量池进行修改，将System的符号引用替换成自定义System（HackSystem）的符号引用。这样加载热部署的类的时候就会把System对象给替换成HackSystem对象</p>
+<ul>
+<li>
+<pre><code class="language-java">package hotswap;
+
+/**
+ * 修改Class文件，暂时只提供修改常量池常量的功能
+ *
+ * @author zzm
+ */
+public class ClassModifier {
+    /**
+     * Class文件中常量池的起始偏移
+     */
+    private static final int CONSTANT_POOL_COUNT_INDEX = 8;
+    /**
+     * CONSTANT_Utf8_info常量的tag标志
+     */
+    private static final int CONSTANT_Utf8_info = 1;
+    /**
+     * 常量池中11种常量所占的长度，CONSTANT_Utf8_info型常量除外，因为它不是定长的
+     */
+    private static final int[] CONSTANT_ITEM_LENGTH = {-1, -1, -1, 5, 5, 9, 9, 3, 3, 5, 5, 5, 5};
+    private static final int u1 = 1;
+    private static final int u2 = 2;
+    private byte[] classByte;
+
+    public ClassModifier(byte[] classByte) {
+        this.classByte = classByte;
+    }
+
+    /**
+     * 修改常量池中CONSTANT_Utf8_info常量的内容
+     *
+     * @param oldStr 修改前的字符串
+     * @param newStr 修改后的字符串
+     * @return 修改结果
+     */
+    public byte[] modifyUTF8Constant(String oldStr, String newStr) {
+        //获取常量池的长度
+        int cpc = getConstantPoolCount();
+        // u2为常量池长度
+        int offset = CONSTANT_POOL_COUNT_INDEX + u2;
+        for (int i = 0; i &lt; cpc; i++) {
+            // 获取单个tag
+            int tag = ByteUtils.bytes2Int(classByte, offset, u1);
+            if (tag == CONSTANT_Utf8_info) {
+                // 如果tag是utf8类型，则获取字符长度
+                int len = ByteUtils.bytes2Int(classByte, offset + u1, u2);
+                // offset往后移u1+u2两位
+                offset += (u1 + u2);
+                // 获取字符的值
+                String str = ByteUtils.bytes2String(classByte, offset, len);
+                if (str.equalsIgnoreCase(oldStr)) {
+                    // 如果找到了目标类，即java.lang.System
+                    byte[] strBytes = ByteUtils.string2Bytes(newStr);
+                    byte[] strLen = ByteUtils.int2Bytes(newStr.length(), u2);
+                    // 将本来的utf8长度换成新的utf8长度
+                    classByte = ByteUtils.bytesReplace(classByte, offset - u2, u2, strLen);
+                    // 将本来的字符串替换为新的字符串
+                    classByte = ByteUtils.bytesReplace(classByte, offset, len, strBytes);
+                    return classByte;
+                } else {
+                    // 如果没找到目标类则跳过
+                    offset += len;
+                }
+            } else {
+                offset += CONSTANT_ITEM_LENGTH[tag];
+            }
+        }
+        return classByte;
+    }
+
+    /**
+     * 获取常量池中常量的数量
+     *
+     * @return 常量池数量
+     */
+    public int getConstantPoolCount() {
+        return ByteUtils.bytes2Int(classByte, CONSTANT_POOL_COUNT_INDEX, u2);
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>HackSystem：自定义的System对象，主要作用是重定义System.out的流对象，其他方法委托给System处理</p>
+<ul>
+<li>
+<pre><code class="language-java">package hotswap;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+
+/**
+ * 为Javaclass劫持java.lang.System提供支持
+ * 除了out和err外，其余的都直接转发给System处理
+ *
+ * @author zzm
+ */
+public class HackSystem {
+    public final static InputStream in = System.in;
+    private static ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    public final static PrintStream out = new PrintStream(buffer);
+    public final static PrintStream err = out;
+
+    public static String getBufferString() {
+        return buffer.toString();
+    }
+
+    public static void clearBuffer() {
+        buffer.reset();
+    }
+
+    public static void setSecurityManager(final SecurityManager s) {
+        System.setSecurityManager(s);
+    }
+
+    public static SecurityManager getSecurityManager() {
+        return System.getSecurityManager();
+    }
+
+    public static long currentTimeMillis() {
+        return System.currentTimeMillis();
+    }
+
+    public static void arraycopy(Object src, int srcPos, Object dest, int destPos, int length) {
+        System.arraycopy(src, srcPos, dest, destPos, length);
+    }
+
+    public static int identityHashCode(Object x) {
+        return System.identityHashCode(x);
+    }
+// 下面所有的方法都与java.lang.System的名称一样
+// 实现都是字节转调System的对应方法
+// 因版面原因，省略了其他方法
+}
+
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>ByteUtils：ClassModifier用到的一些Byte相关的方法</p>
+<ul>
+<li>
+<pre><code class="language-java">package hotswap;
+
+/**
+ * Bytes数组处理工具
+ *
+ * @author
+ */
+public class ByteUtils {
+    public static int bytes2Int(byte[] b, int start, int len) {
+        int sum = 0;
+        int end = start + len;
+        for (int i = start; i &lt; end; i++) {
+            int n = ((int) b[i]) &amp; 0xff;
+            n &lt;&lt;= (--len) * 8;
+            sum = n + sum;
+        }
+        return sum;
+    }
+
+    public static byte[] int2Bytes(int value, int len) {
+        byte[] b = new byte[len];
+        for (int i = 0; i &lt; len; i++) {
+            b[len - i - 1] = (byte) ((value &gt;&gt; 8 * i) &amp; 0xff);
+        }
+        return b;
+    }
+
+    public static String bytes2String(byte[] b, int start, int len) {
+        return new String(b, start, len);
+    }
+
+    public static byte[] string2Bytes(String str) {
+        return str.getBytes();
+    }
+
+    public static byte[] bytesReplace(byte[] originalBytes, int offset, int len, byte[] replaceBytes) {
+        byte[] newBytes = new byte[originalBytes.length + (replaceBytes.length - len)];
+        System.arraycopy(originalBytes, 0, newBytes, 0, offset);
+        System.arraycopy(replaceBytes, 0, newBytes, offset, replaceBytes.length);
+        System.arraycopy(originalBytes, offset + len, newBytes, offset + replaceBytes.length, originalBytes.length - offset - len);
+        return newBytes;
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>测试类：用于测试上面的代码</p>
+<ul>
+<li>
+<pre><code class="language-java">package hotswap;
+
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URLClassLoader;
+import java.util.Scanner;
+
+public class App {
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        String input;
+        byte[] classBytes = null;
+        while ((input = in.nextLine()) != &quot;#&quot;) {
+            /**
+             * 一个ClassLoader不能重复加载同一个类否则会抛出异常
+             * Exception in thread &quot;main&quot; java.lang.LinkageError: loader hotswap.HotSwapClassLoader @3dd3bcd
+             * attempted duplicate class definition for hotswap.HotSwapClassA. (hotswap.HotSwapClassA is in
+             * unnamed module of loader hotswap.HotSwapClassLoader @3dd3bcd, parent loader 'app')
+             */
+            InputStream inputStream ;
+
+            HotSwapClassLoader classLoader = new HotSwapClassLoader();
+            try {
+                inputStream = new FileInputStream(new File(input));
+                classBytes = new byte[inputStream.available()];
+                inputStream.read(classBytes);
+            } catch (IOException e){
+                System.out.println(&quot;读取Class文件出错，重写输入！&quot;);
+                continue;
+            }
+
+            ClassModifier modifier = new ClassModifier(classBytes);
+            classBytes = modifier.modifyUTF8Constant(&quot;java/lang/System&quot;,&quot;hotswap/HackSystem&quot;);
+            Class hotSwapClass = classLoader.loadByte(classBytes);
+            HackSystem.clearBuffer();
+/*            Constructor constructor = hotSwapClass.getConstructor();
+            Object object = constructor.newInstance();
+            Method method = hotSwapClass.getMethod(&quot;hotSwapMethod&quot;, null);
+            method.invoke(object, null);*/
+            Method method = null;
+            try {
+                method = hotSwapClass.getMethod(&quot;hotSwapStaticMethod&quot;);
+                method.invoke(null);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            System.out.println(HackSystem.getBufferString());
+        }
+
+
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>测试动态调用类</p>
+<pre><code class="language-java">package hotswap;
+
+public class HotSwapClassA {
+    public HotSwapClassA(){}
+    public void hotSwapMethod() {
+        System.out.println(&quot;A的热调用方法&quot;);
+    }
+    public static void hotSwapStaticMethod(){
+        System.out.println(&quot;A的热调用静态方法&quot;);
+    }
+}
+
+</code></pre>
+</li>
+<li>
+<p>如果还想实现动态编译的功能可以直接使用jdk1.6提供的<code>StringSourceCompiler</code>类，来对字符串代码进行编译。</p>
+</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%8E%9F%E6%96%87%E5%86%85%E5%AE%B9">原文内容</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0">代码实现</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/designpartten-state/">
+              <span class="post-title">
+                设计模式-状态模式&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/java-dynamic-call/" class="leancloud_visitors"
+              data-flag-title="Java实现动态部署">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

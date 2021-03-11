@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>设计模式-中介者模式 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="设计模式-中介者模式 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="设计模式-中介者模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/designpartten-mediator/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>设计模式-中介者模式</h1>
+    <span class="meta">
+      Posted on
+      2020-09-14，5 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="定义">定义</h1>
+<ul>
+<li>Define an object that encapsulates how a set of objects interact.Mediator promotes loose coupling by keeping objects from referring to each other explicitly,and iit lets you vary their interaction independently.（用一个中介对象封装一系列的对象交互，中介者使各对象不需要显示地相互作用，从而使其耦合松散，而且可以独立地改变他们之间的交互）</li>
+<li>组成
+<ul>
+<li>Mediator抽象中介者：抽象中介者定义统一的接口，用于各同事角色之间的通行</li>
+<li>Concrete  Mediator具体中介者角色：具体中介者角色通过协调各同时角色实现协作行为，必须依赖于各个同事角色</li>
+<li>Colleague同事角色：每一个同事角色都知道中介者角色，而且与其他的同事角色通信的时候，一定要通过中介者角色协作。同事类行为分为两种：
+<ul>
+<li>同事本身的行为，比如改变对象本身的状态，处理自己的行为等，这种行为叫做自发行为（Self-Method），与其他的同事类或中介者没有任何的依赖。</li>
+<li>依赖方法，必须依赖中介者才能完成的行为。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="优点">优点</h1>
+<ul>
+<li>减少了类间依赖，把原有的一对多的依赖变成了一对一的依赖，同事类只依赖中介者，减少了依赖也降低了耦合</li>
+</ul>
+<h1 id="缺点">缺点</h1>
+<ul>
+<li>中介者会膨胀的很大，而且业务逻辑复杂，原本N个对象直接的相互依赖关系转换为中介者和同事类的依赖关系，同事类越多，中介者的逻辑越复杂。</li>
+</ul>
+<h1 id="使用场景">使用场景</h1>
+<p>中介者模式虽然简单，但是会被误用。类间的依赖是必然的，如果只是简单的几个对象的依赖关系，为了使用设计模式而加入了中介者模式，会导致中介者的逻辑复杂化。</p>
+<ul>
+<li>场景：
+<ul>
+<li>类图中出现了蜘蛛网结构，使用中介者模式将其转换为星型结构</li>
+<li>N个对象之间产生了相互依赖关系（N&gt;2）</li>
+<li>多个对象有依赖关系，但是依赖的行为不确定，或有改变的可能</li>
+<li>产品开发（如MVC框架），非项目开发</li>
+</ul>
+</li>
+</ul>
+<h1 id="代码">代码</h1>
+<h2 id="通用类图">通用类图</h2>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0lgd8guyj31gg0wdn28.jpg" alt="中介者模式通用类图" loading="lazy"></figure>
+<h2 id="中介者模式">中介者模式</h2>
+<h3 id="类图">类图</h3>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1girgcidcd9j30i70i9752.jpg" alt="中介者模式类图" loading="lazy"></figure>
+<h3 id="代码-2">代码</h3>
+<p>抽象中介者（<strong>抽象类</strong>）</p>
+<pre><code class="language-java">package com.pattern.mediator;
+
+public abstract class Mediator {
+    protected Colleague1 colleague1;
+    protected Colleague2 colleague2;
+
+    // 使用getter/setter注入，因为同事类必须有中介者，而中介者却可以只有部分同事类
+    public Colleague1 getColleague1() {
+        return colleague1;
+    }
+
+    public Colleague2 getColleague2() {
+        return colleague2;
+    }
+
+    public void setColleague1(Colleague1 colleague1) {
+        this.colleague1 = colleague1;
+    }
+
+    public void setColleague2(Colleague2 colleague2) {
+        this.colleague2 = colleague2;
+    }
+    public abstract void doSometing1();
+    public abstract void doSomething2();
+}
+
+</code></pre>
+<p>具体中介者（<strong>继承自抽象类</strong>）</p>
+<pre><code class="language-java">package com.pattern.mediator;
+
+public class ConcreteMediator extends Mediator {
+    @Override
+    public void doSometing1() {
+        super.colleague1.selfMethod1();
+        super.colleague2.selfMethod2();
+    }
+
+    @Override
+    public void doSomething2() {
+        super.colleague2.selfMethod2();
+        super.colleague1.selfMethod1();
+    }
+}
+
+</code></pre>
+<p>同事类抽象（<strong>抽象类</strong>）「需要产生依赖的类」</p>
+<pre><code class="language-java">package com.pattern.mediator;
+
+public abstract class Colleague {
+    // 定义中介者
+    protected Mediator mediator;
+    public Colleague(Mediator mediator){
+        this.mediator = mediator;
+    }
+}
+
+</code></pre>
+<p>具体同事类1（<strong>继承自抽象类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.mediator;
+
+public class Colleague1 extends Colleague {
+    public Colleague1(Mediator mediator) {
+        super(mediator);
+    }
+    public void selfMethod1(){
+        System.out.println(&quot;同事1自己的自有业务逻辑&quot;);
+    }
+    // 依赖方法，单独同事不能完成需要依靠中介者协调才能完成的业务（即需要调用其他同事类才能完成的任务）
+    public void depMethod1(){
+        System.out.println(&quot;同事1通过中介者调用的业务逻辑&quot;);
+        super.mediator.doSometing1();
+    }
+}
+
+</code></pre>
+<p>具体同事类2（<strong>继承自抽象类</strong>）</p>
+<pre><code class="language-Java">package com.pattern.mediator;
+
+public class Colleague2 extends Colleague {
+    public Colleague2(Mediator mediator) {
+        super(mediator);
+    }
+    public void selfMethod2(){
+        System.out.println(&quot;同事2自己的自有业务逻辑&quot;);
+    }
+    // 依赖方法，单独同事不能完成需要依靠中介者协调才能完成的业务（即需要调用其他同事类才能完成的任务）
+    public void depMethod2(){
+        System.out.println(&quot;同事2通过中介者调用的业务逻辑&quot;);
+    }
+}
+
+</code></pre>
+<h3 id="测试代码">测试代码</h3>
+<pre><code class="language-java">package com.pattern;
+
+import com.pattern.mediator.*;
+import org.junit.Test;
+
+public class MediatorTest {
+    @Test
+    public void Test(){
+        System.out.println(&quot;--------创建一个中介者--------&quot;);
+        Mediator mediator = new ConcreteMediator();
+        System.out.println(&quot;--------创建一个同事类--------&quot;);
+        Colleague1 colleague1 = new Colleague1(mediator);
+        Colleague2 colleague2 = new Colleague2(mediator);
+        mediator.setColleague1(colleague1);
+        mediator.setColleague2(colleague2);
+        System.out.println(&quot;--------同事类调用自己的方法--------&quot;);
+        colleague1.selfMethod1();
+        System.out.println(&quot;--------同事类调用依赖的方法（通过中介者与其他类产生依赖的方法）--------&quot;);
+        colleague1.depMethod1();
+
+    }
+}
+
+</code></pre>
+<h3 id="结果">结果</h3>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1girgcj7x2nj30jp082aaw.jpg" alt="中介者模式运行结果" loading="lazy"></figure>
+<h1 id="注意">注意</h1>
+<ul>
+<li>在中介者模式（中介者中）中很少用到接口或抽象类，因为这些类是协作关系，完成不同的任务，处理不同的业务。</li>
+<li>中介者中的方法，复杂业务的实现是依赖同事类来完成的</li>
+<li>同事类最好使用构造函数注入中介者，中介者使用getter/setter注入同事类;因为同事类必须有中介者，而中介者可以只有部分同事类</li>
+<li><font color=red>不要刻意追求使用中介者模式</font></li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
+<li><a href="#%E7%BC%BA%E7%82%B9">缺点</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
+<ul>
+<li><a href="#%E9%80%9A%E7%94%A8%E7%B1%BB%E5%9B%BE">通用类图</a></li>
+<li><a href="#%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F">中介者模式</a>
+<ul>
+<li><a href="#%E7%B1%BB%E5%9B%BE">类图</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/designpartten-prototype/">
+              <span class="post-title">
+                设计模式-原型模式&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/designpartten-mediator/" class="leancloud_visitors"
+              data-flag-title="设计模式-中介者模式">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>Ubuntu调教日志 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="Ubuntu调教日志 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="Ubuntu调教日志" />
+  <meta property="og:url" content="https://mxecy.cn/post/ubuntu-install/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615471913878"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/R1qiuqz-m/" class="tag">Linux</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+      <a href="https://mxecy.cn/tag/EndumAuhT/" class="tag">Software</a>
+      
+    </span>
+    <h1>Ubuntu调教日志</h1>
+    <span class="meta">
+      Posted on
+      2021-01-14，7 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="前言">前言</h1>
+<ul>
+<li>此记录为Linux的一个调教记录，方便以后查看</li>
+</ul>
+<h1 id="基本篇">基本篇</h1>
+<h2 id="设置软件源">设置软件源</h2>
+<ul>
+<li>由于Ubuntu自带的源是国外的，所以同步的时候会比较慢。因此一般都需要修改源。由于Ubuntu自带gedit，所以就不用vi来编辑了。</li>
+</ul>
+<pre><code class="language-shell"> sudo gedit /etc/apt/sources.list
+</code></pre>
+<p>然后注释原来的源。添加阿里的源。</p>
+<pre><code>deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+</code></pre>
+<p>因为以后需要添加Deepin的软件。所以多添加一个deepin的源。</p>
+<pre><code>deb http://packages.deepin.com/deepin stable main contrib non-free
+#deb-src http://packages.deepin.com/deepin stable main contrib non-free
+</code></pre>
+<p>添加完成后保存退出。</p>
+<pre><code class="language-shell">sudo apt update
+</code></pre>
+<p>等待更新完成。</p>
+<h1 id="环境篇">环境篇</h1>
+<ul>
+<li>由于大部分的环境能直接apt安装。我就不自己配置了。</li>
+</ul>
+<h2 id="java">Java</h2>
+<p>以下是apt支持的Java版本。直接输入后就能安装了（注：是openjdk不是Hotpot的JDK）。</p>
+<pre><code class="language-shell">sudo apt install default-jre              # version 2:1.11-72, or
+sudo apt install openjdk-11-jre-headless  # version 11.0.7+10-3ubuntu1
+sudo apt install openjdk-13-jre-headless  # version 13.0.3+3-1ubuntu2
+sudo apt install openjdk-14-jre-headless  # version 14.0.1+7-1ubuntu1
+sudo apt install openjdk-8-jre-headless   # version 8u252-b09-1ubuntu1
+</code></pre>
+<h2 id="mysql">Mysql</h2>
+<p>终端中输入命令：</p>
+<pre><code class="language-shell">sudo apt install mysql-server
+</code></pre>
+<h3 id="mysql的常见路径">Mysql的常见路径</h3>
+<pre><code>/usr/bin                 客户端程序和脚本  
+/usr/sbin                mysqld 服务器  
+/var/lib/mysql           日志文件，数据库  ［重点要知道这个］  
+/usr/share/doc/packages  文档  
+/usr/include/mysql       包含( 头) 文件  
+/usr/lib/mysql           库  
+/usr/share/mysql         错误消息和字符集文件  
+/usr/share/sql-bench     基准程序  
+</code></pre>
+<h3 id="无法访问">无法访问</h3>
+<ul>
+<li>出现类似<code>ERROR 1045 (28000): Access denied for user 'gloduck'@'localhost' (using password: NO)</code>的提示。一是设置密码（默认没有密码），二是跳过密码验证</li>
+</ul>
+<p>跳过密码验证：<br>
+进入配置文件</p>
+<pre><code class="language-shell">sudo gedit /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre>
+<p>[mysqld]下添加skip-grant-tables</p>
+<pre><code class="language-ini">#
+# The MySQL database server configuration file.
+#
+# One can use all long options that the program supports.
+# Run program with --help to get a list of available options and with
+# --print-defaults to see which it would actually understand and use.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+
+# Here is entries for some specific programs
+# The following values assume you have at least 32M ram
+
+[mysqld]
+skip-grant-tables
+#
+# * Basic Settings
+#
+user		= mysql
+# pid-file	= /var/run/mysqld/mysqld.pid
+# socket	= /var/run/mysqld/mysqld.sock
+# port		= 3306
+# datadir	= /var/lib/mysql
+
+
+# If MySQL is running as a replication slave, this should be
+# changed. Ref https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_tmpdir
+# tmpdir		= /tmp
+#
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+bind-address		= 127.0.0.1
+mysqlx-bind-address	= 127.0.0.1
+#
+# * Fine Tuning
+#
+key_buffer_size		= 16M
+# max_allowed_packet	= 64M
+# thread_stack		= 256K
+
+# thread_cache_size       = -1
+
+# This replaces the startup script and checks MyISAM tables if needed
+# the first time they are touched
+myisam-recover-options  = BACKUP
+
+# max_connections        = 151
+
+# table_open_cache       = 4000
+
+#
+# * Logging and Replication
+#
+# Both location gets rotated by the cronjob.
+#
+# Log all queries
+# Be aware that this log type is a performance killer.
+# general_log_file        = /var/log/mysql/query.log
+# general_log             = 1
+#
+# Error log - should be very few entries.
+#
+log_error = /var/log/mysql/error.log
+#
+# Here you can see queries with especially long duration
+# slow_query_log		= 1
+# slow_query_log_file	= /var/log/mysql/mysql-slow.log
+# long_query_time = 2
+# log-queries-not-using-indexes
+#
+# The following can be used as easy to replay backup logs or for replication.
+# note: if you are setting up a replication slave, see README.Debian about
+#       other settings you may need to change.
+# server-id		= 1
+# log_bin			= /var/log/mysql/mysql-bin.log
+# binlog_expire_logs_seconds	= 2592000
+max_binlog_size   = 100M
+# binlog_do_db		= include_database_name
+# binlog_ignore_db	= include_database_name
+</code></pre>
+<p>重启mysql</p>
+<pre><code class="language-shell">sudo service mysql stop
+&lt;!-- more --&gt;
+
+sudo service mysql start
+</code></pre>
+<h2 id="redis">Redis</h2>
+<p>终端输入命令：</p>
+<pre><code class="language-shell">sudo apt install redis-server
+</code></pre>
+<p>通过<code>redis-cli</code>进入</p>
+<h1 id="常用软件">常用软件</h1>
+<h2 id="v2ray">v2ray</h2>
+<p>v2核心：https://github.com/v2fly/v2ray-core<br>
+v2GUI：https://github.com/Qv2ray/Qv2ray/releases</p>
+<h2 id="深度截图">深度截图</h2>
+<p>注：需要先添加deepin源</p>
+<pre><code class="language-shell">sudo apt install deepin-screenshot
+</code></pre>
+<p>添加快捷键：设置 - 键盘快捷键 - +（最下面）</p>
+<h2 id="qq-tim-微信-迅雷-百度网盘">QQ、TIM、微信、迅雷、百度网盘</h2>
+<p>注：需先添加deepin源</p>
+<ul>
+<li>包名：
+<ul>
+<li>TIM：deepin.com.qq.office</li>
+<li>QQ：deepin.com.qq.im</li>
+<li>QQ轻聊版：deepin.com.qq.im.light</li>
+<li>微信：deepin.com.wechat</li>
+<li>百度网盘：deepin.com.baidu.pan</li>
+<li>迅雷极速版：deepin.com.thunderspeed</li>
+<li>WinRAR：deepin.cn.com.winrar</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-shell">sudo apt install 包名
+</code></pre>
+<h3 id="更新">更新</h3>
+<p>软件一般安装在<code>/home/gloduck/.deepinwine</code><br>
+如百度网盘，进入<code>/home/gloduck/.deepinwine/Deepin-BaiduNetDisk/drive_c/Program Files/baidu/BaiduNetdisk</code>，然后在Windows下安装最新版本覆盖。</p>
+<h3 id="tim无法加载图片">Tim无法加载图片</h3>
+<pre><code class="language-shell">sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1
+</code></pre>
+<h3 id="添加小图标">添加小图标</h3>
+<p>下载chrome-gnome-shell</p>
+<pre><code class="language-shell">sudo apt-get install chrome-gnome-shell
+</code></pre>
+<p>在chrome应用商店搜索并安装 GNOME Shell integration<br>
+接着<a href="https://extensions.gnome.org/extension/1674/topiconsfix/">跳转</a>到此网页<br>
+将右上角的off按钮切换为on<br>
+在Installed extensions页面应用该扩展</p>
+<h2 id="idea">Idea</h2>
+<ul>
+<li>下载Idea：https://www.jetbrains.com/idea/download/</li>
+<li>解压到指定路径（推荐opt）。</li>
+<li>为<code>bin/idea.sh</code><a href="#%E5%88%9B%E5%BB%BA%E6%A1%8C%E9%9D%A2%E5%9B%BE%E6%A0%87">创建快捷方式</a></li>
+</ul>
+<h3 id="导出配置">导出配置</h3>
+<p>配置直接导出然后导入。<br>
+插件：<br>
++ 进入Idea路径。<br>
++ windows：<code>C://Users/Gloduck/AppData/Roaming/JetBrains/IntelliJIdea2020.2/plugins</code><br>
++ 复制文件到：<code>/home/gloduck/.local/share/JetBrains/IntelliJIdea2020.3</code>（注：没有plugins，直接复制）</p>
+<h1 id="常用操作">常用操作</h1>
+<h2 id="root打开文件夹">root打开文件夹：</h2>
+<pre><code class="language-shell">sudo nautilus
+</code></pre>
+<h2 id="span-id创建桌面图标创建桌面图标span"><span id="创建桌面图标">创建桌面图标</span></h2>
+<pre><code class="language-shell">touch 图标名称.desktop
+sudo gedit 图标名称.desktop
+</code></pre>
+<p>然后复制以下内容：</p>
+<pre><code> [Desktop Entry]
+ Encoding=UTF-8
+ Name=应用名称 
+ Comment=应用描述
+ Exec=应用执行文件
+ Icon=应用图标
+ Terminal=false
+ StartupNotify=true
+ Type=Application
+ Categories=Application;Development; // 应用分类
+</code></pre>
+<p>然后将图标移动到<code>/usr/share/applications</code>文件夹下</p>
+<pre><code class="language-shell">sudo mv 图标名称.desktop /usr/share/applications
+</code></pre>
+<h2 id="文件管理器输入路径">文件管理器输入路径</h2>
+<p>按下Ctrl+L</p>
+<h2 id="root打开文件夹-2">root打开文件夹</h2>
+<p>安装nautilus-admin</p>
+<pre><code class="language-shell">sudo apt install nautilus-admin
+</code></pre>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E7%AF%87">基本篇</a>
+<ul>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E8%BD%AF%E4%BB%B6%E6%BA%90">设置软件源</a></li>
+</ul>
+</li>
+<li><a href="#%E7%8E%AF%E5%A2%83%E7%AF%87">环境篇</a>
+<ul>
+<li><a href="#java">Java</a></li>
+<li><a href="#mysql">Mysql</a>
+<ul>
+<li><a href="#mysql%E7%9A%84%E5%B8%B8%E8%A7%81%E8%B7%AF%E5%BE%84">Mysql的常见路径</a></li>
+<li><a href="#%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE">无法访问</a></li>
+</ul>
+</li>
+<li><a href="#redis">Redis</a></li>
+</ul>
+</li>
+<li><a href="#%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6">常用软件</a>
+<ul>
+<li><a href="#v2ray">v2ray</a></li>
+<li><a href="#%E6%B7%B1%E5%BA%A6%E6%88%AA%E5%9B%BE">深度截图</a></li>
+<li><a href="#qq-tim-%E5%BE%AE%E4%BF%A1-%E8%BF%85%E9%9B%B7-%E7%99%BE%E5%BA%A6%E7%BD%91%E7%9B%98">QQ、TIM、微信、迅雷、百度网盘</a>
+<ul>
+<li><a href="#%E6%9B%B4%E6%96%B0">更新</a></li>
+<li><a href="#tim%E6%97%A0%E6%B3%95%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87">Tim无法加载图片</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E5%B0%8F%E5%9B%BE%E6%A0%87">添加小图标</a></li>
+</ul>
+</li>
+<li><a href="#idea">Idea</a>
+<ul>
+<li><a href="#%E5%AF%BC%E5%87%BA%E9%85%8D%E7%BD%AE">导出配置</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C">常用操作</a>
+<ul>
+<li><a href="#root%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E5%A4%B9">root打开文件夹：</a></li>
+<li><a href="#span-id%E5%88%9B%E5%BB%BA%E6%A1%8C%E9%9D%A2%E5%9B%BE%E6%A0%87%E5%88%9B%E5%BB%BA%E6%A1%8C%E9%9D%A2%E5%9B%BE%E6%A0%87span"><span id="创建桌面图标">创建桌面图标</span></a></li>
+<li><a href="#%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8%E8%BE%93%E5%85%A5%E8%B7%AF%E5%BE%84">文件管理器输入路径</a></li>
+<li><a href="#root%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E5%A4%B9-2">root打开文件夹</a></li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/yQnjeLQxQ/">
+              <span class="post-title">
+                Java的方法传值&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/ubuntu-install/" class="leancloud_visitors"
+              data-flag-title="Ubuntu调教日志">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>
