@@ -90,7 +90,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1615810249974"
+            <form id="gridea-search-form" style="position: relative" data-update="1615813188514"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -152,7 +152,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1615810249974"
+            <form id="gridea-search-form" style="position: relative" data-update="1615813188514"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -234,7 +234,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 }
 </code></pre>
 <h2 id="图解">图解</h2>
-<figure data-type="image" tabindex="1"><img src="%E5%9B%BE%E7%89%87/Spring%E5%85%A8%E5%AE%B6%E6%A1%B6%EF%BC%88%E9%9D%A2%E8%AF%95%E7%89%88%EF%BC%89/SpringBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gokvurgbklj30sq0k2q58.jpg" alt="SpringBean的生命周期" loading="lazy"></figure>
 <h2 id="代码">代码</h2>
 <p>createBean：</p>
 <pre><code class="language-java">// AbstractAutowireCapableBeanFactory.class
@@ -346,6 +346,12 @@ protected Object doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable
     ...
 }
 </code></pre>
+<h1 id="springaop自动代理">SpringAOP自动代理</h1>
+<p><s>此处待补充</s><br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1gokvzhiylwj30th0zptab.jpg" alt="动态代理相关的类" loading="lazy"></p>
+<ul>
+<li>SpringAOP的自动代理是通过<code>BeanPostProcessor</code>来实现的。在调用<code>InstantiationBean</code>的时候，会调用<code>postProcessAfterInitialization</code>方法，此时会调用到<code>AbstractAdvisorAutoProxyCreator</code>的相关方法，来实现自动代理。</li>
+</ul>
 <h1 id="测试代码">测试代码</h1>
 <pre><code class="language-java">/**
  * 测试Bean
@@ -472,6 +478,7 @@ public class App {
 <li><a href="#%E4%BB%A3%E7%A0%81">代码</a></li>
 </ul>
 </li>
+<li><a href="#springaop%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%90%86">SpringAOP自动代理</a></li>
 <li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
 </ul>
 </div>

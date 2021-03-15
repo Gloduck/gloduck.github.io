@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://mxecy.cn</id>
     <title>Gloduck</title>
-    <updated>2021-03-15T12:30:08.438Z</updated>
+    <updated>2021-03-15T12:59:50.735Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://mxecy.cn"/>
     <link rel="self" href="https://mxecy.cn/atom.xml"/>
@@ -10,6 +10,64 @@
     <logo>https://mxecy.cn/images/avatar.png</logo>
     <icon>https://mxecy.cn/favicon.ico</icon>
     <rights>All rights reserved 2021, Gloduck</rights>
+    <entry>
+        <title type="html"><![CDATA[Spring解决循环依赖]]></title>
+        <id>https://mxecy.cn/post/spring-circular-dependencies/</id>
+        <link href="https://mxecy.cn/post/spring-circular-dependencies/">
+        </link>
+        <updated>2021-03-15T12:52:54.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="图解">图解</h1>
+<p><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gokvwa9ye0j314m0vk0wy.jpg" alt="Spring解决循环依赖" loading="lazy"><br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1gokvwaucszj30u40z4dj4.jpg" alt="Spring循环依赖" loading="lazy"></p>
+<h1 id="解决方式">解决方式</h1>
+<ul>
+<li>Spring使用了三级缓存 + 提前暴露对象的方式来解决循环依赖的问题。</li>
+<li>相关的重要属性：位于<code>DefaultSingletonBeanRegistry</code>类中
+<ul>
+<li>Spring内部维护了三个Map，所谓的三重缓存。
+<ul>
+<li><code>Map&lt;String, Object&gt; singletonObjects</code>：单例池容器，用于缓存单例Bean的地方。一级缓存。
+<ul>
+<li>这里的bean是已经创建完成的，该bean经历过实例化-&gt;属性填充-&gt;初始化以及各类的后置处理。因此，一旦需要获取bean时，我们第一时间就会寻找一级缓存</li>
+</ul>
+</li>
+<li><code>Map&lt;String, Object&gt; earlySingletonObjects</code>：早期的单例Bean。二级缓存。
+<ul>
+<li>这里跟一级缓存的区别在于，该缓存所获取到的bean是提前曝光出来的，是还没创建完成的。也就是说获取到的bean只能确保已经进行了实例化，但是属性填充跟初始化肯定还没有做完，因此该bean还没创建完成，仅仅能作为指针提前曝光，被其他bean所引用</li>
+</ul>
+</li>
+<li><code>Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories</code>：创建中单例Bean的原始工厂。三级缓存。
+<ul>
+<li>在bean实例化完之后，属性填充以及初始化之前，如果允许提前曝光，spring会将实例化后的bean提前曝光，也就是把该bean转换成beanFactory并加入到三级缓存。在需要引用提前曝光对象时再通过singletonFactory.getObject()获取。</li>
+<li><strong>在三级缓存中的Bean（提前暴露的Bean），如果被其他的Bean引用，就会从三级缓存中移动到二级缓存中。使得Spring能够感知到当前的Bean被其他引用了</strong>。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>Set&lt;String&gt; singletonsCurrentlyInCreation</code>：保存了当前正在创建的单例对象的名称。</li>
+<li><code>Map&lt;String, Set&lt;String&gt;&gt; dependentBeanMap</code>：保存了一个bean对其他的bean的依赖。</li>
+</ul>
+</li>
+<li>问题：
+<ul>
+<li>如何解决循环依赖的：
+<ul>
+<li>通过提前曝光解决循环依赖，当AB循环依赖的时候，先将A的半成品曝光出去，让B先完成初始化，然后在使得初始化完成后的B注入到A中。</li>
+</ul>
+</li>
+<li>为什么要三级缓存：
+<ul>
+<li>当某个 bean 进入到 2 级缓存的时候，说明这个 bean 的早期对象被其他 bean 注入了，也就是说，这个 bean 还是半成品，还未完全创建好的时候，已经被别人拿去使用了，所以必须要有 3 级缓存，2 级缓存中存放的是早期的被别人使用的对象，如果没有 2 级缓存，是无法判断这个对象在创建的过程中，是否被别人拿去使用了。</li>
+<li><strong>三级缓存是为了判断循环依赖的时候，早期暴露出去已经被别人使用的 bean 和最终的 bean 是否是同一个 bean，如果不是同一个则弹出异常，如果早期的对象没有被其他 bean 使用，而后期被修改了，不会产生异常，如果没有三级缓存，是无法判断是否有循环依赖，且早期的 bean 被循环依赖中的 bean 使用了</strong>。</li>
+<li>Spring解决循环依赖的时候通过对象提前暴露来解决循环依赖，但是考虑到AOP和后置处理器的影响，此时暴露给其他Bean的当前对象可能不是最新的版本，因为通过AOP和后置处理器，此Bean的实际地址和其他Bean引用的地址不一样。这样就会导致其他Bean中引用的当前Bean不是最新版本。三级缓存的存在就是为了使得当前的Bean知道其他的Bean引用的不是自己的新版本。以便抛出异常。如下图，在调用<code>InstantiationBean</code>（使用了动态代理）之后实际上对象已经不一样了。</li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gokvxgggalj30mh042dg3.jpg" alt="在InstantiationBean中改变了Bean" loading="lazy"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Spring Bean生命周期]]></title>
         <id>https://mxecy.cn/post/spring-life-cycle/</id>
@@ -45,7 +103,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 }
 </code></pre>
 <h2 id="图解">图解</h2>
-<figure data-type="image" tabindex="1"><img src="%E5%9B%BE%E7%89%87/Spring%E5%85%A8%E5%AE%B6%E6%A1%B6%EF%BC%88%E9%9D%A2%E8%AF%95%E7%89%88%EF%BC%89/SpringBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gokvurgbklj30sq0k2q58.jpg" alt="SpringBean的生命周期" loading="lazy"></figure>
 <h2 id="代码">代码</h2>
 <p>createBean：</p>
 <pre><code class="language-java">// AbstractAutowireCapableBeanFactory.class
@@ -157,6 +215,12 @@ protected Object doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable
     ...
 }
 </code></pre>
+<h1 id="springaop自动代理">SpringAOP自动代理</h1>
+<p><s>此处待补充</s><br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1gokvzhiylwj30th0zptab.jpg" alt="动态代理相关的类" loading="lazy"></p>
+<ul>
+<li>SpringAOP的自动代理是通过<code>BeanPostProcessor</code>来实现的。在调用<code>InstantiationBean</code>的时候，会调用<code>postProcessAfterInitialization</code>方法，此时会调用到<code>AbstractAdvisorAutoProxyCreator</code>的相关方法，来实现自动代理。</li>
+</ul>
 <h1 id="测试代码">测试代码</h1>
 <pre><code class="language-java">/**
  * 测试Bean
@@ -3295,358 +3359,6 @@ final HashMap.Node&lt;K,V&gt; removeNode(int hash, Object key, Object value,
 <ul>
 <li>两个线程同时对一个hashMap resize。线程a执行到<code>Entry&lt;K,V&gt; next = e.next;</code>被阻塞了，线程b执行完了resize，此时a再继续执行时，可能会导致死环。</li>
 </ul>
-</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Java实现动态部署]]></title>
-        <id>https://mxecy.cn/post/java-dynamic-call/</id>
-        <link href="https://mxecy.cn/post/java-dynamic-call/">
-        </link>
-        <updated>2020-11-16T10:00:51.000Z</updated>
-        <content type="html"><![CDATA[<p>最近看深入理解Java虚拟机的时候，第九章给了一个实战-手写一个远程执行功能，觉得是一个对JVM类加载机制以及类文件结构的一个很不错的总结。</p>
-<h1 id="原文内容">原文内容</h1>
-<blockquote>
-<p>首先，在实现“在服务端执行临时代码”这个需求之前，先来明确一下本次实战的具体目标，我们<br>
-希望最终的产品是这样的：</p>
-<ul>
-<li>不依赖某个JDK版本才加入的特性（包括JVMTI），能在目前还被普遍使用的JDK中部署，只要<br>
-是使用JDK 1.4以上的JDK都可以运行。</li>
-<li>不改变原有服务端程序的部署，不依赖任何第三方类库。</li>
-<li>不侵入原有程序，即无须改动原程序的任何代码。也不会对原有程序的运行带来任何影响。</li>
-<li>考虑到BeanShell Script或JavaScript等脚本与Java对象交互起来不太方便，“临时代码”应该直接支持Java语言。</li>
-<li>“临时代码”应当具备足够的自由度，不需要依赖特定的类或实现特定的接口。这里写的是“不需要”而不是“不可以”，当“临时代码”需要引用其他类库时也没有限制，只要服务端程序能使用的类型和接口，临时代码都应当能直接引用。</li>
-<li>“临时代码”的执行结果能返回到客户端，执行结果可以包括程序中输出的信息及抛出的异常等。</li>
-</ul>
-<p>看完上面列出的目标，读者觉得完成这个需求需要做多少工作量呢？也许答案比大多数人所想的都要简单一些：5个类，250行代码（含注释），大约一个半小时左右的开发时间就可以了，现在就开始编写程序吧！</p>
-</blockquote>
-<blockquote>
-<p>在程序实现的过程中，我们需要解决以下3个问题：</p>
-<ul>
-<li>
-<p>如何编译提交到服务器的Java代码？</p>
-</li>
-<li>
-<p>如何执行编译之后的Java代码？</p>
-</li>
-<li>
-<p>如何收集Java代码的执行结果？</p>
-</li>
-</ul>
-<p>对于第一个问题，我们有两种方案可以选择。一种在服务器上编译，在JDK 6以后可以使用Compiler API，在JDK 6以前可以使用tools.jar包（在JAVA_HOME/lib目录下）中的com.sun.tools.Javac.Main类来编译Java文件，它们其实和直接使用Javac命令来编译是一样的。这种思路的缺点是引入了额外的依赖，而且把程序绑死在特定的JDK上了，要部署到其他公司的JDK中还得把tools.jar带上（虽然JRockit和J9虚拟机也有这个JAR包，但它总不是标准所规定必须存在的）。</p>
-<p>另外一种思路是直接在客户端编译好，把字节码而不是Java代码传到服务端，这听起来好像有点投机取巧，<br>
-一般来说确实不应该假定客户端一定具有编译代码的能力，也不能假定客户端就有编译出产品所需的<br>
-依赖项。但是既然程序员会写Java代码去给服务端排查问题，那么很难想象他的机器上会连编译Java程<br>
-序的环境都没有。<br>
-对于第二个问题：要执行编译后的Java代码，让类加载器加载这个类生成一个Class对象，然后反射调用一下某个方法就可以了（因为不实现任何接口，我们可以借用一下Java中约定俗成的“main()”方法）。但我们还应该考虑得更周全些：一段程序往往不是编写、运行一次就能达到效果，同一个类可能要被反复地修改、提交、执行。另外，提交上去的类要能访问到服务端的其他类库才行。还有就是既然提交的是临时代码，那提交的Java类在执行完后就应当能被卸载回收掉。<br>
-最后一个问题，我们想把程序往标准输出（System.out）和标准错误输出（System.err）中打印的信息收集起来。但标准输出设备是整个虚拟机进程全局共享的资源，如果使用System.setOut()/System.setErr()方法把输出流重定向到自己定义的PrintStream对象上固然可以收集到输出信息，但也会对原有程序产生影响：会把其他线程向标准输出中打印的信息也收集了。虽然这些并不是不能解决的问题，不过为了达到完全不影响原程序的目的，我们可以采用另外一种办法：直接在执行的类中把对System.out的符号引用替换为我们准备的PrintStream的符号引用，依赖前面学习到的知识，做到这一点并不困难。</p>
-</blockquote>
-<h1 id="代码实现">代码实现</h1>
-<ul>
-<li>
-<p>自定义类加载器：自定义类加载器用于开放defineClass方法，来将二进制流转换成Class对象，被虚拟机加载。其中指定了父类加载器<code>super(HotSwapClassLoader.class.getClassLoader());</code>用于委托加载其他的类</p>
-<ul>
-<li>
-<pre><code class="language-java">package hotswap;
-
-/**
- * 为了多次载入执行类而加入的加载器
- * 把defineClass方法开放出来，只有外部显式调用的时候才会使用到loadByte方法
- * 由虚拟机调用时，仍然按照原有的双亲委派规则使用loadClass方法进行类加载
- *
- * @author zzm
- */
-public class HotSwapClassLoader extends ClassLoader {
-    public HotSwapClassLoader() {
-        super(HotSwapClassLoader.class.getClassLoader());
-    }
-
-    public Class loadByte(byte[] classByte) {
-        return defineClass(null, classByte, 0, classByte.length);
-    }
-    
-}
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p>修改二进制流文件：为了实现文章上说的把System.out替换成自己准备的PrintStream功能，此处是对常量池进行修改，将System的符号引用替换成自定义System（HackSystem）的符号引用。这样加载热部署的类的时候就会把System对象给替换成HackSystem对象</p>
-<ul>
-<li>
-<pre><code class="language-java">package hotswap;
-
-/**
- * 修改Class文件，暂时只提供修改常量池常量的功能
- *
- * @author zzm
- */
-public class ClassModifier {
-    /**
-     * Class文件中常量池的起始偏移
-     */
-    private static final int CONSTANT_POOL_COUNT_INDEX = 8;
-    /**
-     * CONSTANT_Utf8_info常量的tag标志
-     */
-    private static final int CONSTANT_Utf8_info = 1;
-    /**
-     * 常量池中11种常量所占的长度，CONSTANT_Utf8_info型常量除外，因为它不是定长的
-     */
-    private static final int[] CONSTANT_ITEM_LENGTH = {-1, -1, -1, 5, 5, 9, 9, 3, 3, 5, 5, 5, 5};
-    private static final int u1 = 1;
-    private static final int u2 = 2;
-    private byte[] classByte;
-
-    public ClassModifier(byte[] classByte) {
-        this.classByte = classByte;
-    }
-
-    /**
-     * 修改常量池中CONSTANT_Utf8_info常量的内容
-     *
-     * @param oldStr 修改前的字符串
-     * @param newStr 修改后的字符串
-     * @return 修改结果
-     */
-    public byte[] modifyUTF8Constant(String oldStr, String newStr) {
-        //获取常量池的长度
-        int cpc = getConstantPoolCount();
-        // u2为常量池长度
-        int offset = CONSTANT_POOL_COUNT_INDEX + u2;
-        for (int i = 0; i &lt; cpc; i++) {
-            // 获取单个tag
-            int tag = ByteUtils.bytes2Int(classByte, offset, u1);
-            if (tag == CONSTANT_Utf8_info) {
-                // 如果tag是utf8类型，则获取字符长度
-                int len = ByteUtils.bytes2Int(classByte, offset + u1, u2);
-                // offset往后移u1+u2两位
-                offset += (u1 + u2);
-                // 获取字符的值
-                String str = ByteUtils.bytes2String(classByte, offset, len);
-                if (str.equalsIgnoreCase(oldStr)) {
-                    // 如果找到了目标类，即java.lang.System
-                    byte[] strBytes = ByteUtils.string2Bytes(newStr);
-                    byte[] strLen = ByteUtils.int2Bytes(newStr.length(), u2);
-                    // 将本来的utf8长度换成新的utf8长度
-                    classByte = ByteUtils.bytesReplace(classByte, offset - u2, u2, strLen);
-                    // 将本来的字符串替换为新的字符串
-                    classByte = ByteUtils.bytesReplace(classByte, offset, len, strBytes);
-                    return classByte;
-                } else {
-                    // 如果没找到目标类则跳过
-                    offset += len;
-                }
-            } else {
-                offset += CONSTANT_ITEM_LENGTH[tag];
-            }
-        }
-        return classByte;
-    }
-
-    /**
-     * 获取常量池中常量的数量
-     *
-     * @return 常量池数量
-     */
-    public int getConstantPoolCount() {
-        return ByteUtils.bytes2Int(classByte, CONSTANT_POOL_COUNT_INDEX, u2);
-    }
-}
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p>HackSystem：自定义的System对象，主要作用是重定义System.out的流对象，其他方法委托给System处理</p>
-<ul>
-<li>
-<pre><code class="language-java">package hotswap;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
-
-/**
- * 为Javaclass劫持java.lang.System提供支持
- * 除了out和err外，其余的都直接转发给System处理
- *
- * @author zzm
- */
-public class HackSystem {
-    public final static InputStream in = System.in;
-    private static ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    public final static PrintStream out = new PrintStream(buffer);
-    public final static PrintStream err = out;
-
-    public static String getBufferString() {
-        return buffer.toString();
-    }
-
-    public static void clearBuffer() {
-        buffer.reset();
-    }
-
-    public static void setSecurityManager(final SecurityManager s) {
-        System.setSecurityManager(s);
-    }
-
-    public static SecurityManager getSecurityManager() {
-        return System.getSecurityManager();
-    }
-
-    public static long currentTimeMillis() {
-        return System.currentTimeMillis();
-    }
-
-    public static void arraycopy(Object src, int srcPos, Object dest, int destPos, int length) {
-        System.arraycopy(src, srcPos, dest, destPos, length);
-    }
-
-    public static int identityHashCode(Object x) {
-        return System.identityHashCode(x);
-    }
-// 下面所有的方法都与java.lang.System的名称一样
-// 实现都是字节转调System的对应方法
-// 因版面原因，省略了其他方法
-}
-
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p>ByteUtils：ClassModifier用到的一些Byte相关的方法</p>
-<ul>
-<li>
-<pre><code class="language-java">package hotswap;
-
-/**
- * Bytes数组处理工具
- *
- * @author
- */
-public class ByteUtils {
-    public static int bytes2Int(byte[] b, int start, int len) {
-        int sum = 0;
-        int end = start + len;
-        for (int i = start; i &lt; end; i++) {
-            int n = ((int) b[i]) &amp; 0xff;
-            n &lt;&lt;= (--len) * 8;
-            sum = n + sum;
-        }
-        return sum;
-    }
-
-    public static byte[] int2Bytes(int value, int len) {
-        byte[] b = new byte[len];
-        for (int i = 0; i &lt; len; i++) {
-            b[len - i - 1] = (byte) ((value &gt;&gt; 8 * i) &amp; 0xff);
-        }
-        return b;
-    }
-
-    public static String bytes2String(byte[] b, int start, int len) {
-        return new String(b, start, len);
-    }
-
-    public static byte[] string2Bytes(String str) {
-        return str.getBytes();
-    }
-
-    public static byte[] bytesReplace(byte[] originalBytes, int offset, int len, byte[] replaceBytes) {
-        byte[] newBytes = new byte[originalBytes.length + (replaceBytes.length - len)];
-        System.arraycopy(originalBytes, 0, newBytes, 0, offset);
-        System.arraycopy(replaceBytes, 0, newBytes, offset, replaceBytes.length);
-        System.arraycopy(originalBytes, offset + len, newBytes, offset + replaceBytes.length, originalBytes.length - offset - len);
-        return newBytes;
-    }
-}
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p>测试类：用于测试上面的代码</p>
-<ul>
-<li>
-<pre><code class="language-java">package hotswap;
-
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URLClassLoader;
-import java.util.Scanner;
-
-public class App {
-
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        String input;
-        byte[] classBytes = null;
-        while ((input = in.nextLine()) != &quot;#&quot;) {
-            /**
-             * 一个ClassLoader不能重复加载同一个类否则会抛出异常
-             * Exception in thread &quot;main&quot; java.lang.LinkageError: loader hotswap.HotSwapClassLoader @3dd3bcd
-             * attempted duplicate class definition for hotswap.HotSwapClassA. (hotswap.HotSwapClassA is in
-             * unnamed module of loader hotswap.HotSwapClassLoader @3dd3bcd, parent loader 'app')
-             */
-            InputStream inputStream ;
-
-            HotSwapClassLoader classLoader = new HotSwapClassLoader();
-            try {
-                inputStream = new FileInputStream(new File(input));
-                classBytes = new byte[inputStream.available()];
-                inputStream.read(classBytes);
-            } catch (IOException e){
-                System.out.println(&quot;读取Class文件出错，重写输入！&quot;);
-                continue;
-            }
-
-            ClassModifier modifier = new ClassModifier(classBytes);
-            classBytes = modifier.modifyUTF8Constant(&quot;java/lang/System&quot;,&quot;hotswap/HackSystem&quot;);
-            Class hotSwapClass = classLoader.loadByte(classBytes);
-            HackSystem.clearBuffer();
-/*            Constructor constructor = hotSwapClass.getConstructor();
-            Object object = constructor.newInstance();
-            Method method = hotSwapClass.getMethod(&quot;hotSwapMethod&quot;, null);
-            method.invoke(object, null);*/
-            Method method = null;
-            try {
-                method = hotSwapClass.getMethod(&quot;hotSwapStaticMethod&quot;);
-                method.invoke(null);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            System.out.println(HackSystem.getBufferString());
-        }
-
-
-    }
-}
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p>测试动态调用类</p>
-<pre><code class="language-java">package hotswap;
-
-public class HotSwapClassA {
-    public HotSwapClassA(){}
-    public void hotSwapMethod() {
-        System.out.println(&quot;A的热调用方法&quot;);
-    }
-    public static void hotSwapStaticMethod(){
-        System.out.println(&quot;A的热调用静态方法&quot;);
-    }
-}
-
-</code></pre>
-</li>
-<li>
-<p>如果还想实现动态编译的功能可以直接使用jdk1.6提供的<code>StringSourceCompiler</code>类，来对字符串代码进行编译。</p>
 </li>
 </ul>
 ]]></content>
