@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[Gloduck]的个人博客">
 <meta name="author" content="kveln">
-<title>个人经常使用的一些网站 | Gloduck</title>
+<title>Spring Bean生命周期 | Gloduck</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="个人经常使用的一些网站 | Gloduck » Feed"
+<link rel="alternate" type="application/rss+xml" title="Spring Bean生命周期 | Gloduck » Feed"
   href="https://mxecy.cn/atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="个人经常使用的一些网站" />
-  <meta property="og:url" content="https://mxecy.cn/post/useful-website/" />
+  <meta property="og:description" content="Spring Bean生命周期" />
+  <meta property="og:url" content="https://mxecy.cn/post/spring-life-cycle/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Gloduck" />
@@ -178,13 +178,19 @@
   <div class="post-heading">
     <span class="tags">
       
-      <a href="https://mxecy.cn/tag/qYuWqrP8x/" class="tag">WebSite</a>
+      <a href="https://mxecy.cn/tag/rwUmRzqG-/" class="tag">Sring</a>
+      
+      <a href="https://mxecy.cn/tag/04MVO5Em0y/" class="tag">SourceCode</a>
+      
+      <a href="https://mxecy.cn/tag/k9YMrxiLi/" class="tag">java</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
       
     </span>
-    <h1>个人经常使用的一些网站</h1>
+    <h1>Spring Bean生命周期</h1>
     <span class="meta">
       Posted on
-      2019-06-15，1 min read
+      2021-03-15，5 min read
     </span>
   </div>
   
@@ -199,47 +205,290 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <p>Gayhub加速下载：一个基于PHP-porxy的反代网站，可以用来gayhub上资源下载速度，或者访问谷歌之类的</p>
-<p><a href="https://proxy.qnid.cc/index.php">https://proxy.qnid.cc/index.php</a></p>
-<hr>
-<p>Itmeo：一个好看渐变色对于RGB值的网站</p>
-<p><a href="https://webgradients.com/">https://webgradients.com/</a></p>
-<hr>
-<p>笨牛网：接入了CloudFlare的一个三方网站，免费提供加速服务</p>
-<p><a href="https://cdn.bnxb.com/">https://cdn.bnxb.com/</a></p>
-<hr>
-<p>Patch List：krkr2模拟器小黄油的解密文件下载页面</p>
-<p><a href="https://zeas2.github.io/Kirikiroid2_patch/patch/">https://zeas2.github.io/Kirikiroid2_patch/patch/</a></p>
-<hr>
-<p>MikuTools - 工具集合：提供了一些常用的小工具合集</p>
-<p><a href="https://tools.miku.ac/">https://tools.miku.ac/</a></p>
-<hr>
-<p>pixivic：一个P站反代网站。可以用来收图</p>
-<p><a href="https://pixivic.com/">https://pixivic.com/</a></p>
-<hr>
-<p>API接口大全：一个API接口的收集网站，比较全，而且都是免费或者一定免费次数的</p>
-<p><a href="https://www.free-api.com/">https://www.free-api.com/</a></p>
-<hr>
-<p>开发者手册：良心云的开发者手册，可以查点资料啥的</p>
-<p><a href="https://cloud.tencent.com/developer/devdocs">https://cloud.tencent.com/developer/devdocs</a></p>
-<hr>
-<p>待添加。。。</p>
+          <h1 id="bean的生命周期">Bean的生命周期</h1>
+<ul>
+<li>实例化</li>
+<li>属性赋值</li>
+<li>初始化</li>
+<li>销毁</li>
+</ul>
+<pre><code class="language-java">//AbstractAutowireCapableBeanFactory.class
+protected Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final @Nullable Object[] args)
+      throws BeanCreationException {
 
-          <div class="toc-container"></div>
+   // Instantiate the bean.
+   BeanWrapper instanceWrapper = null;
+   if (instanceWrapper == null) {
+       // 实例化阶段！
+      instanceWrapper = createBeanInstance(beanName, mbd, args);
+   }
+
+   // Initialize the bean instance.
+   Object exposedObject = bean;
+   try {
+       // 属性赋值阶段！
+      populateBean(beanName, mbd, instanceWrapper);
+       // 初始化阶段！
+      exposedObject = initializeBean(beanName, exposedObject, mbd);
+   }
+}
+</code></pre>
+<h2 id="图解">图解</h2>
+<figure data-type="image" tabindex="1"><img src="%E5%9B%BE%E7%89%87/Spring%E5%85%A8%E5%AE%B6%E6%A1%B6%EF%BC%88%E9%9D%A2%E8%AF%95%E7%89%88%EF%BC%89/SpringBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" alt="" loading="lazy"></figure>
+<h2 id="代码">代码</h2>
+<p>createBean：</p>
+<pre><code class="language-java">// AbstractAutowireCapableBeanFactory.class
+protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+			throws BeanCreationException {
+		...
+
+		// Prepare method overrides.
+		try {
+			mbdToUse.prepareMethodOverrides();
+		}
+		catch (BeanDefinitionValidationException ex) {
+			throw new BeanDefinitionStoreException(mbdToUse.getResourceDescription(),
+					beanName, &quot;Validation of method overrides failed&quot;, ex);
+		}
+
+		try {
+            // 调用InstantiationAwareBeanPostProcessor的postProcessBeforeInstantiation
+			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
+			if (bean != null) {
+				return bean;
+			}
+		}
+		catch (Throwable ex) {
+
+		}
+
+		try {
+            // 调用doCreateBean方法
+			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
+			if (logger.isTraceEnabled()) {
+				logger.trace(&quot;Finished creating instance of bean '&quot; + beanName + &quot;'&quot;);
+			}
+			return beanInstance;
+		}
+		catch (BeanCreationException | ImplicitlyAppearedSingletonException ex) {
+
+		}
+		catch (Throwable ex) {
+
+		}
+	}
+</code></pre>
+<p>doCreateBean：</p>
+<pre><code class="language-java">// AbstractAutowireCapableBeanFactory.class
+protected Object doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+        throws BeanCreationException {
+
+    // Instantiate the bean.
+    BeanWrapper instanceWrapper = null;
+    if (mbd.isSingleton()) {
+        instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
+    }
+    if (instanceWrapper == null) {
+        // 初始化对象，相当于new Object
+        instanceWrapper = createBeanInstance(beanName, mbd, args);
+    }
+    Object bean = instanceWrapper.getWrappedInstance();
+    Class&lt;?&gt; beanType = instanceWrapper.getWrappedClass();
+    if (beanType != NullBean.class) {
+        mbd.resolvedTargetType = beanType;
+    }
+
+    // Allow post-processors to modify the merged bean definition.
+    synchronized (mbd.postProcessingLock) {
+        if (!mbd.postProcessed) {
+            try {
+                applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
+            }
+            catch (Throwable ex) {
+                throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+                        &quot;Post-processing of merged bean definition failed&quot;, ex);
+            }
+            mbd.postProcessed = true;
+        }
+    }
+
+    ...
+
+    // Initialize the bean instance.
+    Object exposedObject = bean;
+    try {
+        /**
+         * 属性赋值：
+         *  执行InstantiationAwareBeanPostProcessors的postProcessAfterInstantiation方法
+         *  调用InstantiationAwareBeanPostProcessor的postProcessPropertyValues方法
+         *  注入属性，具体通过：applyPropertyValues方法
+         */
+        populateBean(beanName, mbd, instanceWrapper);
+        /**
+         * 初始化Bean：
+         *  调用各种Aware，具体通过：invokeAwareMethods方法
+         *  调用BeanPostProcessor的postProcessBeforeInitialization方法
+         *  调用Bean的init方法：通过：invokeInitMethods。在调用init方法之前如果实现了InitializingBean接口，则会调用afterPropertiesSet方法
+         *  调用BeanPostProcessor的postProcessAfterInitialization方法
+         */
+        exposedObject = initializeBean(beanName, exposedObject, mbd);
+    }
+    catch (Throwable ex) {
+        if (ex instanceof BeanCreationException &amp;&amp; beanName.equals(((BeanCreationException) ex).getBeanName())) {
+            throw (BeanCreationException) ex;
+        }
+        else {
+            throw new BeanCreationException(
+                    mbd.getResourceDescription(), beanName, &quot;Initialization of bean failed&quot;, ex);
+        }
+    }
+    ...
+}
+</code></pre>
+<h1 id="测试代码">测试代码</h1>
+<pre><code class="language-java">/**
+ * 测试Bean
+ */
+@Component
+public class Person implements BeanFactoryAware, BeanNameAware,
+        InitializingBean, DisposableBean {
+    private String filed;
+
+    @Value(&quot;filed&quot;)
+    public void setFiled(String filed) {
+        System.out.println(&quot;执行Bean的属性注入&quot;);
+        this.filed = filed;
+    }
+
+    public Person(){
+        System.out.println(&quot;执行Bean的构造方法&quot;);
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        System.out.println(&quot;执行BeanFactoryAware的setBeanFactory&quot;);
+    }
+
+    @Override
+    public void setBeanName(String name) {
+        System.out.println(&quot;执行BeanNameAware的setBeanName&quot;);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println(&quot;执行Bean的销毁方法&quot;);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println(&quot;执行InitializingBean的afterPropertiesSet&quot;);
+    }
+
+    @Override
+    public String toString() {
+        return &quot;Person{&quot; +
+                &quot;filed='&quot; + filed + '\'' +
+                '}';
+    }
+}
+
+
+/**
+ * 自定义处理器
+ */
+@Component
+public class MyBeanPostProcessor implements BeanPostProcessor {
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println(&quot;执行MyBeanPostProcessor的postProcessBeforeInitialization&quot;);
+        return null;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println(&quot;执行MyBeanPostProcessor的postProcessAfterInitialization&quot;);
+
+        return null;
+    }
+}
+
+
+/**
+ * 自定义Bean实例化处理器
+ */
+@Component
+public class MyInstantiationAwareBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter {
+    @Override
+    public Object postProcessBeforeInstantiation(Class&lt;?&gt; beanClass, String beanName) throws BeansException {
+        System.out.println(&quot;MyInstantiationAwareBeanPostProcessor调用postProcessBeforeInstantiation&quot;);
+        return super.postProcessBeforeInstantiation(beanClass, beanName);
+    }
+
+    @Override
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        System.out.println(&quot;MyInstantiationAwareBeanPostProcessor调用postProcessAfterInstantiation&quot;);
+
+        return super.postProcessAfterInstantiation(bean, beanName);
+    }
+
+    @Override
+    public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
+        System.out.println(&quot;MyInstantiationAwareBeanPostProcessor调用postProcessProperties&quot;);
+
+        return super.postProcessProperties(pvs, bean, beanName);
+    }
+}
+
+/**
+ * 配置包扫描
+ */
+@ComponentScan(&quot;spring&quot;)
+public class Config {
+}
+
+
+/**
+ * 主方法
+ */
+public class App {
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(Config.class);
+        Person person = (Person)context.getBean(&quot;person&quot;);
+        try {
+            person.destroy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+</code></pre>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">Bean的生命周期</a>
+<ul>
+<li><a href="#%E5%9B%BE%E8%A7%A3">图解</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+</ul>
+</div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://mxecy.cn/post/Single-file-application/">
+            <a href="https://mxecy.cn/post/graalvm/">
               <span class="post-title">
-                单文件应用合集&rarr;
+                Graalvm​虚拟机集成&rarr;
               </span>
             </a>
           </p>
           
           <div class="comment" style="text-align: center;">
             
-            <span id="/post/useful-website/" class="leancloud_visitors"
-              data-flag-title="个人经常使用的一些网站">
+            <span id="/post/spring-life-cycle/" class="leancloud_visitors"
+              data-flag-title="Spring Bean生命周期">
               <em class="post-meta-item-text">阅读量 </em>
               <i class="leancloud-visitors-count">loading...</i>
             </span>
