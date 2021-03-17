@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>AQS源码分析 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="AQS源码分析 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="AQS源码分析" />
+  <meta property="og:url" content="https://mxecy.cn/post/aqs-sourcecode/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615992806244"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1615992806244"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tva1.sinaimg.cn/mw690/006ZFECEly1gl4yy6d2kaj32yo1o0kjl.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/04MVO5Em0y/" class="tag">SourceCode</a>
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      
+    </span>
+    <h1>AQS源码分析</h1>
+    <span class="meta">
+      Posted on
+      2021-03-17，10 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="abstractqueuedsynchronizer">AbstractQueuedSynchronizer</h1>
+<ul>
+<li><strong>注意：本文根据JDK8进行分析，后续版本的实现有一定变化。</strong></li>
+<li>队列同步器使用了CLH锁（基于单向链表的自旋锁，申请加锁的线程通过前驱节点的变量进行自旋。在前置节点解锁后，当前节点会结束自旋，并进行加锁）。AQS中的队列是CLH变体的虚拟双向队列（FIFO），AQS是通过将每条请求共享资源的线程封装成一个节点来实现锁的分配。
+<ul>
+<li>CLH 中的头节点是一个虚拟的头节点，获取了锁的线程是不在队列中的</li>
+</ul>
+</li>
+<li>队列同步器使用了模板方法模式，只需要重写指定的方法就可以实现同步的语义。AQS有两个内部类：ConditionObject和Node</li>
+<li>如果一个节点的前驱节点的状态被设置为了<code>signal</code>，那么下一个节点就能够被阻塞了，因为如果前驱节点为<code>signal</code>的时候，在其释放（<code>release</code>）的时候，会唤醒下一个节点。</li>
+<li>在AQS中，同步队列，如果一个线程获取到了同步状态，就会从同步队列中&quot;移除&quot;。（当前节点被设置为头节点，但是头节点的thread是为null的）</li>
+<li>AQS存在着两个队列：一个是同步队列，一个是条件队列
+<ul>
+<li>同步队列：双向队列</li>
+<li>条件队列：单向队列</li>
+</ul>
+</li>
+</ul>
+<h1 id="源码">源码</h1>
+<figure data-type="image" tabindex="1"><img src="%E5%9B%BE%E7%89%87/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%B9%B6%E5%8F%91/AQS%E6%96%B9%E6%B3%95.png" alt="" loading="lazy"></figure>
+<h2 id="方法源码">方法源码</h2>
+<h3 id="获取独占同步状态">获取独占同步状态</h3>
+<ul>
+<li>
+<p>流程：</p>
+<ul>
+<li>调用<code>tryAcquire</code>方法获取同步状态，如果获取失败，则调用<code>addWaiter</code>生成一个新的节点，并将其放在同步队列中。</li>
+<li>同步队列中，如果当前节点的前驱节点是头节点，就尝试获取同步状态，如果获取成功就将当前节点设为头节点然后返回。如果失败，则调用<code>shouldParkAfterFailedAcquire</code>来查看当前节点是否需要阻塞，如果需要阻塞就调用<code>parkAndCheckInterrupt</code>阻塞当前节点，并且检查中断。</li>
+<li><code>shouldParkAfterFailedAcquire</code>中，如果前驱节点为single，表明前驱节点已经被阻塞了，则当前节点也可以放心的阻塞。返回true表明可以阻塞。如果前驱节点已经被取消了，则将前驱节点移出队列。否者将当前节点的状态设置为single。</li>
+</ul>
+</li>
+<li>
+<p>acquire：获取资源，独占模式</p>
+</li>
+</ul>
+<pre><code class="language-java">public final void acquire(int arg) {
+    // 尝试获取，获取失败则生成一个生成一个新的节点添加到尾部，然后排他获取锁
+    if (!tryAcquire(arg) &amp;&amp;
+        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+        // 如果进入了if，则代表acquireQueued方法被中断了，于是恢复终端状态
+        selfInterrupt();
+}
+</code></pre>
+<ul>
+<li>acquireQueued：尝试获取同步状态。如果不被阻塞，则代表当前线程争抢不激烈，就CAS获取同步状态。如果阻塞，并且在阻塞的过程中（<strong>如果是doAcquireInterruptibly的话，则在中断后会直接抛出异常。其他和acquireQueued差不多</strong>）</li>
+</ul>
+<pre><code class="language-java">final boolean acquireQueued(final Node node, int arg) {
+    boolean failed = true;
+    try {
+        boolean interrupted = false;
+        for (;;) {
+            // 获取前驱节点
+            final Node p = node.predecessor();
+            // 如果前驱节点为头节点，就尝试获取同步状态
+            if (p == head &amp;&amp; tryAcquire(arg)) {
+                // 获取成功将当前节点设置为头节点然后返回。
+                setHead(node);
+                p.next = null; // help GC
+                failed = false;
+                return interrupted;
+            }
+            // 检测当前节点获取失败后是否应该阻塞，如果应该的话就阻塞并且检测中断状态。
+            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;
+                parkAndCheckInterrupt())
+                interrupted = true;
+        }
+    } finally {
+        // return前调用，进入此处则证明出现了异常。则取消当前尝试。
+        if (failed)
+            cancelAcquire(node);
+    }
+}
+</code></pre>
+<ul>
+<li>shouldParkAfterFailedAcquire：当获取同步状态失败的时候是否应该阻塞当前线程</li>
+</ul>
+<pre><code class="language-java">private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
+    int ws = pred.waitStatus;
+    if (ws == Node.SIGNAL)
+		// 如果前驱节点为Single，则表明前驱节点已经被阻塞了。则当前节点就能够安全的被阻塞了。
+        return true;
+    if (ws &gt; 0) {
+		// 如果前驱节点已经被取消了，则将被取消的节点移出队列。然后返回false
+        do {
+            node.prev = pred = pred.prev;
+        } while (pred.waitStatus &gt; 0);
+        pred.next = node;
+    } else {
+        /*
+             * waitStatus must be 0 or PROPAGATE.  Indicate that we
+             * need a signal, but don't park yet.  Caller will need to
+             * retry to make sure it cannot acquire before parking.
+             */
+        // 将前驱节点设置为Signal，然后返回false。因为前驱节点为signal的时候，在其release的时候会通知后续节点唤醒。
+        compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
+    }
+    return false;
+}
+</code></pre>
+<ul>
+<li>addWaiter：添加一个指定模式的节点，通过mode指定，并将其添加到队尾，<code>Node.EXECUSIVE</code>或<code>Node.SHARED</code></li>
+</ul>
+<pre><code class="language-java">private Node addWaiter(Node mode) {
+    // 创建一个新的节点
+    Node node = new Node(Thread.currentThread(), mode);
+    Node pred = tail;
+    // 尝试快速添加，如果失败则调用enq进行cas添加
+    if (pred != null) {
+        node.prev = pred;
+        if (compareAndSetTail(pred, node)) {
+            pred.next = node;
+            return node;
+        }
+    }
+    enq(node);
+    return node;
+}
+</code></pre>
+<ul>
+<li>Enq：cas添加到队尾，成功则返回当前节点的前驱节点</li>
+</ul>
+<pre><code class="language-java">private Node enq(final Node node) {
+    // cas添加到队尾，成功则返回当前节点的前驱节点
+    for (;;) {
+        Node t = tail;
+        if (t == null) { // 初始化，一开始的时候可能为空。当尾部为空的时候，则代表头也为空
+            if (compareAndSetHead(new Node()))
+                tail = head;
+        } else {
+            node.prev = t;
+            if (compareAndSetTail(t, node)) {
+                t.next = node;
+                return t;
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="释放同步状态">释放同步状态</h3>
+<ul>
+<li>release：释放同步状态</li>
+</ul>
+<pre><code class="language-java">public final boolean release(int arg) {
+    if (tryRelease(arg)) {
+        Node h = head;
+        if (h != null &amp;&amp; h.waitStatus != 0)
+            // 唤醒一个阻塞的线程，如果存在的话。
+            unparkSuccessor(h);
+        return true;
+    }
+    return false;
+}
+</code></pre>
+<ul>
+<li>unparkSuccesser：唤醒一个阻塞中的节点，如果存在的话。</li>
+</ul>
+<pre><code class="language-java">private void unparkSuccessor(Node node) {
+    /*
+         * If status is negative (i.e., possibly needing signal) try
+         * to clear in anticipation of signalling.  It is OK if this
+         * fails or if status is changed by waiting thread.
+         */
+    int ws = node.waitStatus;
+    if (ws &lt; 0)
+        compareAndSetWaitStatus(node, ws, 0);
+
+    Node s = node.next;
+    // 默认唤醒下一个节点，如果下一个节点已经取消或者为空，则从尾部找到一个没有被取消的节点唤醒。
+    if (s == null || s.waitStatus &gt; 0) {
+        s = null;
+        for (Node t = tail; t != null &amp;&amp; t != node; t = t.prev)
+            if (t.waitStatus &lt;= 0)
+                s = t;
+    }
+    if (s != null)
+        LockSupport.unpark(s.thread);
+}
+
+</code></pre>
+<h3 id="await等待">await等待</h3>
+<ul>
+<li>await：等待，并释放资源。
+<ul>
+<li>注意：此处为什么不是将当前的节点添加到条件队列，而是在条件队列里生成一个新的节点？
+<ul>
+<li>因为调用await的时候已经获取到了同步状态，此时当前节点已经不算在同步队列中了。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-java">public final void await() throws InterruptedException {
+    // 如果线程被中断了的话直接抛出异常
+    if (Thread.interrupted())
+        throw new InterruptedException();
+    // 添加一个新的节点到等待队列。
+    Node node = addConditionWaiter();
+    // 释放所有资源。到此时，锁已经被释放了。
+    int savedState = fullyRelease(node);
+    int interruptMode = 0;
+    /**
+         * 不断轮询当前是否在同步队列中，如果不在同步队列中就继续阻塞（除非等待时候被中断了）。
+         * 如果在同步队列中那么就代表被唤醒了（调用了singal方法）
+         */
+    while (!isOnSyncQueue(node)) {
+        LockSupport.park(this);
+        if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
+            break;
+    }
+    // 重新竞争锁
+    if (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)
+        interruptMode = REINTERRUPT;
+    if (node.nextWaiter != null) // clean up if cancelled
+        unlinkCancelledWaiters();
+    if (interruptMode != 0)
+        reportInterruptAfterWait(interruptMode);
+}
+</code></pre>
+<h3 id="signal通知">signal通知</h3>
+<ul>
+<li>signal：通知</li>
+</ul>
+<pre><code class="language-java">// 从条件队列中获取一个等待时间最长的唤醒
+public final void signal() {
+    if (!isHeldExclusively())
+        throw new IllegalMonitorStateException();
+    Node first = firstWaiter;
+    if (first != null)
+        doSignal(first); 
+}
+</code></pre>
+<ul>
+<li>doSignal：</li>
+</ul>
+<pre><code class="language-java">private void doSignal(Node first) {
+    do {
+        // 此处不需要加锁，因为当前doSignal只会被一个线程调用
+        // 将当前节点从条件队列里面移除去。使其孤立
+        if ( (firstWaiter = first.nextWaiter) == null)
+            lastWaiter = null;
+        first.nextWaiter = null;
+        // 将其从条件队列中转换到同步队列
+    } while (!transferForSignal(first) &amp;&amp;
+             (first = firstWaiter) != null);
+}
+
+</code></pre>
+<ul>
+<li>transferForSignal：将当前节点从条件队列中移交到同步队列</li>
+</ul>
+<pre><code class="language-java">final boolean transferForSignal(Node node) {
+    /*
+         *如果当前节点状态无法被替换，那么当前节点就被取消了
+         */
+    if (!node.compareAndSetWaitStatus(Node.CONDITION, 0))
+        return false;
+
+    /*
+         * Splice onto queue and try to set waitStatus of predecessor to
+         * indicate that thread is (probably) waiting. If cancelled or
+         * attempt to set waitStatus fails, wake up to resync (in which
+         * case the waitStatus can be transiently and harmlessly wrong).
+         */
+    // 将当前节点添加到同步队列并且返回前驱节点
+    Node p = enq(node);
+    int ws = p.waitStatus;
+    // 如果当前节点的前驱节点被取消了或尝试替换等待状态失败就唤醒当前线程。
+    if (ws &gt; 0 || !p.compareAndSetWaitStatus(ws, Node.SIGNAL))
+        LockSupport.unpark(node.thread);
+    return true;
+}
+</code></pre>
+<h2 id="内部类">内部类</h2>
+<h3 id="conditionobject">ConditionObject</h3>
+<ul>
+<li>成员变量：
+<ul>
+<li><code>firstWaiter</code>：条件队列第一个节点</li>
+<li><code>lastWaiter</code>：条件队列最后一个节点</li>
+</ul>
+</li>
+<li>参数：
+<ul>
+<li><code>REINTERRUPT</code>：表示在退出的时候重新中断</li>
+<li><code>THROW_IE</code>：表示在退出的时候抛出InterruptedException</li>
+</ul>
+</li>
+</ul>
+<h3 id="node">Node</h3>
+<ul>
+<li>
+<p>CLH中的一个节点</p>
+</li>
+<li>
+<p>参数：</p>
+<ul>
+<li>waitStatus：如果waitStatus非负表示节点不需要发信号。
+<ul>
+<li>cancelled：值为1，表明当前线程被取消了。</li>
+<li>initial：值为0，初始状态</li>
+<li>signal：值为-1，表明了当前节点已经被阻塞了，等待唤醒</li>
+<li>condition：值为-2，表明当前节点在等待Condition。当其他线程对Condition调用了signal方法后，该节点会从等待队列中转移到同步队列中，加入到对同步状态的获取中</li>
+<li>propagate：值为-3，表示下一次共享式同步状态获取将会无条件的被传播下去</li>
+</ul>
+</li>
+<li>prev：前结点的引用，如果前节点移除后会找到一个新的前节点。在队列中的线程是前节点永远存在</li>
+<li>next：后节点的引用，后节点为空并不一定表示在队尾。</li>
+<li>thread：当前节点绑定的线程</li>
+<li>nextWaiter：下一个等待节点的链接，用于共享或者条件队列的时候。</li>
+</ul>
+</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#abstractqueuedsynchronizer">AbstractQueuedSynchronizer</a></li>
+<li><a href="#%E6%BA%90%E7%A0%81">源码</a>
+<ul>
+<li><a href="#%E6%96%B9%E6%B3%95%E6%BA%90%E7%A0%81">方法源码</a>
+<ul>
+<li><a href="#%E8%8E%B7%E5%8F%96%E7%8B%AC%E5%8D%A0%E5%90%8C%E6%AD%A5%E7%8A%B6%E6%80%81">获取独占同步状态</a></li>
+<li><a href="#%E9%87%8A%E6%94%BE%E5%90%8C%E6%AD%A5%E7%8A%B6%E6%80%81">释放同步状态</a></li>
+<li><a href="#await%E7%AD%89%E5%BE%85">await等待</a></li>
+<li><a href="#signal%E9%80%9A%E7%9F%A5">signal通知</a></li>
+</ul>
+</li>
+<li><a href="#%E5%86%85%E9%83%A8%E7%B1%BB">内部类</a>
+<ul>
+<li><a href="#conditionobject">ConditionObject</a></li>
+<li><a href="#node">Node</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/spring-circular-dependencies/">
+              <span class="post-title">
+                Spring解决循环依赖&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/aqs-sourcecode/" class="leancloud_visitors"
+              data-flag-title="AQS源码分析">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>
