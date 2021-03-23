@@ -90,7 +90,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1616033022046"
+            <form id="gridea-search-form" style="position: relative" data-update="1616477186639"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -152,7 +152,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1616033022046"
+            <form id="gridea-search-form" style="position: relative" data-update="1616477186639"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -188,7 +188,7 @@
     <h1>AQS源码分析</h1>
     <span class="meta">
       Posted on
-      2021-03-17，10 min read
+      2021-03-17，15 min read
     </span>
   </div>
   
@@ -220,9 +220,20 @@
 <li>条件队列：单向队列</li>
 </ul>
 </li>
+<li>有几点需要注意：
+<ul>
+<li>当在wait的时候被中断是需要抛出异常的</li>
+<li>LockSupport调用park阻塞的时候从阻塞状态中恢复的原因有两个，所以需要额外判断。
+<ul>
+<li>调用了unpark</li>
+<li>当前线程在park的时候被中断了。</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <h1 id="源码">源码</h1>
-<figure data-type="image" tabindex="1"><img src="%E5%9B%BE%E7%89%87/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%B9%B6%E5%8F%91/AQS%E6%96%B9%E6%B3%95.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gotreh3irej30vh0scdlz.jpg" alt="AQS方法" loading="lazy"></figure>
 <h2 id="方法源码">方法源码</h2>
 <h3 id="获取独占同步状态">获取独占同步状态</h3>
 <ul>
@@ -383,8 +394,28 @@
 
 </code></pre>
 <h3 id="await等待">await等待</h3>
+<p>https://blog.csdn.net/kailuan2zhong/article/details/105391230</p>
 <ul>
-<li>await：等待，并释放资源。
+<li>
+<p>大致流程：</p>
+<ul>
+<li>如果当前线程被中断了的话，就抛出异常。否则在条件队列中添加一个新的节点，添加新节点的同时去除非condition的节点，然后释放当前的同步状态。</li>
+<li>不断的轮询当前节点是否在同步队列中（判断同步队列是通过当前节点的状态和有没有前后节点来判断的），如果不在同步队列中就继续阻塞当前节点。同时还需要判断当前的线程是否中断。判断线程中断的时候同时还要判断是否调用了signal，如果调用了就恢复中断状态，否则抛出异常。（类似synchronized，如果在wait的时候中断线程是会抛出异常的）
+<ul>
+<li>如果调用了signal将当前节点加入到了同步队列会跳出循环。</li>
+<li>如果当前线程因为中断而被加入到了同步队列中会跳出循环。
+<ul>
+<li>在循环中线程被唤醒的原因有两个：1是因为调用了signal，在signal中调用了LockSupport的unpark方法导致线程被唤醒；2是因为在LockSupport的park途中线程被中断了，LockSupport会自动从阻塞状态中恢复过来。所以还需要额外的判断被唤醒的原因。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>跳出循环后则代表当前线程已经被添加到了同步队列中，于是调用acquireQueued重新抢夺同步状态。</li>
+<li>抢夺到同步状态后根据mode判断是否要抛出异常（在等待过程中被中断需要抛出异常）或恢复中断状态</li>
+</ul>
+</li>
+<li>
+<p>await：等待，并释放资源。</p>
 <ul>
 <li>注意：此处为什么不是将当前的节点添加到条件队列，而是在条件队列里生成一个新的节点？
 <ul>
@@ -398,27 +429,88 @@
     // 如果线程被中断了的话直接抛出异常
     if (Thread.interrupted())
         throw new InterruptedException();
-    // 添加一个新的节点到等待队列。
+    // 添加一个新的节点到等待队列。在addConditionWaiter中，如果发现尾节点的状态不对，则调用unlinkCancelledWaiters将等待队列中的非condition状态的节点移除。
     Node node = addConditionWaiter();
     // 释放所有资源。到此时，锁已经被释放了。
     int savedState = fullyRelease(node);
     int interruptMode = 0;
     /**
-         * 不断轮询当前是否在同步队列中，如果不在同步队列中就继续阻塞（除非等待时候被中断了）。
+         * 不断轮询当前是否在同步队列中，如果不在同步队列中就继续阻塞（除非等待时候被中断了）。通过当前节点的状态来进行判断，如果当前节点的状态为condition或前驱节点为空，则代表还在条件队列中。如果后续节点不为空（next，同步队列的下一个是通过nextWaiter判断的，所以不冲突），则代表已经在同步队列中了。否则从尾节点找到前驱当前节点。
          * 如果在同步队列中那么就代表被唤醒了（调用了singal方法）
          */
     while (!isOnSyncQueue(node)) {
         LockSupport.park(this);
+        // 此处线程已经被唤醒，唤醒的原因有两个：一是因为线程被中断，二是因为signal
         if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
+            // 判断在等待过程中线程是否被中断，如果被中断了就跳出循环重新抢夺时间片，抢夺到了后然后报告中断状态。
             break;
     }
     // 重新竞争锁
     if (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)
         interruptMode = REINTERRUPT;
     if (node.nextWaiter != null) // clean up if cancelled
+        // 如果当前节点有后续节点，清除被取消的节点
         unlinkCancelledWaiters();
     if (interruptMode != 0)
+        // 恢复中断状态
         reportInterruptAfterWait(interruptMode);
+}
+</code></pre>
+<ul>
+<li>addConditionWaiter：在条件队列中添加一个节点。同时会清除非condition的节点</li>
+</ul>
+<pre><code class="language-java">private Node addConditionWaiter() {    
+	Node t = lastWaiter; // 获取尾部指针，看来是采用尾插法    
+	// If lastWaiter is cancelled, clean out.    
+	if (t != null &amp;&amp; t.waitStatus != Node.CONDITION) {        
+		unlinkCancelledWaiters(); // 如果尾节点的状态不为condition，则遍历队列。清除非condition的节点。
+		t = lastWaiter;    
+	}    
+	Node node = new Node(Thread.currentThread(), Node.CONDITION); // 创建一个新节点    
+	if (t == null) // 尾结点为空，说明队列是空的        
+		firstWaiter = node; // 初始化队列    
+	else        
+		t.nextWaiter = node; // 尾插    
+	lastWaiter = node; // 调整尾指针指向    
+	return node; // 返回新增节点对象
+}
+</code></pre>
+<ul>
+<li>fullRelease：释放所有状态</li>
+<li>isOnSyncQueue：判断节点是否在同步队列中</li>
+</ul>
+<pre><code class="language-java">    final boolean isOnSyncQueue(Node node) {
+        if (node.waitStatus == Node.CONDITION || node.prev == null)
+            // 如果当前节点的状态为condition，或前去节点为null，则当前节点是一个独立的节点，即不在同步队列中
+            return false;
+        if (node.next != null) // 如果当前节点的下一个不为null，则代表已经在同步队列中了（此处是同步队列的判断，条件队列的判断是通过nextWaiter来判断的）
+            return true;
+		// 前置节点不为空。此时不代表当前节点一定在同步队列中，因为CAS可能会失败，需要不断的从尾节点轮询来获取当前节点的确切状态
+        return findNodeFromTail(node);
+    }
+</code></pre>
+<ul>
+<li>checkInterruptWhileWaiting：判断在等待过程中线程是否中断，同时报告线程中断的原因</li>
+</ul>
+<pre><code class="language-java">// 判断当前线程在等待的过程中是否被中断
+private int checkInterruptWhileWaiting(Node node) {
+    return Thread.interrupted() ?
+        (transferAfterCancelledWait(node) ? THROW_IE : REINTERRUPT) :
+    0;
+}
+
+// 如果被中断了判断被中断的时候是否已经调用了signal。即判断被唤醒的原因。因为如果还在等待过程中被中断了的话需要抛出异常。
+final boolean transferAfterCancelledWait(Node node) {
+
+    if (node.compareAndSetWaitStatus(Node.CONDITION, 0)) {
+        // 此时代表被唤醒的时候还没有调用signal，如果CAS替换成功，则表明当前线程被唤醒的原因是因为在阻塞的过程中调用了interrupt
+        enq(node);
+        return true;
+    }
+    // 此时代表由于signal被唤醒。
+    while (!isOnSyncQueue(node))
+        Thread.yield();
+    return false;
 }
 </code></pre>
 <h3 id="signal通知">signal通知</h3>
@@ -427,7 +519,7 @@
 </ul>
 <pre><code class="language-java">// 从条件队列中获取一个等待时间最长的唤醒
 public final void signal() {
-    if (!isHeldExclusively())
+    if (!isHeldExclusively()) //模板方法，判断是持有同步状态。
         throw new IllegalMonitorStateException();
     Node first = firstWaiter;
     if (first != null)
@@ -439,10 +531,11 @@ public final void signal() {
 </ul>
 <pre><code class="language-java">private void doSignal(Node first) {
     do {
-        // 此处不需要加锁，因为当前doSignal只会被一个线程调用
-        // 将当前节点从条件队列里面移除去。使其孤立
+        
         if ( (firstWaiter = first.nextWaiter) == null)
+            // 如果节点没有后续节点了，就将lastWaiter置为空
             lastWaiter = null;
+        // 将first节点孤立出来（从条件队列中移除）
         first.nextWaiter = null;
         // 将其从条件队列中转换到同步队列
     } while (!transferForSignal(first) &amp;&amp;
@@ -470,6 +563,8 @@ public final void signal() {
     Node p = enq(node);
     int ws = p.waitStatus;
     // 如果当前节点的前驱节点被取消了或尝试替换等待状态失败就唤醒当前线程。
+    // 前者：如果同步状态为取消，则唤醒线程，在await()逻辑中，被唤醒的线程会检查线程状态，此时的取消会导致在transferAfterCancelledWait()方法中，无法将node状态由CONDITION转为0，也就进而不停让出线程cpu时间，导致线程被取消。
+    // 后者：无法更改等待状态的值，就说明有其他线程在操作该node。
     if (ws &gt; 0 || !p.compareAndSetWaitStatus(ws, Node.SIGNAL))
         LockSupport.unpark(node.thread);
     return true;
