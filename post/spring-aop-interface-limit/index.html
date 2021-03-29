@@ -90,7 +90,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1617009972630"
+            <form id="gridea-search-form" style="position: relative" data-update="1617023670435"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -152,7 +152,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1617009972630"
+            <form id="gridea-search-form" style="position: relative" data-update="1617023670435"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -207,7 +207,16 @@
           
           <h1 id="待解决问题">待解决问题</h1>
 <ul>
-<li>没有解决无效数据清理的问题，会出现OOM</li>
+<li>没有解决无效数据清理的问题，会出现OOM（有时间更新）
+<ul>
+<li>解决方案：
+<ul>
+<li>将缓存设置成LRU（可以直接把<code>ConcurrentSkipListMap</code>改为Spring提供的<code>ConcurrentLruCache</code>）。因为根据LRU的策略，被淘汰的是调用不频繁的接口记录。可能只调用了一次就被记录了，这些就可以直接删除，因为接口限制限制的是那些频繁次数调用的。</li>
+<li>设置一个后台任务来处理。</li>
+</ul>
+</li>
+</ul>
+</li>
 <li>只实现了根据IP来进行限制</li>
 </ul>
 <h1 id="测试">测试</h1>
