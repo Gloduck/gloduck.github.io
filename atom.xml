@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://mxecy.cn</id>
     <title>Gloduck</title>
-    <updated>2021-03-23T05:26:34.971Z</updated>
+    <updated>2021-03-29T09:26:35.831Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://mxecy.cn"/>
     <link rel="self" href="https://mxecy.cn/atom.xml"/>
@@ -1015,6 +1015,373 @@ Hello world
 </ul>
 </li>
 </ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java通过AOP实现接口限制]]></title>
+        <id>https://mxecy.cn/post/spring-aop-interface-limit/</id>
+        <link href="https://mxecy.cn/post/spring-aop-interface-limit/">
+        </link>
+        <updated>2021-01-30T09:24:21.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="待解决问题">待解决问题</h1>
+<ul>
+<li>没有解决无效数据清理的问题，会出现OOM</li>
+<li>只实现了根据IP来进行限制</li>
+</ul>
+<h1 id="测试">测试</h1>
+<h2 id="测试代码">测试代码</h2>
+<pre><code class="language-java">package springboot;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import springboot.limit.annotation.Limit;
+import springboot.limit.enums.LimitType;
+
+@SpringBootApplication
+public class SpringBootApplicationStart {
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootApplicationStart.class, args);
+    }
+    @RestController
+    @RequestMapping(&quot;/test&quot;)
+    public static class MyController{
+        @GetMapping()
+        @Limit(count = 10,timeout = 200,type = LimitType.IP)
+        public String show(){
+            String json = &quot;json&quot;;
+            return json;
+        }
+    }
+}
+</code></pre>
+<h2 id="测试结果">测试结果</h2>
+<ul>
+<li>接口限制为：时间间隔200秒，请求限制10个。即1秒50个请求</li>
+<li>压力测试为：200个请求循环20秒，一共4000个请求</li>
+<li>结果为：异常率82%，<code>(50 * 20) / 4000 = 0.25</code>，结果差不多</li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gp0waj1b91j31q40tnq60.jpg" alt="测试配置" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gp0wasurwqj31a50g4t9s.jpg" alt="结果" loading="lazy"></figure>
+<h1 id="代码">代码</h1>
+<h2 id="注解">注解</h2>
+<ul>
+<li>定义一个注解，指示AOP</li>
+</ul>
+<pre><code class="language-java">package springboot.limit.annotation;
+
+import springboot.limit.enums.LimitType;
+
+import java.lang.annotation.*;
+
+/**
+ * @author Gloduck
+ */
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Limit {
+    /**
+     * 限制数量
+     * @return
+     */
+    int count();
+
+    /**
+     * 时间间隔
+     * @return
+     */
+    long timeout();
+
+    /**
+     * 限制的类型
+     * @return
+     */
+    LimitType type();
+}
+</code></pre>
+<h2 id="记录实体">记录实体</h2>
+<ul>
+<li>定义一个实体，用于记录访问数以及起始记录时间</li>
+</ul>
+<pre><code class="language-java">package springboot.limit;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * @author Gloduck
+ */
+public class LimitEntry {
+    private  long startTime;
+    private final AtomicInteger counter;
+
+
+
+    public LimitEntry() {
+        this.startTime = System.currentTimeMillis();
+        this.counter = new AtomicInteger(0);
+    }
+
+    public int get(){
+        return counter.get();
+    }
+    public boolean compareAndSet(int expectedValue, int newValue){
+        return counter.compareAndSet(expectedValue, newValue);
+    }
+    public boolean isExpire(long expire){
+        return this.startTime + expire &lt; System.currentTimeMillis();
+    }
+
+    /**
+     * 刷新
+     */
+    public void refresh(){
+        this.startTime = System.currentTimeMillis();
+        this.counter.set(0);
+    }
+}
+
+</code></pre>
+<h2 id="切面">切面</h2>
+<ul>
+<li>通过切面来实现接口限制功能</li>
+</ul>
+<pre><code class="language-java">package springboot.limit.aspect;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import springboot.limit.LimitEntry;
+import springboot.limit.annotation.Limit;
+import springboot.limit.enums.LimitType;
+import springboot.limit.exception.LimitAccessException;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentSkipListMap;
+
+@Aspect
+@Component
+public class LimitAspect {
+    private Logger logger = LoggerFactory.getLogger(LimitAspect.class);
+    private final ConcurrentSkipListMap&lt;String, LimitEntry&gt; map = new ConcurrentSkipListMap&lt;&gt;();
+
+    @Pointcut(&quot;@annotation(limit)&quot;)
+    public void pointCut(Limit limit) {
+    }
+
+    @Around(value = &quot;pointCut(limit)&quot;, argNames = &quot;joinPoint,limit&quot;)
+    public Object interfaceLimit(ProceedingJoinPoint joinPoint, Limit limit) throws Throwable {
+        LimitType type = limit.type();
+        String key = type.generateKey(getRequest());
+        // 获取limitEntry
+        LimitEntry limitEntry = map.get(key);
+        if(limitEntry == null){
+            limitEntry = new LimitEntry();
+            map.put(key, limitEntry);
+        }
+        int currentValue;
+        boolean flag = false;
+        do {
+            if(limitEntry.isExpire(limit.timeout())){
+                // 如果过期了，加锁刷新
+                synchronized (limitEntry){
+                    if(limitEntry.isExpire(limit.timeout())){
+                        limitEntry.refresh();
+                    }
+                }
+            }
+            // 获取当前的值
+            currentValue = limitEntry.get();
+            if (currentValue &gt;= limit.count()) {
+                // 如果访问次数超限了就退出。
+                flag = true;
+                break;
+            }
+        } while (!limitEntry.compareAndSet(currentValue, currentValue + 1));
+
+        logger.info(&quot;获取到的key为：{}，当前的是否超出访问限制：{}&quot;, key, (flag ? &quot;是&quot; : &quot;否&quot;));
+        checkIfNeedClear();
+        if (flag) {
+            throw new LimitAccessException(&quot;访问超出限制&quot;);
+        } else {
+            return joinPoint.proceed();
+        }
+    }
+
+    public HttpServletRequest getRequest() {
+        return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+    }
+
+    /**
+     * 检查是否需要清理
+     */
+    public void checkIfNeedClear(){
+
+    }
+}
+</code></pre>
+<h2 id="枚举类">枚举类</h2>
+<ul>
+<li>定义一个枚举类，用于指定限制的规则，目前只实现了根据IP限制</li>
+</ul>
+<pre><code class="language-java">package springboot.limit.enums;
+
+import springboot.limit.utils.LimitUtils;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * @author Gloduck
+ */
+public enum LimitType {
+    /**
+     * 根据IP限制
+     */
+    IP {
+        @Override
+        public String generateKey(HttpServletRequest request) {
+            String key = String.format(&quot;ip:%s&quot;, LimitUtils.getIpAddr(request));
+            return key;
+        }
+    };
+
+    public String generateKey(HttpServletRequest request) {
+        throw new AbstractMethodError();
+    }
+
+
+}
+</code></pre>
+<h2 id="工具类">工具类</h2>
+<ul>
+<li>使用到的工具类。</li>
+</ul>
+<pre><code class="language-java">package springboot.limit.utils;
+
+import cn.hutool.core.net.NetUtil;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * @author Gloduck
+ */
+public class LimitUtils {
+    private static final String UNKNOWN = &quot;unknown&quot;;
+    private static final String X_FORWARDED_FOR = &quot;x-forwarded-for&quot;;
+    private static final String Proxy_Client_IP = &quot;Proxy-Client-IP&quot;;
+    private static final String WL_Proxy_Client_IP = &quot;WL-Proxy-Client-IP&quot;;
+    private static final String LOCAL_IP = &quot;127.0.0.1&quot;;
+
+    private LimitUtils() {
+    }
+
+    /**
+     * 获取IP地址
+     *
+     * @param request
+     * @return
+     */
+    public static String getIpAddr(HttpServletRequest request) {
+        // 获取客户端ip地址
+        String clientIp = request.getHeader(X_FORWARDED_FOR);
+        if (clientIp == null || clientIp.length() == 0 || UNKNOWN.equalsIgnoreCase(clientIp)) {
+            clientIp = request.getHeader(Proxy_Client_IP);
+        }
+        if (clientIp == null || clientIp.length() == 0 || UNKNOWN.equalsIgnoreCase(clientIp)) {
+            clientIp = request.getHeader(WL_Proxy_Client_IP);
+        }
+        if (clientIp == null || clientIp.length() == 0 || UNKNOWN.equalsIgnoreCase(clientIp)) {
+            clientIp = request.getRemoteAddr();
+        }
+        /*
+         * 对于获取到多ip的情况下，找到公网ip.
+         */
+        String sIP = null;
+        if (clientIp != null &amp;&amp; !clientIp.contains(UNKNOWN) &amp;&amp; clientIp.indexOf(&quot;,&quot;) &gt; 0) {
+            String[] ipsz = clientIp.split(&quot;,&quot;);
+            for (String anIpsz : ipsz) {
+                if (!isInnerIp(anIpsz.trim())) {
+                    sIP = anIpsz.trim();
+                    break;
+                }
+            }
+            /*
+             * 如果多ip都是内网ip，则取第一个ip.
+             */
+            if (null == sIP) {
+                sIP = ipsz[0].trim();
+            }
+            clientIp = sIP;
+        }
+        if (clientIp != null &amp;&amp; clientIp.contains(UNKNOWN)) {
+            clientIp = clientIp.replaceAll(&quot;unknown,&quot;, &quot;&quot;);
+            clientIp = clientIp.trim();
+        }
+        if (&quot;&quot;.equals(clientIp) || null == clientIp) {
+            clientIp = &quot;127.0.0.1&quot;;
+        }
+        return clientIp;
+    }
+
+    /**
+     * 判断是否为内网IP
+     *
+     * @param ipAddress
+     * @return
+     */
+    public static boolean isInnerIp(String ipAddress) {
+        boolean isInnerIp;
+        long ipNum = NetUtil.ipv4ToLong(ipAddress);
+
+        long aBegin = NetUtil.ipv4ToLong(&quot;10.0.0.0&quot;);
+        long aEnd = NetUtil.ipv4ToLong(&quot;10.255.255.255&quot;);
+
+        long bBegin = NetUtil.ipv4ToLong(&quot;172.16.0.0&quot;);
+        long bEnd = NetUtil.ipv4ToLong(&quot;172.31.255.255&quot;);
+
+        long cBegin = NetUtil.ipv4ToLong(&quot;192.168.0.0&quot;);
+        long cEnd = NetUtil.ipv4ToLong(&quot;192.168.255.255&quot;);
+
+        isInnerIp = isInner(ipNum, aBegin, aEnd) || isInner(ipNum, bBegin, bEnd) || isInner(ipNum, cBegin, cEnd) || ipAddress.equals(LOCAL_IP);
+        return isInnerIp;
+    }
+
+    /**
+     * 指定IP的long是否在指定范围内
+     *
+     * @param userIp 用户IP
+     * @param begin  开始IP
+     * @param end    结束IP
+     * @return 是否在范围内
+     */
+    private static boolean isInner(long userIp, long begin, long end) {
+        return (userIp &gt;= begin) &amp;&amp; (userIp &lt;= end);
+    }
+}
+
+</code></pre>
+<h2 id="异常">异常</h2>
+<ul>
+<li>接口访问超限出现的异常。</li>
+</ul>
+<pre><code class="language-java">package springboot.limit.exception;
+
+public class LimitAccessException extends RuntimeException {
+    public LimitAccessException(String message) {
+        super(message);
+    }
+}
+</code></pre>
 ]]></content>
     </entry>
     <entry>
@@ -2853,69 +3220,6 @@ sudo gedit 图标名称.desktop
 <p>安装nautilus-admin</p>
 <pre><code class="language-shell">sudo apt install nautilus-admin
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Java的方法传值]]></title>
-        <id>https://mxecy.cn/post/yQnjeLQxQ/</id>
-        <link href="https://mxecy.cn/post/yQnjeLQxQ/">
-        </link>
-        <updated>2020-12-02T08:40:18.000Z</updated>
-        <content type="html"><![CDATA[<ul>
-<li>首先先声明结论，Java的方法传递的是值。对于Java的对象来说传递的是对象引用的副本。</li>
-<li>具体还得从局部变量表说起
-<ul>
-<li>局部变量表定义：局部变量表(Local Variable Table)是一组变量值存储空间，用于存放方法参数和方法内定义的局部变量。局部变量表的容量以变量槽(Variable Slot)为最小单位。</li>
-<li>对于局部变量表的每一个变量槽。都能存放一个boolean、byte、char、short、int、float、reference或returnAddress类型的数据。<strong>而其中reference就是代表的一个对象的引用（数组也是引用类型）</strong>。</li>
-<li>如果执行的是实例方法，那么<strong>局部变量表中0位索引的变量槽默认是用于传递方法所属对象实例的应用（this）</strong>，其余参数按照参数表顺序排列。再根据方法体内部定义的变量顺序和作用域分配其余变量槽</li>
-</ul>
-</li>
-<li>也就是说，参数传入到局部变量表里的实际上是一个引用。那为什么说Java是按值传递的呢？因为这个引用实际上是一个传入对象的引用的一个副本，而非是对象真正的引用。关于这方面可以参考微软对引用的定义。<a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/language-reference/keywords/ref#passing-an-argument-by-reference">地址</a></li>
-<li>对于对象进行修改操作，是可以直接反应到对象上的（如：传入的是一个map对象，调用put方法）。而对于对象的赋值操作，则不会反应到对象上（如：传入了一个对象，并在方法内把它指向null<code>传入的方法 = null</code>）。<br>
-首先，定义一个对象，作为测试使用</li>
-</ul>
-<pre><code class="language-java">class MyObject {
-    public int number;
-}
-</code></pre>
-<p>然后定义一个swap方法，用于交换两个对象。</p>
-<pre><code class="language-java">public static void swap(MyObject a, MyObject b) {
-    MyObject c = a;
-    a = b;
-    b = c;
-}
-</code></pre>
-<p>定义main方法进行测试。</p>
-<pre><code class="language-java">public static void main(String[] args){
-    MyObject a = new MyObject();
-    MyObject b = new MyObject();
-    a.number = 10;
-    b.number = 20;
-    swap(a, b);
-    System.out.println(a.number + &quot; &quot; + b.number);
-}
-</code></pre>
-<p>结果显而易见，10和20</p>
-<pre><code class="language-shell">[0.030s][info][gc] Using G1
-10 20
-
-Process finished with exit code 0
-</code></pre>
-<p>接着，我们在swap后对a进行一个a.number++的操作。</p>
-<pre><code class="language-java">public static void swap(MyObject a, MyObject b) {
-    MyObject c = a;
-    a = b;
-    b = c;
-    a.number++;
-}
-</code></pre>
-<pre><code class="language-shell">[0.030s][info][gc] Using G1
-10 21
-
-Process finished with exit code 0
-</code></pre>
-<p>此时，打印出来的结果是10 和 21。<br>
-因为在交换后，局部变量a的指向地址已经是调用者b的指向地址了。所以修改的值对于调用者来说是修改的b的值。</p>
 ]]></content>
     </entry>
 </feed>
