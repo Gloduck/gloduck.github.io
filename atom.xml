@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://mxecy.cn</id>
     <title>Gloduck</title>
-    <updated>2021-03-30T14:37:55.335Z</updated>
+    <updated>2021-03-30T15:11:30.974Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://mxecy.cn"/>
     <link rel="self" href="https://mxecy.cn/atom.xml"/>
@@ -25,6 +25,7 @@
 </ul>
 <h1 id="一个简单的demo">一个简单的Demo</h1>
 <ul>
+<li>Demo路径：https://github.com/Gloduck/graalvm-demo</li>
 <li>一个读取文件的一个demo，读取类路径下的<code>config.json</code>并且输出。</li>
 </ul>
 <pre><code class="language-java">package cn.gloduck;
