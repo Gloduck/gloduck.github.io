@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://mxecy.cn</id>
     <title>Gloduck</title>
-    <updated>2021-03-29T13:14:33.933Z</updated>
+    <updated>2021-03-30T14:35:25.379Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://mxecy.cn"/>
     <link rel="self" href="https://mxecy.cn/atom.xml"/>
@@ -10,6 +10,56 @@
     <logo>https://mxecy.cn/images/avatar.png</logo>
     <icon>https://mxecy.cn/favicon.ico</icon>
     <rights>All rights reserved 2021, Gloduck</rights>
+    <entry>
+        <title type="html"><![CDATA[Graalvm反射配置辅助工具agentlib]]></title>
+        <id>https://mxecy.cn/post/graalvm-agentlib-usage/</id>
+        <link href="https://mxecy.cn/post/graalvm-agentlib-usage/">
+        </link>
+        <updated>2021-03-30T14:21:52.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>Graalvm通过静态分析提前编译来为Java应用程序构建高度优化的本机可执行文件，这就需要在编译时就知道所有的程序类型，而java中的反射、动态代理等功能，在编译时不确定具体的类型，所以在使用GraalVm构建native image前需要通过配置列出反射可见的所有类型。反射的配置是一个json格式的文件。为了简化这种反射的配置，GraalVm提供agentlib工具，来辅助生成这个配置文件。</li>
+<li>在使用agentlib生成配置时，建议将应用的测试用例全部跑一边，让应用覆盖到所有的业务接口，不然，生成的配置可能覆盖不到所有的反射类</li>
+<li>在执行期间，代理与Java VM交互以拦截所有查找类，方法，字段，资源或请求代理访问的调用。然后，代理生成的文件jni-config.json，reflect-config.json，proxy-config.json、resource-config.json在指定的目录输出。生成的文件是JSON格式的独立配置文件，其中包含所有拦截的动态访问。</li>
+<li>Reflection配置文档：https://github.com/oracle/REFLECTION.md</li>
+<li>agetnlib文档：https://www.graalvm.org/docs/Native-Image/user/CONFIGURE</li>
+</ul>
+<h1 id="一个简单的demo">一个简单的Demo</h1>
+<ul>
+<li>一个读取文件的一个demo，读取类路径下的<code>config.json</code>并且输出。</li>
+</ul>
+<pre><code class="language-java">package cn.gloduck;
+
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.json.JSONUtil;
+
+import java.io.IOException;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+
+/**
+ * @author Gloduck
+ */
+public class NativeStarter {
+    public static void main(String[] args) throws IOException {
+        InputStream inputStream = NativeStarter.class.getResourceAsStream(&quot;config.json&quot;);
+        String json = IoUtil.read(inputStream, Charset.defaultCharset());
+        System.out.println(json);
+    }
+}
+
+</code></pre>
+<p>如图，直接编译是无法输出的。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1gp2atmu0l8j312d0adgng.jpg" alt="直接编译" loading="lazy"><br>
+这时候可以通过agentlib工具来进行分析，首先先将jar包进行打包，然后运行分析工具。</p>
+<pre><code class="language-shell">java -agentlib:native-image-agent=config-output-dir=配置文件输出路径 -jar 分析的jar包
+</code></pre>
+<p>接着分析出来的文件会出现在配置的输出路径里，接着将这些文件全部复制到项目的<code>resource/META-INF/native-image</code>路径下。<br>
+然后重新运行打包，结果就能输出了。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1gp2b01weofj30n907uweo.jpg" alt="使用工具后" loading="lazy"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[AQS源码分析]]></title>
         <id>https://mxecy.cn/post/aqs-sourcecode/</id>
@@ -2824,411 +2874,6 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
 <figure data-type="image" tabindex="7"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswwvv3xsj30mj027749.jpg" alt="" loading="lazy"></figure>
 <p>第一个按钮是Run，第二个按钮是Debug。</p>
 <p>修改代码（只测试了Java代码的修改）后，按快捷键 Ctrl + Shift + F9，运行后会提示有变化是否重新加载，选yes。完成加载以后，就已经实现了热更新效果。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Ubuntu调教日志]]></title>
-        <id>https://mxecy.cn/post/ubuntu-install/</id>
-        <link href="https://mxecy.cn/post/ubuntu-install/">
-        </link>
-        <updated>2021-01-14T06:45:59.000Z</updated>
-        <summary type="html"><![CDATA[<h1 id="前言">前言</h1>
-<ul>
-<li>此记录为Linux的一个调教记录，方便以后查看</li>
-</ul>
-<h1 id="基本篇">基本篇</h1>
-<h2 id="设置软件源">设置软件源</h2>
-<ul>
-<li>由于Ubuntu自带的源是国外的，所以同步的时候会比较慢。因此一般都需要修改源。由于Ubuntu自带gedit，所以就不用vi来编辑了。</li>
-</ul>
-<pre><code class="language-shell"> sudo gedit /etc/apt/sources.list
-</code></pre>
-<p>然后注释原来的源。添加阿里的源。</p>
-<pre><code>deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
-
-deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
-
-deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
-
-deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
-
-deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
-</code></pre>
-<p>因为以后需要添加Deepin的软件。所以多添加一个deepin的源。</p>
-<pre><code>deb http://packages.deepin.com/deepin stable main contrib non-free
-#deb-src http://packages.deepin.com/deepin stable main contrib non-free
-</code></pre>
-<p>添加完成后保存退出。</p>
-<pre><code class="language-shell">sudo apt update
-</code></pre>
-<p>等待更新完成。</p>
-<h1 id="环境篇">环境篇</h1>
-<ul>
-<li>由于大部分的环境能直接apt安装。我就不自己配置了。</li>
-</ul>
-<h2 id="java">Java</h2>
-<p>以下是apt支持的Java版本。直接输入后就能安装了（注：是openjdk不是Hotpot的JDK）。</p>
-<pre><code class="language-shell">sudo apt install default-jre              # version 2:1.11-72, or
-sudo apt install openjdk-11-jre-headless  # version 11.0.7+10-3ubuntu1
-sudo apt install openjdk-13-jre-headless  # version 13.0.3+3-1ubuntu2
-sudo apt install openjdk-14-jre-headless  # version 14.0.1+7-1ubuntu1
-sudo apt install openjdk-8-jre-headless   # version 8u252-b09-1ubuntu1
-</code></pre>
-<h2 id="mysql">Mysql</h2>
-<p>终端中输入命令：</p>
-<pre><code class="language-shell">sudo apt install mysql-server
-</code></pre>
-<h3 id="mysql的常见路径">Mysql的常见路径</h3>
-<pre><code>/usr/bin                 客户端程序和脚本  
-/usr/sbin                mysqld 服务器  
-/var/lib/mysql           日志文件，数据库  ［重点要知道这个］  
-/usr/share/doc/packages  文档  
-/usr/include/mysql       包含( 头) 文件  
-/usr/lib/mysql           库  
-/usr/share/mysql         错误消息和字符集文件  
-/usr/share/sql-bench     基准程序  
-</code></pre>
-<h3 id="无法访问">无法访问</h3>
-<ul>
-<li>出现类似<code>ERROR 1045 (28000): Access denied for user 'gloduck'@'localhost' (using password: NO)</code>的提示。一是设置密码（默认没有密码），二是跳过密码验证</li>
-</ul>
-<p>跳过密码验证：<br>
-进入配置文件</p>
-<pre><code class="language-shell">sudo gedit /etc/mysql/mysql.conf.d/mysqld.cnf
-</code></pre>
-<p>[mysqld]下添加skip-grant-tables</p>
-<pre><code class="language-ini">#
-# The MySQL database server configuration file.
-#
-# One can use all long options that the program supports.
-# Run program with --help to get a list of available options and with
-# --print-defaults to see which it would actually understand and use.
-#
-# For explanations see
-# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
-
-# Here is entries for some specific programs
-# The following values assume you have at least 32M ram
-
-[mysqld]
-skip-grant-tables
-#
-# * Basic Settings
-#
-user		= mysql
-# pid-file	= /var/run/mysqld/mysqld.pid
-# socket	= /var/run/mysqld/mysqld.sock
-# port		= 3306
-# datadir	= /var/lib/mysql
-
-
-# If MySQL is running as a replication slave, this should be
-# changed. Ref https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_tmpdir
-# tmpdir		= /tmp
-#
-# Instead of skip-networking the default is now to listen only on
-# localhost which is more compatible and is not less secure.
-bind-address		= 127.0.0.1
-mysqlx-bind-address	= 127.0.0.1
-#
-# * Fine Tuning
-#
-key_buffer_size		= 16M
-# max_allowed_packet	= 64M
-# thread_stack		= 256K
-
-# thread_cache_size       = -1
-
-# This replaces the startup script and checks MyISAM tables if needed
-# the first time they are touched
-myisam-recover-options  = BACKUP
-
-# max_connections        = 151
-
-# table_open_cache       = 4000
-
-#
-# * Logging and Replication
-#
-# Both location gets rotated by the cronjob.
-#
-# Log all queries
-# Be aware that this log type is a performance killer.
-# general_log_file        = /var/log/mysql/query.log
-# general_log             = 1
-#
-# Error log - should be very few entries.
-#
-log_error = /var/log/mysql/error.log
-#
-# Here you can see queries with especially long duration
-# slow_query_log		= 1
-# slow_query_log_file	= /var/log/mysql/mysql-slow.log
-# long_query_time = 2
-# log-queries-not-using-indexes
-#
-# The following can be used as easy to replay backup logs or for replication.
-# note: if you are setting up a replication slave, see README.Debian about
-#       other settings you may need to change.
-# server-id		= 1
-# log_bin			= /var/log/mysql/mysql-bin.log
-# binlog_expire_logs_seconds	= 2592000
-max_binlog_size   = 100M
-# binlog_do_db		= include_database_name
-# binlog_ignore_db	= include_database_name
-</code></pre>
-<p>重启mysql</p>
-<pre><code class="language-shell">sudo service mysql stop</code></pre>
-]]></summary>
-        <content type="html"><![CDATA[<h1 id="前言">前言</h1>
-<ul>
-<li>此记录为Linux的一个调教记录，方便以后查看</li>
-</ul>
-<h1 id="基本篇">基本篇</h1>
-<h2 id="设置软件源">设置软件源</h2>
-<ul>
-<li>由于Ubuntu自带的源是国外的，所以同步的时候会比较慢。因此一般都需要修改源。由于Ubuntu自带gedit，所以就不用vi来编辑了。</li>
-</ul>
-<pre><code class="language-shell"> sudo gedit /etc/apt/sources.list
-</code></pre>
-<p>然后注释原来的源。添加阿里的源。</p>
-<pre><code>deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
-
-deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
-
-deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
-
-deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
-
-deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
-deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
-</code></pre>
-<p>因为以后需要添加Deepin的软件。所以多添加一个deepin的源。</p>
-<pre><code>deb http://packages.deepin.com/deepin stable main contrib non-free
-#deb-src http://packages.deepin.com/deepin stable main contrib non-free
-</code></pre>
-<p>添加完成后保存退出。</p>
-<pre><code class="language-shell">sudo apt update
-</code></pre>
-<p>等待更新完成。</p>
-<h1 id="环境篇">环境篇</h1>
-<ul>
-<li>由于大部分的环境能直接apt安装。我就不自己配置了。</li>
-</ul>
-<h2 id="java">Java</h2>
-<p>以下是apt支持的Java版本。直接输入后就能安装了（注：是openjdk不是Hotpot的JDK）。</p>
-<pre><code class="language-shell">sudo apt install default-jre              # version 2:1.11-72, or
-sudo apt install openjdk-11-jre-headless  # version 11.0.7+10-3ubuntu1
-sudo apt install openjdk-13-jre-headless  # version 13.0.3+3-1ubuntu2
-sudo apt install openjdk-14-jre-headless  # version 14.0.1+7-1ubuntu1
-sudo apt install openjdk-8-jre-headless   # version 8u252-b09-1ubuntu1
-</code></pre>
-<h2 id="mysql">Mysql</h2>
-<p>终端中输入命令：</p>
-<pre><code class="language-shell">sudo apt install mysql-server
-</code></pre>
-<h3 id="mysql的常见路径">Mysql的常见路径</h3>
-<pre><code>/usr/bin                 客户端程序和脚本  
-/usr/sbin                mysqld 服务器  
-/var/lib/mysql           日志文件，数据库  ［重点要知道这个］  
-/usr/share/doc/packages  文档  
-/usr/include/mysql       包含( 头) 文件  
-/usr/lib/mysql           库  
-/usr/share/mysql         错误消息和字符集文件  
-/usr/share/sql-bench     基准程序  
-</code></pre>
-<h3 id="无法访问">无法访问</h3>
-<ul>
-<li>出现类似<code>ERROR 1045 (28000): Access denied for user 'gloduck'@'localhost' (using password: NO)</code>的提示。一是设置密码（默认没有密码），二是跳过密码验证</li>
-</ul>
-<p>跳过密码验证：<br>
-进入配置文件</p>
-<pre><code class="language-shell">sudo gedit /etc/mysql/mysql.conf.d/mysqld.cnf
-</code></pre>
-<p>[mysqld]下添加skip-grant-tables</p>
-<pre><code class="language-ini">#
-# The MySQL database server configuration file.
-#
-# One can use all long options that the program supports.
-# Run program with --help to get a list of available options and with
-# --print-defaults to see which it would actually understand and use.
-#
-# For explanations see
-# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
-
-# Here is entries for some specific programs
-# The following values assume you have at least 32M ram
-
-[mysqld]
-skip-grant-tables
-#
-# * Basic Settings
-#
-user		= mysql
-# pid-file	= /var/run/mysqld/mysqld.pid
-# socket	= /var/run/mysqld/mysqld.sock
-# port		= 3306
-# datadir	= /var/lib/mysql
-
-
-# If MySQL is running as a replication slave, this should be
-# changed. Ref https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_tmpdir
-# tmpdir		= /tmp
-#
-# Instead of skip-networking the default is now to listen only on
-# localhost which is more compatible and is not less secure.
-bind-address		= 127.0.0.1
-mysqlx-bind-address	= 127.0.0.1
-#
-# * Fine Tuning
-#
-key_buffer_size		= 16M
-# max_allowed_packet	= 64M
-# thread_stack		= 256K
-
-# thread_cache_size       = -1
-
-# This replaces the startup script and checks MyISAM tables if needed
-# the first time they are touched
-myisam-recover-options  = BACKUP
-
-# max_connections        = 151
-
-# table_open_cache       = 4000
-
-#
-# * Logging and Replication
-#
-# Both location gets rotated by the cronjob.
-#
-# Log all queries
-# Be aware that this log type is a performance killer.
-# general_log_file        = /var/log/mysql/query.log
-# general_log             = 1
-#
-# Error log - should be very few entries.
-#
-log_error = /var/log/mysql/error.log
-#
-# Here you can see queries with especially long duration
-# slow_query_log		= 1
-# slow_query_log_file	= /var/log/mysql/mysql-slow.log
-# long_query_time = 2
-# log-queries-not-using-indexes
-#
-# The following can be used as easy to replay backup logs or for replication.
-# note: if you are setting up a replication slave, see README.Debian about
-#       other settings you may need to change.
-# server-id		= 1
-# log_bin			= /var/log/mysql/mysql-bin.log
-# binlog_expire_logs_seconds	= 2592000
-max_binlog_size   = 100M
-# binlog_do_db		= include_database_name
-# binlog_ignore_db	= include_database_name
-</code></pre>
-<p>重启mysql</p>
-<pre><code class="language-shell">sudo service mysql stop
-&lt;!-- more --&gt;
-
-sudo service mysql start
-</code></pre>
-<h2 id="redis">Redis</h2>
-<p>终端输入命令：</p>
-<pre><code class="language-shell">sudo apt install redis-server
-</code></pre>
-<p>通过<code>redis-cli</code>进入</p>
-<h1 id="常用软件">常用软件</h1>
-<h2 id="v2ray">v2ray</h2>
-<p>v2核心：https://github.com/v2fly/v2ray-core<br>
-v2GUI：https://github.com/Qv2ray/Qv2ray/releases</p>
-<h2 id="深度截图">深度截图</h2>
-<p>注：需要先添加deepin源</p>
-<pre><code class="language-shell">sudo apt install deepin-screenshot
-</code></pre>
-<p>添加快捷键：设置 - 键盘快捷键 - +（最下面）</p>
-<h2 id="qq-tim-微信-迅雷-百度网盘">QQ、TIM、微信、迅雷、百度网盘</h2>
-<p>注：需先添加deepin源</p>
-<ul>
-<li>包名：
-<ul>
-<li>TIM：deepin.com.qq.office</li>
-<li>QQ：deepin.com.qq.im</li>
-<li>QQ轻聊版：deepin.com.qq.im.light</li>
-<li>微信：deepin.com.wechat</li>
-<li>百度网盘：deepin.com.baidu.pan</li>
-<li>迅雷极速版：deepin.com.thunderspeed</li>
-<li>WinRAR：deepin.cn.com.winrar</li>
-</ul>
-</li>
-</ul>
-<pre><code class="language-shell">sudo apt install 包名
-</code></pre>
-<h3 id="更新">更新</h3>
-<p>软件一般安装在<code>/home/gloduck/.deepinwine</code><br>
-如百度网盘，进入<code>/home/gloduck/.deepinwine/Deepin-BaiduNetDisk/drive_c/Program Files/baidu/BaiduNetdisk</code>，然后在Windows下安装最新版本覆盖。</p>
-<h3 id="tim无法加载图片">Tim无法加载图片</h3>
-<pre><code class="language-shell">sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
-sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
-sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1
-</code></pre>
-<h3 id="添加小图标">添加小图标</h3>
-<p>下载chrome-gnome-shell</p>
-<pre><code class="language-shell">sudo apt-get install chrome-gnome-shell
-</code></pre>
-<p>在chrome应用商店搜索并安装 GNOME Shell integration<br>
-接着<a href="https://extensions.gnome.org/extension/1674/topiconsfix/">跳转</a>到此网页<br>
-将右上角的off按钮切换为on<br>
-在Installed extensions页面应用该扩展</p>
-<h2 id="idea">Idea</h2>
-<ul>
-<li>下载Idea：https://www.jetbrains.com/idea/download/</li>
-<li>解压到指定路径（推荐opt）。</li>
-<li>为<code>bin/idea.sh</code><a href="#%E5%88%9B%E5%BB%BA%E6%A1%8C%E9%9D%A2%E5%9B%BE%E6%A0%87">创建快捷方式</a></li>
-</ul>
-<h3 id="导出配置">导出配置</h3>
-<p>配置直接导出然后导入。<br>
-插件：<br>
-+ 进入Idea路径。<br>
-+ windows：<code>C://Users/Gloduck/AppData/Roaming/JetBrains/IntelliJIdea2020.2/plugins</code><br>
-+ 复制文件到：<code>/home/gloduck/.local/share/JetBrains/IntelliJIdea2020.3</code>（注：没有plugins，直接复制）</p>
-<h1 id="常用操作">常用操作</h1>
-<h2 id="root打开文件夹">root打开文件夹：</h2>
-<pre><code class="language-shell">sudo nautilus
-</code></pre>
-<h2 id="span-id创建桌面图标创建桌面图标span"><span id="创建桌面图标">创建桌面图标</span></h2>
-<pre><code class="language-shell">touch 图标名称.desktop
-sudo gedit 图标名称.desktop
-</code></pre>
-<p>然后复制以下内容：</p>
-<pre><code> [Desktop Entry]
- Encoding=UTF-8
- Name=应用名称 
- Comment=应用描述
- Exec=应用执行文件
- Icon=应用图标
- Terminal=false
- StartupNotify=true
- Type=Application
- Categories=Application;Development; // 应用分类
-</code></pre>
-<p>然后将图标移动到<code>/usr/share/applications</code>文件夹下</p>
-<pre><code class="language-shell">sudo mv 图标名称.desktop /usr/share/applications
-</code></pre>
-<h2 id="文件管理器输入路径">文件管理器输入路径</h2>
-<p>按下Ctrl+L</p>
-<h2 id="root打开文件夹-2">root打开文件夹</h2>
-<p>安装nautilus-admin</p>
-<pre><code class="language-shell">sudo apt install nautilus-admin
-</code></pre>
 ]]></content>
     </entry>
 </feed>

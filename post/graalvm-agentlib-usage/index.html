@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[Gloduck]的个人博客">
 <meta name="author" content="kveln">
-<title>爬虫-有道翻译 | Gloduck</title>
+<title>Graalvm反射配置辅助工具agentlib | Gloduck</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="爬虫-有道翻译 | Gloduck » Feed"
+<link rel="alternate" type="application/rss+xml" title="Graalvm反射配置辅助工具agentlib | Gloduck » Feed"
   href="https://mxecy.cn/atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="爬虫-有道翻译" />
-  <meta property="og:url" content="https://mxecy.cn/post/spider-youdan-translation/" />
+  <meta property="og:description" content="Graalvm反射配置辅助工具agentlib" />
+  <meta property="og:url" content="https://mxecy.cn/post/graalvm-agentlib-usage/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Gloduck" />
@@ -178,13 +178,17 @@
   <div class="post-heading">
     <span class="tags">
       
+      <a href="https://mxecy.cn/tag/VPOLJ7-I3/" class="tag">JVM</a>
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
       <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
       
     </span>
-    <h1>爬虫-有道翻译</h1>
+    <h1>Graalvm反射配置辅助工具agentlib</h1>
     <span class="meta">
       Posted on
-      2020-06-15，4 min read
+      2021-03-30，3 min read
     </span>
   </div>
   
@@ -199,109 +203,67 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <p>记录一次Python的有道翻译爬虫。</p>
-<h1 id="抓包">抓包</h1>
-<p>首先进入<a href="http://fanyi.youdao.com/">有道的网址</a>，打开F12调试工具。<br>
-然后随便输入一个词获取翻译。<br>
-<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gftdadvzbwj31hb0o6te0.jpg" alt="" loading="lazy"><br>
-请求的网址是：http://fanyi.youdao.com/translate_o?smartresult=dict&amp;smartresult=rule<br>
-并且携带了一下参数。<br>
-<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gftdcdeqgej30a80bijrz.jpg" alt="" loading="lazy"><br>
-其中关注的参数有如下：</p>
-<ul>
-<li>i：要翻译的词</li>
-<li>salt：时间戳</li>
-<li>sign：签名</li>
+          <ul>
+<li>Graalvm通过静态分析提前编译来为Java应用程序构建高度优化的本机可执行文件，这就需要在编译时就知道所有的程序类型，而java中的反射、动态代理等功能，在编译时不确定具体的类型，所以在使用GraalVm构建native image前需要通过配置列出反射可见的所有类型。反射的配置是一个json格式的文件。为了简化这种反射的配置，GraalVm提供agentlib工具，来辅助生成这个配置文件。</li>
+<li>在使用agentlib生成配置时，建议将应用的测试用例全部跑一边，让应用覆盖到所有的业务接口，不然，生成的配置可能覆盖不到所有的反射类</li>
+<li>在执行期间，代理与Java VM交互以拦截所有查找类，方法，字段，资源或请求代理访问的调用。然后，代理生成的文件jni-config.json，reflect-config.json，proxy-config.json、resource-config.json在指定的目录输出。生成的文件是JSON格式的独立配置文件，其中包含所有拦截的动态访问。</li>
+<li>Reflection配置文档：https://github.com/oracle/REFLECTION.md</li>
+<li>agetnlib文档：https://www.graalvm.org/docs/Native-Image/user/CONFIGURE</li>
 </ul>
-<p>由于sign是MD5加密过的，使用要找到他的加密信息。<br>
-<img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gftdet815jj30k60kyjso.jpg" alt="" loading="lazy"><br>
-通过全文本搜索，发现sign相关的加密方法位于<a href="http://shared.ydstatic.com/fanyi/newweb/v1.0.27/scripts/newweb/fanyi.min.js">fanyi.min.js</a>中。<br>
-所幸，这段js没有加密，我们可以格式化一下js然后查找它的方法，获取到加密的方法。<br>
-<img src="https://tva4.sinaimg.cn/large/006ZFECEgy1gftdhlzzqdj30ll0760te.jpg" alt="" loading="lazy"><br>
-我们可以发现，他加密的字段一共有四个，其中两个是常量，以及两个变量。<br>
-<img src="https://tvax2.sinaimg.cn/large/006ZFECEgy1gftdjo0ykvj30an01ogli.jpg" alt="" loading="lazy"><br>
-从这段代码我们可以看出，参数i是当前的时间戳加上一个随机数生成的。<br>
-然后参数e也就是我们要翻译的词。<br>
-左边的那段常量是一个固定的，右边的那段常量应该是为了防止伪造请求而添加的一段随机字符串。<br>
-我查询过以前其他作者的文章，发现他们的博文中的这串字符串不一样，所以应该这东西是会变化的。<br>
-所幸我们可以通过获取js的内容并通过正则表达式获取到这一段内容。<br>
-最后将这些拼接起来作为sign参数Post上去，就能获取到对应的翻译了。</p>
-<h1 id="代码">代码</h1>
-<p>注意一下Python的缩进</p>
-<pre><code class="language-python">import requests
-import json
-import time
-import random
-import hashlib
-import re
-url = &quot;http://fanyi.youdao.com/translate_o?smartresult=dict&amp;smartresult=rule&quot;
-# 从js中提取md5加密字符串
-jsurl = &quot;http://shared.ydstatic.com/fanyi/newweb/v1.0.27/scripts/newweb/fanyi.min.js&quot;
-jsContent = str(requests.post(url=jsurl).content,&quot;utf8&quot;)
-# 替换+
-jsContent = jsContent.replace(&quot;+&quot;,&quot;&quot;)
-password = re.findall(r'&quot;fanyideskweb&quot;ei&quot;(.*?)&quot;',jsContent)
-word = input(&quot;输入翻译词：&quot;)
-while(word != &quot;#&quot;):
-    # 获取时间戳 + 0-10随机数
-    timestamp = str(int(time.time()*1000) + random.randint(0,10))
-    # MD5加密sign
-    sign = &quot;fanyideskweb&quot; + word +  timestamp + password[0]
-    md5 = hashlib.md5()
-    md5.update(sign.encode(&quot;utf8&quot;))
-    signMd5 = md5.hexdigest()
-    # 构造请求body
-    formatData = {
-        &quot;i&quot;: word,
-        &quot;from&quot;: &quot;AUTO&quot;,
-        &quot;to&quot;: &quot;AUTO&quot;,
-        &quot;smartresult&quot;: &quot;dict&quot;,
-        &quot;client&quot;: &quot;fanyideskweb&quot;,
-        &quot;salt&quot;: str(timestamp),
-        &quot;sign&quot;: signMd5,
-        &quot;doctype&quot;: &quot;json&quot;,
-        &quot;version&quot;: &quot;2.1&quot;,
-        &quot;keyfrom&quot;: &quot;fanyi.web&quot;,
-        &quot;action&quot;: &quot;FY_BY_REALTlME&quot;,
+<h1 id="一个简单的demo">一个简单的Demo</h1>
+<ul>
+<li>一个读取文件的一个demo，读取类路径下的<code>config.json</code>并且输出。</li>
+</ul>
+<pre><code class="language-java">package cn.gloduck;
+
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.json.JSONUtil;
+
+import java.io.IOException;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+
+/**
+ * @author Gloduck
+ */
+public class NativeStarter {
+    public static void main(String[] args) throws IOException {
+        InputStream inputStream = NativeStarter.class.getResourceAsStream(&quot;config.json&quot;);
+        String json = IoUtil.read(inputStream, Charset.defaultCharset());
+        System.out.println(json);
     }
-    # 构造请求头
-    headers = {
-    # 必要信息：Cookie，Host，Origin，Referer，User-Agent
-        &quot;Cookie&quot;: &quot;OUTFOX_SEARCH_USER_ID=1354776506@10.108.160.101; JSESSIONID=aaaVuQquabmk44VgVY3kx; OUTFOX_SEARCH_USER_ID_NCOO=1742625287.947354; ___rl__test__cookies=1592221619433&quot;,
-        &quot;Host&quot;: &quot;fanyi.youdao.com&quot;,
-        &quot;Origin&quot;:&quot;http://fanyi.youdao.com&quot;,
-        &quot;Referer&quot;:&quot;http://fanyi.youdao.com/&quot;,
-        &quot;User-Agent&quot;: &quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36&quot;
-        }
-    response = requests.post(url=url,data=formatData,headers=headers)
-    # 解析JSON
-    result = json.loads(str(response.content,&quot;utf8&quot;))
-    print(&quot;输入的字符为：{}&quot;.format(result['translateResult'][0][0]['src']))
-    print(&quot;结果为：{}&quot;.format(result['translateResult'][0][0]['tgt']))
-    print(&quot;------------&quot;)
-    word = input(&quot;输入翻译词：&quot;)
+}
 
 </code></pre>
+<p>如图，直接编译是无法输出的。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1gp2atmu0l8j312d0adgng.jpg" alt="直接编译" loading="lazy"><br>
+这时候可以通过agentlib工具来进行分析，首先先将jar包进行打包，然后运行分析工具。</p>
+<pre><code class="language-shell">java -agentlib:native-image-agent=config-output-dir=配置文件输出路径 -jar 分析的jar包
+</code></pre>
+<p>接着分析出来的文件会出现在配置的输出路径里，接着将这些文件全部复制到项目的<code>resource/META-INF/native-image</code>路径下。<br>
+然后重新运行打包，结果就能输出了。<br>
+<img src="https://tva1.sinaimg.cn/large/006ZFECEly1gp2b01weofj30n907uweo.jpg" alt="使用工具后" loading="lazy"></p>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
-<li><a href="#%E6%8A%93%E5%8C%85">抓包</a></li>
-<li><a href="#%E4%BB%A3%E7%A0%81">代码</a></li>
+<li><a href="#%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84demo">一个简单的Demo</a></li>
 </ul>
 </div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://mxecy.cn/post/redis-install/">
+            <a href="https://mxecy.cn/post/aqs-sourcecode/">
               <span class="post-title">
-                Redis安装&rarr;
+                AQS源码分析&rarr;
               </span>
             </a>
           </p>
           
           <div class="comment" style="text-align: center;">
             
-            <span id="/post/spider-youdan-translation/" class="leancloud_visitors"
-              data-flag-title="爬虫-有道翻译">
+            <span id="/post/graalvm-agentlib-usage/" class="leancloud_visitors"
+              data-flag-title="Graalvm反射配置辅助工具agentlib">
               <em class="post-meta-item-text">阅读量 </em>
               <i class="leancloud-visitors-count">loading...</i>
             </span>
