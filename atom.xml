@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://mxecy.cn</id>
     <title>Gloduck</title>
-    <updated>2021-03-30T15:11:30.974Z</updated>
+    <updated>2021-04-01T07:19:16.472Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://mxecy.cn"/>
     <link rel="self" href="https://mxecy.cn/atom.xml"/>
@@ -10,6 +10,121 @@
     <logo>https://mxecy.cn/images/avatar.png</logo>
     <icon>https://mxecy.cn/favicon.ico</icon>
     <rights>All rights reserved 2021, Gloduck</rights>
+    <entry>
+        <title type="html"><![CDATA[Java中的观察者模式和观察订阅模式]]></title>
+        <id>https://mxecy.cn/post/java-observer-and-publisher/</id>
+        <link href="https://mxecy.cn/post/java-observer-and-publisher/">
+        </link>
+        <updated>2021-04-01T06:46:31.000Z</updated>
+        <content type="html"><![CDATA[<p>在Java中为我们提供了观察者模式的相关接口和抽象<code>Observable</code>和<code>Observer</code>分别对应了观察者模式的观察者和消费者。但是这两个类在Java9的时候打上了<code>@Deprecated</code>表明这两个接口已经过时了，取而代之的是叫我们使用Flow中的内部类。</p>
+<ul>
+<li>通过查看代码，我们能发现，在<code>Observable</code>接口中，大量的使用了synchronized关键字来保证并发的安全性，同时存放订阅者的接口也是Java中的废弃API vector类。</li>
+<li>在介绍观察者模式的时候我们谈到过观察者模式的缺点，由于是单线程，所以可能会导致出现在通知的时候，一个观察者被阻塞了（可能在执行耗时的操作），而导致后续的任务都被阻塞。而再<code>Observable</code>中为了保证同步安全，大量的使用了synchronized关键字进行加锁，这就导致了在并发下，性能会进一步消耗。</li>
+</ul>
+<p>为了解决这个问题，在JDK9中引入了Flow框架来实现发布订阅模式，这也是JDK9实现响应式编程的一个标志。</p>
+<p>首先来对比以下观察者模式和发布订阅模式的区别（有种说法是发布订阅模式就是观察者模式，但是实际上并不一样，或者说发布订阅模式是观察者模式的升级版）：</p>
+<ul>
+<li>在观察者模式中，我们有两个重要的角色：观察者和被观察者，其中被观察者在执行了某些操作之后会通知观察者，观察者接收到了通知后会进行响应的操作。</li>
+<li>而在发布订阅模式中，我们有三个重要角色：发布者，订阅者和代理。其中发布者对应了观察者模式中的被观察者，而订阅者对应了观察者模式中的观察者。和观察者模式不同的是被观察者并不知道观察者，观察者也不知道被观察者。他们知道的是：代理（Broker）。消息队列就是典型的发布订阅模式，所以很多概念能直接类比。</li>
+</ul>
+<p>在发布订阅模式中，发布者和订阅者是松耦合的，并且通过代理（Broker）来进行交流，而在观察者模式中被观察者和观察者是耦合在一起的。并且发布订阅模式通常是异步的。</p>
+<p>JDK9中引入了Flow类来方便我们实现发布订阅模式，其中有四个内部类：</p>
+<p><strong>Subscriber Interface（订阅者订阅接口）</strong>：</p>
+<pre><code class="language-java">public static interface Subscriber&lt;T&gt; {
+    public void onSubscribe(Subscription subscription);	// 在发布者接受订阅者的订阅动作之后，发布任何的订阅消息之前被调用。新创建的Subscription订阅令牌对象通过此方法传递给订阅者。
+    public void onNext(T item); // 下一个待处理的数据项的处理函数，相当于Observer的update，具体的处理逻辑就是在这里处理的。
+    public void onError(Throwable throwable); // 在发布者或订阅遇到不可恢复的错误时调用
+    public void onComplete(); // 当没有订阅者调用（包括onNext()方法）发生时调用。
+}
+</code></pre>
+<p><strong>Subscription Interface （订阅令牌接口）</strong>：</p>
+<ul>
+<li>订阅令牌对象通过Subscriber.onSubscribe()方法传递</li>
+</ul>
+<pre><code class="language-java">public static interface Subscription {
+    public void request(long n); // 是无阻塞背压概念背后的关键方法。订阅者使用它来请求n个以上的消费项目。这样，订阅者控制了它当前能够接收多少个数据，超过了就不会处理了。可以将其设置成Long.MAX_VALUE来表示无限个。
+    public void cancel(); // 由订阅者主动来取消其订阅，取消后将不会在接收到任何数据消息
+}
+</code></pre>
+<p><strong>Publisher Interface(发布者接口)</strong>：</p>
+<ul>
+<li>默认情况下，我们一般不使用publisher接口，而是使用他的实现类<code>SubmissionPublisher</code>，在实现类里已经为我们提供了相应的实现，并且是异步的。</li>
+</ul>
+<pre><code class="language-java">@FunctionalInterface
+public static interface Publisher&lt;T&gt; {
+    public void subscribe(Subscriber&lt;? super T&gt; subscriber); // 调用该方法，建立订阅者Subscriber与发布者Publisher之间的消息订阅关系。
+
+
+}
+</code></pre>
+<p><strong>Processor Interface（处理器接口）</strong>：</p>
+<ul>
+<li>处理者Processor 可以同时充当订阅者和发布者，起到转换发布者——订阅者管道中的元素的作用。用于将发布者T类型的数据元素，接收并转换为类型R的数据并发布。</li>
+</ul>
+<pre><code class="language-java">public static interface Processor&lt;T,R&gt; extends Subscriber&lt;T&gt;, Publisher&lt;R&gt; {
+}
+</code></pre>
+<h1 id="相关代码">相关代码</h1>
+<pre><code class="language-java">package cn.gloduck.spider;
+
+import java.util.concurrent.Flow;
+import java.util.concurrent.SubmissionPublisher;
+import java.util.concurrent.TimeUnit;
+
+public class PublisherDemo {
+    public static void main(String[] args) throws InterruptedException {
+        // 定义发布者
+        SubmissionPublisher&lt;String&gt; publisher = new SubmissionPublisher&lt;&gt;();
+        // 添加一个订阅者
+        publisher.subscribe(new MySubscriber());
+        for (int i = 0; i &lt; 10; i++) {
+            // 发布10个消息
+            publisher.submit(&quot;消息内容为：&quot; + i);
+        }
+        // 暂停一秒钟，因为publisher的发送是异步的。
+        TimeUnit.SECONDS.sleep(1);
+    }
+
+    /**
+     * 订阅者
+     */
+    private static class MySubscriber implements Flow.Subscriber&lt;String&gt; {
+        private Flow.Subscription subscription;
+
+        @Override
+        public void onSubscribe(Flow.Subscription subscription) {
+            System.out.println(&quot;当前订阅者添加了订阅&quot;);
+            // 表明当前订阅者只处理两个消息。
+            subscription.request(2);
+            // 在类中保存一个令牌的备份
+            this.subscription = subscription;
+        }
+
+        @Override
+        public void onNext(String item) {
+            // 接收并处理发布者发布的消息
+            System.out.printf(&quot;接收到了消息为：%s\n&quot;, item);
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+            // 出现了异常(例如处理数据的时候产生了异常)
+            throwable.printStackTrace();
+
+            // 我们可以告诉发布者, 后面不接受数据了
+            this.subscription.cancel();
+        }
+
+        @Override
+        public void onComplete() {
+            System.out.println(&quot;处理完了!&quot;);
+        }
+    }
+}
+
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Graalvm反射配置辅助工具agentlib]]></title>
         <id>https://mxecy.cn/post/graalvm-agentlib-usage/</id>
@@ -2839,42 +2954,6 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
     }
 }
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[JRebel配置]]></title>
-        <id>https://mxecy.cn/post/idea-jrebel/</id>
-        <link href="https://mxecy.cn/post/idea-jrebel/">
-        </link>
-        <updated>2021-01-19T03:35:09.000Z</updated>
-        <content type="html"><![CDATA[<ul>
-<li>JRebel是一款热部署插件，相对于SpringBoot自带的Dev插件来说好太多了。</li>
-</ul>
-<h1 id="安装">安装</h1>
-<p>安装插件</p>
-<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswljt15fj30tk0b2751.jpg" alt="Idea插件" loading="lazy"></figure>
-<p>在线生成GUIDS</p>
-<p><a href="https://www.guidgen.com/">在线生成GUIDS</a></p>
-<p>服务器地址：https://jrebel.qekang.com/{GUID}</p>
-<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswrr5nf5j30zl0nt413.jpg" alt="" loading="lazy"></figure>
-<p>输入服务器地址和邮箱，然后点击激活即可。</p>
-<h1 id="配置">配置</h1>
-<h2 id="设置离线模式">设置离线模式</h2>
-<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswubmsf2j30v80k776c.jpg" alt="" loading="lazy"></figure>
-<h2 id="设置自动编译">设置自动编译</h2>
-<p>由于JRebel是实时监控class文件的变化来实现热部署的，所以在idea环境下需要打开自动变异功能才能实现随时修改，随时生效。</p>
-<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswv9ntw2j30v00jgjuc.jpg" alt="" loading="lazy"></figure>
-<h2 id="设置compilerautomakeallowwhenapprunning">设置compiler.automake.allow.when.app.running</h2>
-<p>快捷键ctrl+shift+A，搜索：registry<br>
-或者<br>
-按快捷键 Ctrl+Shift+Alt+/ ，选择 Registry</p>
-<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmsww78w9xj30a802y745.jpg" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="6"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswwhunoij30ne0iftar.jpg" alt="" loading="lazy"></figure>
-<h1 id="使用">使用</h1>
-<p>运行项目时要点击图中红框中的按钮，即可运行：</p>
-<figure data-type="image" tabindex="7"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gmswwvv3xsj30mj027749.jpg" alt="" loading="lazy"></figure>
-<p>第一个按钮是Run，第二个按钮是Debug。</p>
-<p>修改代码（只测试了Java代码的修改）后，按快捷键 Ctrl + Shift + F9，运行后会提示有变化是否重新加载，选yes。完成加载以后，就已经实现了热更新效果。</p>
 ]]></content>
     </entry>
 </feed>

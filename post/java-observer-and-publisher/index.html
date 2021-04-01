@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[Gloduck]的个人博客">
 <meta name="author" content="kveln">
-<title>Emmet语法规则 | Gloduck</title>
+<title>Java中的观察者模式和观察订阅模式 | Gloduck</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="Emmet语法规则 | Gloduck » Feed"
+<link rel="alternate" type="application/rss+xml" title="Java中的观察者模式和观察订阅模式 | Gloduck » Feed"
   href="https://mxecy.cn/atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="Emmet语法规则" />
-  <meta property="og:url" content="https://mxecy.cn/post/emmet-rules/" />
+  <meta property="og:description" content="Java中的观察者模式和观察订阅模式" />
+  <meta property="og:url" content="https://mxecy.cn/post/java-observer-and-publisher/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Gloduck" />
@@ -178,13 +178,15 @@
   <div class="post-heading">
     <span class="tags">
       
-      <a href="https://mxecy.cn/tag/n1eliKx9R/" class="tag">HTML</a>
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
       
     </span>
-    <h1>Emmet语法规则</h1>
+    <h1>Java中的观察者模式和观察订阅模式</h1>
     <span class="meta">
       Posted on
-      2020-03-10，5 min read
+      2021-04-01，6 min read
     </span>
   </div>
   
@@ -199,147 +201,132 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <p>Emmet语法规则作为一个加快HTML编写方式，只需要一行的代码就能快速的生成HTML的结构。如，在前端相关视频中常见的在编辑器中输入 div#(id名) 就能快速的生成一个带id的div结构，这些都是Emmet语法的一部分。目前Emmet被Atom，Vscode等大多数的编辑器所支持。。</p>
-<hr>
-<h1 id="示例">示例</h1>
-<p>如以下代码：</p>
-<pre><code class="language-shell">div.contain#main&gt;div.content&gt;ul&gt;li$*3{列表$}^img[src=&quot;img.jpg&quot; alt=&quot;test&quot;]+select&gt;.test$$@10*5
+          <p>在Java中为我们提供了观察者模式的相关接口和抽象<code>Observable</code>和<code>Observer</code>分别对应了观察者模式的观察者和消费者。但是这两个类在Java9的时候打上了<code>@Deprecated</code>表明这两个接口已经过时了，取而代之的是叫我们使用Flow中的内部类。</p>
+<ul>
+<li>通过查看代码，我们能发现，在<code>Observable</code>接口中，大量的使用了synchronized关键字来保证并发的安全性，同时存放订阅者的接口也是Java中的废弃API vector类。</li>
+<li>在介绍观察者模式的时候我们谈到过观察者模式的缺点，由于是单线程，所以可能会导致出现在通知的时候，一个观察者被阻塞了（可能在执行耗时的操作），而导致后续的任务都被阻塞。而再<code>Observable</code>中为了保证同步安全，大量的使用了synchronized关键字进行加锁，这就导致了在并发下，性能会进一步消耗。</li>
+</ul>
+<p>为了解决这个问题，在JDK9中引入了Flow框架来实现发布订阅模式，这也是JDK9实现响应式编程的一个标志。</p>
+<p>首先来对比以下观察者模式和发布订阅模式的区别（有种说法是发布订阅模式就是观察者模式，但是实际上并不一样，或者说发布订阅模式是观察者模式的升级版）：</p>
+<ul>
+<li>在观察者模式中，我们有两个重要的角色：观察者和被观察者，其中被观察者在执行了某些操作之后会通知观察者，观察者接收到了通知后会进行响应的操作。</li>
+<li>而在发布订阅模式中，我们有三个重要角色：发布者，订阅者和代理。其中发布者对应了观察者模式中的被观察者，而订阅者对应了观察者模式中的观察者。和观察者模式不同的是被观察者并不知道观察者，观察者也不知道被观察者。他们知道的是：代理（Broker）。消息队列就是典型的发布订阅模式，所以很多概念能直接类比。</li>
+</ul>
+<p>在发布订阅模式中，发布者和订阅者是松耦合的，并且通过代理（Broker）来进行交流，而在观察者模式中被观察者和观察者是耦合在一起的。并且发布订阅模式通常是异步的。</p>
+<p>JDK9中引入了Flow类来方便我们实现发布订阅模式，其中有四个内部类：</p>
+<p><strong>Subscriber Interface（订阅者订阅接口）</strong>：</p>
+<pre><code class="language-java">public static interface Subscriber&lt;T&gt; {
+    public void onSubscribe(Subscription subscription);	// 在发布者接受订阅者的订阅动作之后，发布任何的订阅消息之前被调用。新创建的Subscription订阅令牌对象通过此方法传递给订阅者。
+    public void onNext(T item); // 下一个待处理的数据项的处理函数，相当于Observer的update，具体的处理逻辑就是在这里处理的。
+    public void onError(Throwable throwable); // 在发布者或订阅遇到不可恢复的错误时调用
+    public void onComplete(); // 当没有订阅者调用（包括onNext()方法）发生时调用。
+}
 </code></pre>
-<p>此段代码包含了Emmet大多数的语法规则。<br>
-当在编辑器中桥下tab会生成如下代码(此处用的是Vscode)：</p>
-<pre><code class="language-html">    &lt;div class=&quot;contain&quot; id=&quot;main&quot;&gt;
-        &lt;div class=&quot;content&quot;&gt;
-            &lt;ul&gt;
-                &lt;li1&gt;列表1&lt;/li1&gt;
-                &lt;li2&gt;列表2&lt;/li2&gt;
-                &lt;li3&gt;列表3&lt;/li3&gt;
-            &lt;/ul&gt;
-            &lt;img src=&quot;img.jpg&quot; alt=&quot;test&quot;&gt;
-            &lt;select name=&quot;&quot; id=&quot;&quot;&gt;
-                &lt;option class=&quot;test10&quot;&gt;&lt;/option&gt;
-                &lt;option class=&quot;test11&quot;&gt;&lt;/option&gt;
-                &lt;option class=&quot;test12&quot;&gt;&lt;/option&gt;
-                &lt;option class=&quot;test13&quot;&gt;&lt;/option&gt;
-                &lt;option class=&quot;test14&quot;&gt;&lt;/option&gt;
-            &lt;/select&gt;
-        &lt;/div&gt;
-   &lt;/div&gt;
+<p><strong>Subscription Interface （订阅令牌接口）</strong>：</p>
+<ul>
+<li>订阅令牌对象通过Subscriber.onSubscribe()方法传递</li>
+</ul>
+<pre><code class="language-java">public static interface Subscription {
+    public void request(long n); // 是无阻塞背压概念背后的关键方法。订阅者使用它来请求n个以上的消费项目。这样，订阅者控制了它当前能够接收多少个数据，超过了就不会处理了。可以将其设置成Long.MAX_VALUE来表示无限个。
+    public void cancel(); // 由订阅者主动来取消其订阅，取消后将不会在接收到任何数据消息
+}
 </code></pre>
-<h1 id="语法">语法</h1>
-<h2 id="id和类名与">id和类名：.与#</h2>
-<p>说明：.与#分别对应class名和id名，在标签，如div标签的后面加上.或者#可以指定相应的class名和id名。<br>
-示例：</p>
-<pre><code class="language-html">&lt;!-- 输入：div#main.contain --&gt;
-   &lt;div id=&quot;main&quot; class=&quot;contain&quot;&gt;&lt;/div&gt;
+<p><strong>Publisher Interface(发布者接口)</strong>：</p>
+<ul>
+<li>默认情况下，我们一般不使用publisher接口，而是使用他的实现类<code>SubmissionPublisher</code>，在实现类里已经为我们提供了相应的实现，并且是异步的。</li>
+</ul>
+<pre><code class="language-java">@FunctionalInterface
+public static interface Publisher&lt;T&gt; {
+    public void subscribe(Subscriber&lt;? super T&gt; subscriber); // 调用该方法，建立订阅者Subscriber与发布者Publisher之间的消息订阅关系。
+
+
+}
 </code></pre>
-<h2 id="节点与与">节点：&gt;与+与^</h2>
-<p>说明：&gt;代表当前节点的子节点，+代表当前节点的兄弟节点，<sup>代表当前节点的父节点。如div&gt;div表示div下嵌套了另外一个div。div+div表示两个同层次下的div，div</sup>div表示后者div嵌套在前者div的父层下。<br>
-示例：</p>
-<pre><code class="language-html">&lt;!-- 输入：ul&gt;li --&gt;
-   &lt;ul&gt;
-        &lt;li&gt;&lt;/li&gt;
-   &lt;/ul&gt;
-&lt;!-- 输入：li+li --&gt;
-   &lt;li&gt;&lt;/li&gt;
-   &lt;li&gt;&lt;/li&gt;
-&lt;!-- 输入：a^div --&gt;
-   &lt;a href=&quot;&quot;&gt;&lt;/a&gt;
-   &lt;div&gt;
-   &lt;/div&gt;
+<p><strong>Processor Interface（处理器接口）</strong>：</p>
+<ul>
+<li>处理者Processor 可以同时充当订阅者和发布者，起到转换发布者——订阅者管道中的元素的作用。用于将发布者T类型的数据元素，接收并转换为类型R的数据并发布。</li>
+</ul>
+<pre><code class="language-java">public static interface Processor&lt;T,R&gt; extends Subscriber&lt;T&gt;, Publisher&lt;R&gt; {
+}
 </code></pre>
-<h2 id="重复">重复：*</h2>
-<p>说明：*后面加上数字代表标签重复的个数。<br>
-示例：</p>
-<pre><code class="language-html">&lt;!-- 输入：li*2 --&gt;
-   &lt;li&gt;&lt;/li&gt;
-   &lt;li&gt;&lt;/li&gt;
+<h1 id="相关代码">相关代码</h1>
+<pre><code class="language-java">package cn.gloduck.spider;
+
+import java.util.concurrent.Flow;
+import java.util.concurrent.SubmissionPublisher;
+import java.util.concurrent.TimeUnit;
+
+public class PublisherDemo {
+    public static void main(String[] args) throws InterruptedException {
+        // 定义发布者
+        SubmissionPublisher&lt;String&gt; publisher = new SubmissionPublisher&lt;&gt;();
+        // 添加一个订阅者
+        publisher.subscribe(new MySubscriber());
+        for (int i = 0; i &lt; 10; i++) {
+            // 发布10个消息
+            publisher.submit(&quot;消息内容为：&quot; + i);
+        }
+        // 暂停一秒钟，因为publisher的发送是异步的。
+        TimeUnit.SECONDS.sleep(1);
+    }
+
+    /**
+     * 订阅者
+     */
+    private static class MySubscriber implements Flow.Subscriber&lt;String&gt; {
+        private Flow.Subscription subscription;
+
+        @Override
+        public void onSubscribe(Flow.Subscription subscription) {
+            System.out.println(&quot;当前订阅者添加了订阅&quot;);
+            // 表明当前订阅者只处理两个消息。
+            subscription.request(2);
+            // 在类中保存一个令牌的备份
+            this.subscription = subscription;
+        }
+
+        @Override
+        public void onNext(String item) {
+            // 接收并处理发布者发布的消息
+            System.out.printf(&quot;接收到了消息为：%s\n&quot;, item);
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+            // 出现了异常(例如处理数据的时候产生了异常)
+            throwable.printStackTrace();
+
+            // 我们可以告诉发布者, 后面不接受数据了
+            this.subscription.cancel();
+        }
+
+        @Override
+        public void onComplete() {
+            System.out.println(&quot;处理完了!&quot;);
+        }
+    }
+}
+
 </code></pre>
-<h2 id="分组">分组：()</h2>
-<p>说明：不是很好说明，简单理解为括号里的是单独的一块，有点类似敲代码时括号的作用。<br>
-示例：</p>
-<pre><code class="language-html">&lt;!-- 输入：div&gt;(ul&gt;li)+div --&gt;
-  &lt;div&gt;
-       &lt;ul&gt;
-           &lt;li&gt;&lt;/li&gt;
-       &lt;/ul&gt;
-  &lt;/div&gt;
-  &lt;div&gt;
-  &lt;/div&gt;
-</code></pre>
-<h2 id="属性">属性：[]</h2>
-<p>说明：在标签后面加上[]可以指定相关的属性。使用属性名=属性的形式，多个之间使用空格隔开<br>
-示例：</p>
-<pre><code class="language-html">&lt;!-- 输入：a[href=&quot;#&quot;] --&gt;
-   &lt;a href=&quot;#&quot;&gt;&lt;/a&gt;
-</code></pre>
-<h2 id="编号">编号：$</h2>
-<p>说明：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">代</mi><mi mathvariant="normal">表</mi><mi mathvariant="normal">一</mi><mi mathvariant="normal">位</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">多</mi><mi mathvariant="normal">个</mi></mrow><annotation encoding="application/x-tex">代表一位数，多个</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0em;vertical-align:0em;"></span><span class="mord cjk_fallback">代</span><span class="mord cjk_fallback">表</span><span class="mord cjk_fallback">一</span><span class="mord cjk_fallback">位</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">多</span><span class="mord cjk_fallback">个</span></span></span></span>连用可以代表多个数，如$$代表两位数，一般与*连用。<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">@</mi><mi mathvariant="normal">开</mi><mi mathvariant="normal">始</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">可</mi><mi mathvariant="normal">以</mi><mi mathvariant="normal">指</mi><mi mathvariant="normal">定</mi><mi mathvariant="normal">开</mi><mi mathvariant="normal">始</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">值</mi><mi mathvariant="normal">。</mi></mrow><annotation encoding="application/x-tex">@开始数可以指定开始的数值。</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">@</span><span class="mord cjk_fallback">开</span><span class="mord cjk_fallback">始</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">可</span><span class="mord cjk_fallback">以</span><span class="mord cjk_fallback">指</span><span class="mord cjk_fallback">定</span><span class="mord cjk_fallback">开</span><span class="mord cjk_fallback">始</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">值</span><span class="mord cjk_fallback">。</span></span></span></span>@-可以指定倒序。</p>
-<pre><code class="language-html">&lt;!-- 输入：li.test$*3 --&gt;
-   &lt;li class=&quot;test1&quot;&gt;&lt;/li&gt;
-   &lt;li class=&quot;test2&quot;&gt;&lt;/li&gt;
-   &lt;li class=&quot;test3&quot;&gt;&lt;/li&gt;
-&lt;!-- 指定开始数：li.test$@3*3 --&gt;
-   &lt;li class=&quot;test3&quot;&gt;&lt;/li&gt;
-   &lt;li class=&quot;test4&quot;&gt;&lt;/li&gt;
-   &lt;li class=&quot;test5&quot;&gt;&lt;/li&gt;
-&lt;!-- 倒序：li.test$@-*3   Vscode默认不可用--&gt;
-   &lt;li class=&quot;test3&quot;&gt;&lt;/li&gt;
-   &lt;li class=&quot;test2&quot;&gt;&lt;/li&gt;
-   &lt;li class=&quot;test1&quot;&gt;&lt;/li&gt;
-</code></pre>
-<h2 id="文本内容">文本内容：{}</h2>
-<p>说明：通过使用{}来指定标签之间的文本内容。<br>
-示例：</p>
-<pre><code class="language-html">&lt;!-- 输入：p{test} --&gt;
-   &lt;p&gt;test&lt;/p&gt;
-</code></pre>
-<h2 id="自动识别标签">自动识别标签</h2>
-<p>说明：可以直接通过#id名或者.类名来输入标签，会自动识别当前标签类型。默认情况下直接输入为div，ul子节点为li等。<br>
-示例：</p>
-<pre><code class="language-html">&lt;!-- 输入：.main --&gt;
-   &lt;div class=&quot;main&quot;&gt;&lt;/div&gt;
-&lt;!-- 输入：ul&gt;.list --&gt;
-   &lt;ul&gt;
-        &lt;li class=&quot;list&quot;&gt;&lt;/li&gt;
-   &lt;/ul&gt;
-&lt;!-- 输入：tr&gt;.list --&gt;
-   &lt;tr&gt;
-        &lt;td class=&quot;list&quot;&gt;&lt;/td&gt;
-   &lt;/tr&gt;
-</code></pre>
-<hr>
-<p>使用习惯后撸HTML的速度能起飞。</p>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
-<li><a href="#%E7%A4%BA%E4%BE%8B">示例</a></li>
-<li><a href="#%E8%AF%AD%E6%B3%95">语法</a>
-<ul>
-<li><a href="#id%E5%92%8C%E7%B1%BB%E5%90%8D%E4%B8%8E">id和类名：.与#</a></li>
-<li><a href="#%E8%8A%82%E7%82%B9%E4%B8%8E%E4%B8%8E">节点：&gt;与+与^</a></li>
-<li><a href="#%E9%87%8D%E5%A4%8D">重复：*</a></li>
-<li><a href="#%E5%88%86%E7%BB%84">分组：()</a></li>
-<li><a href="#%E5%B1%9E%E6%80%A7">属性：[]</a></li>
-<li><a href="#%E7%BC%96%E5%8F%B7">编号：$</a></li>
-<li><a href="#%E6%96%87%E6%9C%AC%E5%86%85%E5%AE%B9">文本内容：{}</a></li>
-<li><a href="#%E8%87%AA%E5%8A%A8%E8%AF%86%E5%88%AB%E6%A0%87%E7%AD%BE">自动识别标签</a></li>
-</ul>
-</li>
+<li><a href="#%E7%9B%B8%E5%85%B3%E4%BB%A3%E7%A0%81">相关代码</a></li>
 </ul>
 </div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://mxecy.cn/post/baidu-library-download/">
+            <a href="https://mxecy.cn/post/graalvm-agentlib-usage/">
               <span class="post-title">
-                百度文库下载&rarr;
+                Graalvm反射配置辅助工具agentlib&rarr;
               </span>
             </a>
           </p>
           
           <div class="comment" style="text-align: center;">
             
-            <span id="/post/emmet-rules/" class="leancloud_visitors"
-              data-flag-title="Emmet语法规则">
+            <span id="/post/java-observer-and-publisher/" class="leancloud_visitors"
+              data-flag-title="Java中的观察者模式和观察订阅模式">
               <em class="post-meta-item-text">阅读量 </em>
               <i class="leancloud-visitors-count">loading...</i>
             </span>
