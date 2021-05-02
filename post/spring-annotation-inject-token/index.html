@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[Gloduck]的个人博客">
 <meta name="author" content="kveln">
-<title>如何防止百度链接失效 | Gloduck</title>
+<title>Spring使用注解注入token的值 | Gloduck</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="如何防止百度链接失效 | Gloduck » Feed"
+<link rel="alternate" type="application/rss+xml" title="Spring使用注解注入token的值 | Gloduck » Feed"
   href="https://mxecy.cn/atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="如何防止百度链接失效" />
-  <meta property="og:url" content="https://mxecy.cn/post/baidu-link-invalid/" />
+  <meta property="og:description" content="Spring使用注解注入token的值" />
+  <meta property="og:url" content="https://mxecy.cn/post/spring-annotation-inject-token/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Gloduck" />
@@ -178,13 +178,21 @@
   <div class="post-heading">
     <span class="tags">
       
-      <a href="https://mxecy.cn/tag/KkAHc_aHW/" class="tag">Other</a>
+      <a href="https://mxecy.cn/tag/Ap3l94E0D/" class="tag">Spring</a>
+      
+      <a href="https://mxecy.cn/tag/04MVO5Em0y/" class="tag">SourceCode</a>
+      
+      <a href="https://mxecy.cn/tag/iEER33cgr/" class="tag">SpringBoot</a>
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
       
     </span>
-    <h1>如何防止百度链接失效</h1>
+    <h1>Spring使用注解注入token的值</h1>
     <span class="meta">
       Posted on
-      2019-08-17，2 min read
+      2021-05-02，4 min read
     </span>
   </div>
   
@@ -199,45 +207,214 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <h1 id="前言">前言</h1>
-<p>闲得无聊逛Gayhub的时候偶然看到一个项目，貌似是用来防止链接被和谐的。然后就下载来试了试。发现还真的挺有用的。</p>
-<p>项目地址：https://github.com/logonod/Panlian</p>
-<p>大多数人都应该知道百度有一套秒传文件的机制吧。一个相同文件的MD5值是相同的，因此在上传的过程中通过MD5可以对文件进行匹配，达到秒传的目的。而这个项目目测好像就是利用的这个来实现秒传的用途的。</p>
-<h1 id="试水">试水</h1>
-<p>我们来找一份文件试试水(没啥好分享的，就用一个Gal来试水吧)：</p>
-<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g5s7afn7npj30ah01rdfl.jpg" alt="" loading="lazy"></figure>
-<p>选择好文件后，我们点击链接分享：</p>
-<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g5s7bgx9joj304703vgle.jpg" alt="" loading="lazy"></figure>
-<p>接着我们得到了一串地址：</p>
-<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g5s7by46lmj30i2087glp.jpg" alt="" loading="lazy"></figure>
-<p>以pan://开头的MD5值</p>
-<p>接着打开一个新的账号点击导入：</p>
-<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g5s7cyxjyzj30hz087mx9.jpg" alt="" loading="lazy"></figure>
-<p>然后就能在另外一个网盘看到文件了。</p>
-<p>划重点~~~由于是利用的秒传，所以说理论上源文件你在自己的网盘删除了，分享也不会失效</p>
-<p><a href="pan://wpHChMKkcGF0aMK5w6fCvMKWw6fCu8KHw6bCl8K2w6nCl8K0w6fCmsKEw6fCusKmw6XCrsKaLnppcMKuY29udGXEpC1sxKZnxIXDjinDgjhUwqvEosSkxKZ0LW1kNcOZIDA0ZGZhMGJlNGE2MmUzNsWKxLk5MDM3OWU4YWQxZjgxwqlzbGljZcS3xLnEu2EyMjDFpzU3NzY4NDI2YjgzOWPFjmIzMDUyMzXFj2Zk">测试链接(右键复制)</a><br>
-至于安装嘛，，由于作者已经给出了操作流程。就不多叙述了。也可以自己打包成浏览器的插件使用。</p>
-<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEly1g5s7egmaiwg31ak0xuu12.jpg" alt="" loading="lazy"></figure>
+          <ul>
+<li>在实际开发中，我们可能会需要使用到注解来给我们的方法注入一些参数值，比如从token中获取某些参数然后注入到controller中的方法中。但是由于SpringAOP无法支持对参数上的注解进行拦截所以我们需要使用其他的方法来实现。</li>
+<li>Spring为我们提供了一个接口：<code>AbstractNamedValueMethodArgumentResolver</code>，这个接口是专门用于处理当前情况的，Spring中的很多常用注解也是通过继承这个类实现的。如：<code>@CookieValue</code>、<code>@PathVariable</code>等。</li>
+<li>本文主要介绍如何通过继承这个类来实现相应的效果。</li>
+</ul>
+<h1 id="实现">实现</h1>
+<h2 id="代码">代码</h2>
+<ul>
+<li>定义一个注解，用于标识要获取的属性。</li>
+</ul>
+<pre><code class="language-java">package cn.gloduck.gmall.token.annotation;
+
+import org.springframework.core.annotation.AliasFor;
+
+import java.lang.annotation.*;
+
+
+/**
+ * 从token中获取属性
+ *
+ * @author Gloduck
+ */
+@Target({ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface TokenAttribute {
+
+    /**
+     * 需要获取的属性值
+     *
+     * @return
+     */
+    String name();
+
+    /**
+     * token的分组
+     *
+     * @return
+     */
+    String group();
+
+    /**
+     * 当前的参数是否必须
+     * @return
+     */
+    boolean required() default true;
+
+}
+
+</code></pre>
+<ul>
+<li>定义一个异常，用于抛出</li>
+</ul>
+<pre><code class="language-java">package cn.gloduck.gmall.token.exception;
+
+/**
+ * 从token中获取属性失败抛出的异常
+ * @author Gloduck
+ */
+public class TokenAttributeException extends RuntimeException {
+    public TokenAttributeException(String message) {
+        super(message);
+    }
+}
+</code></pre>
+<ul>
+<li><code>AbstractNamedValueMethodArgumentResolver</code>的具体实现，具体获取逻辑在<code>resolveName</code>中</li>
+</ul>
+<pre><code class="language-java">package cn.gloduck.gmall.token;
+
+import cn.gloduck.gmall.constant.TokenConstant;
+import cn.gloduck.gmall.token.annotation.TokenAttribute;
+import cn.gloduck.gmall.service.TokenService;
+import cn.gloduck.gmall.token.exception.TokenAttributeException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.MethodParameter;
+import org.springframework.util.Assert;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver;
+
+import javax.servlet.ServletException;
+import java.util.Map;
+
+
+/**
+ * token扩展，使得可以直接通过@TokenAttribute注解获取token中的值
+ * @author Gloduck
+ */
+@Slf4j
+public class TokenAttributeMethodArgumentResolver  extends AbstractNamedValueMethodArgumentResolver {
+    public TokenAttributeMethodArgumentResolver(TokenService tokenService) {
+        log.info(&quot;注入:{}到:{}&quot;,tokenService.getClass().getName(), this.getClass().getName());
+        this.tokenService = tokenService;
+    }
+
+    private TokenService tokenService;
+
+    /**
+     * 当前处理器支持@TokenAttribute注解
+     * @param methodParameter
+     * @return
+     */
+    @Override
+    public boolean supportsParameter(MethodParameter methodParameter) {
+        return methodParameter.hasParameterAnnotation(TokenAttribute.class);
+    }
+
+
+    /**
+     * 封装NamedValueInfo，如果获取不到的话会从defaultValue中获取，所以我们这里设置defaultValue为null
+     * @param methodParameter
+     * @return
+     */
+    @Override
+    protected NamedValueInfo createNamedValueInfo(MethodParameter methodParameter) {
+        TokenAttribute annotation = methodParameter.getParameterAnnotation(TokenAttribute.class);
+        Assert.state(annotation != null, &quot;No RequestAttribute annotation&quot;);
+        return new NamedValueInfo(annotation.name(), annotation.required(), null);
+    }
+
+    /**
+     * 具体的处理逻辑
+     * @param s
+     * @param methodParameter
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @Override
+    protected Object resolveName(String s, MethodParameter methodParameter, NativeWebRequest request) throws Exception {
+        String token = request.getHeader(TokenConstant.TOKEN_HEADER);
+        if(token == null){
+            // 获取token失败
+            return null;
+        }
+        TokenAttribute tokenAttribute = methodParameter.getParameterAnnotation(TokenAttribute.class);
+        String group = tokenAttribute.group();
+        String name = tokenAttribute.name();
+        Map&lt;String, String&gt; map = tokenService.verifyAndGetPayloadMap(group, token);
+        if(map == null){
+            // token校验失败
+            return null;
+        }
+        String value = map.get(name);
+        return value;
+    }
+
+    /**
+     * 当获取不到时候的处理
+     * @param name
+     * @param parameter
+     * @throws ServletException
+     */
+    @Override
+    protected void handleMissingValue(String name, MethodParameter parameter) throws ServletException {
+        throw new TokenAttributeException(String.format(&quot;token中获取参数:%s失败&quot;,name));
+    }
+
+}
+
+</code></pre>
+<h2 id="配置">配置</h2>
+<ul>
+<li>
+<p>自定义的<code>AbstractNamedValueMethodArgumentResolver</code>需要注册，所以我们需要重写<code>WebMvcConfigurationSupport</code>中的<code>addArgumentResolvers</code>方法</p>
+</li>
+<li>
+<pre><code class="language-java">
+/**
+ * @author Gloduck
+ */
+@Configuration
+public class GlobalConfiguration extends WebMvcConfigurationSupport {
+    @Autowired
+    private TokenService tokenService;
+    @Override
+    protected void addArgumentResolvers(List&lt;HandlerMethodArgumentResolver&gt; argumentResolvers) {
+        // 使得能直接通过注解从token中获取参数
+        argumentResolvers.add(new TokenAttributeMethodArgumentResolver(tokenService));
+    }
+}
+
+</code></pre>
+</li>
+</ul>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
-<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
-<li><a href="#%E8%AF%95%E6%B0%B4">试水</a></li>
+<li><a href="#%E5%AE%9E%E7%8E%B0">实现</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE">配置</a></li>
+</ul>
+</li>
 </ul>
 </div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://mxecy.cn/post/useful-website/">
+            <a href="https://mxecy.cn/post/java-observer-and-publisher/">
               <span class="post-title">
-                个人经常使用的一些网站&rarr;
+                Java中的观察者模式和观察订阅模式&rarr;
               </span>
             </a>
           </p>
           
           <div class="comment" style="text-align: center;">
             
-            <span id="/post/baidu-link-invalid/" class="leancloud_visitors"
-              data-flag-title="如何防止百度链接失效">
+            <span id="/post/spring-annotation-inject-token/" class="leancloud_visitors"
+              data-flag-title="Spring使用注解注入token的值">
               <em class="post-meta-item-text">阅读量 </em>
               <i class="leancloud-visitors-count">loading...</i>
             </span>
