@@ -90,7 +90,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1619962322607"
+            <form id="gridea-search-form" style="position: relative" data-update="1621677281574"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -152,7 +152,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1619962322607"
+            <form id="gridea-search-form" style="position: relative" data-update="1621677281574"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -188,7 +188,7 @@
     <h1>Ubuntu调教日志</h1>
     <span class="meta">
       Posted on
-      2021-01-14，7 min read
+      2021-01-14，9 min read
     </span>
   </div>
   
@@ -217,16 +217,12 @@
 <p>然后注释原来的源。添加阿里的源。</p>
 <pre><code>deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
-
 deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
-
 deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
-
 deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
-
 deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
 </code></pre>
@@ -406,6 +402,13 @@ sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1
 接着<a href="https://extensions.gnome.org/extension/1674/topiconsfix/">跳转</a>到此网页<br>
 将右上角的off按钮切换为on<br>
 在Installed extensions页面应用该扩展</p>
+<h3 id="小技巧">小技巧</h3>
+<ul>
+<li>如果想要同时安装多个deepin封装的程序的话。deepin默认会为每一个创建一个隔离的环境。实际上只用安装一个就行了。</li>
+<li>以tim为例，安装后创建的环境为：<code>/home/gloduck/.deepinwine/Deepin-TIM</code>，此时如果还想要安装其他的软件，直接将软件复制到<code>/home/gloduck/.deepinwine/Deepin-TIM/drive_c/Program Files</code>目录下就行了。</li>
+<li>运行的话通过命令：<code>env WINEPREFIX=&quot;$HOME/.deepinwine/Deepin-TIM&quot; deepin-wine &quot;c:\\Program Files\\baidu\\BaiduNetdisks\\baidunetdisk.exe&quot; &amp;</code>运行。</li>
+<li>具体原因参考：<code>/opt/deepinwine/apps/Deepin-TIM/run.sh</code>文件</li>
+</ul>
 <h2 id="idea">Idea</h2>
 <ul>
 <li>下载Idea：https://www.jetbrains.com/idea/download/</li>
@@ -418,6 +421,23 @@ sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1
 + 进入Idea路径。<br>
 + windows：<code>C://Users/Gloduck/AppData/Roaming/JetBrains/IntelliJIdea2020.2/plugins</code><br>
 + 复制文件到：<code>/home/gloduck/.local/share/JetBrains/IntelliJIdea2020.3</code>（注：没有plugins，直接复制）</p>
+<h2 id="typora">typora</h2>
+<ul>
+<li>
+<p>如果直接使用apt安装typora的话，那么大概率是打不开的。需要通过官方的源来安装。</p>
+</li>
+<li>
+<pre><code class="language-shell"># or run:
+# sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys BA300B7755AFCFAE
+wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+# add Typora's repository
+sudo add-apt-repository 'deb https://typora.io/linux ./'
+sudo apt-get update
+# install typora
+sudo apt-get install typora
+</code></pre>
+</li>
+</ul>
 <h1 id="常用操作">常用操作</h1>
 <h2 id="root打开文件夹">root打开文件夹：</h2>
 <pre><code class="language-shell">sudo nautilus
@@ -446,6 +466,9 @@ sudo gedit 图标名称.desktop
 <h2 id="root打开文件夹-2">root打开文件夹</h2>
 <p>安装nautilus-admin</p>
 <pre><code class="language-shell">sudo apt install nautilus-admin
+</code></pre>
+<h2 id="隐藏dock的驱动器">隐藏Dock的驱动器</h2>
+<pre><code class="language-shell">gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
 </code></pre>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
@@ -476,6 +499,7 @@ sudo gedit 图标名称.desktop
 <li><a href="#%E6%9B%B4%E6%96%B0">更新</a></li>
 <li><a href="#tim%E6%97%A0%E6%B3%95%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87">Tim无法加载图片</a></li>
 <li><a href="#%E6%B7%BB%E5%8A%A0%E5%B0%8F%E5%9B%BE%E6%A0%87">添加小图标</a></li>
+<li><a href="#%E5%B0%8F%E6%8A%80%E5%B7%A7">小技巧</a></li>
 </ul>
 </li>
 <li><a href="#idea">Idea</a>
@@ -483,6 +507,7 @@ sudo gedit 图标名称.desktop
 <li><a href="#%E5%AF%BC%E5%87%BA%E9%85%8D%E7%BD%AE">导出配置</a></li>
 </ul>
 </li>
+<li><a href="#typora">typora</a></li>
 </ul>
 </li>
 <li><a href="#%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C">常用操作</a>
@@ -491,6 +516,7 @@ sudo gedit 图标名称.desktop
 <li><a href="#span-id%E5%88%9B%E5%BB%BA%E6%A1%8C%E9%9D%A2%E5%9B%BE%E6%A0%87%E5%88%9B%E5%BB%BA%E6%A1%8C%E9%9D%A2%E5%9B%BE%E6%A0%87span"><span id="创建桌面图标">创建桌面图标</span></a></li>
 <li><a href="#%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8%E8%BE%93%E5%85%A5%E8%B7%AF%E5%BE%84">文件管理器输入路径</a></li>
 <li><a href="#root%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E5%A4%B9-2">root打开文件夹</a></li>
+<li><a href="#%E9%9A%90%E8%97%8Fdock%E7%9A%84%E9%A9%B1%E5%8A%A8%E5%99%A8">隐藏Dock的驱动器</a></li>
 </ul>
 </li>
 </ul>
