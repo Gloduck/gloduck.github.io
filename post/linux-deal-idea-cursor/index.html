@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[Gloduck]的个人博客">
 <meta name="author" content="kveln">
-<title>设计模式-享元模式 | Gloduck</title>
+<title>Linux解决Idea光标不跟随 | Gloduck</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="设计模式-享元模式 | Gloduck » Feed"
+<link rel="alternate" type="application/rss+xml" title="Linux解决Idea光标不跟随 | Gloduck » Feed"
   href="https://mxecy.cn/atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="设计模式-享元模式" />
-  <meta property="og:url" content="https://mxecy.cn/post/designpartten-flyweight/" />
+  <meta property="og:description" content="Linux解决Idea光标不跟随" />
+  <meta property="og:url" content="https://mxecy.cn/post/linux-deal-idea-cursor/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Gloduck" />
@@ -178,17 +178,15 @@
   <div class="post-heading">
     <span class="tags">
       
-      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      <a href="https://mxecy.cn/tag/gS9hbKX8J/" class="tag">Idea</a>
       
-      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
-      
-      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      <a href="https://mxecy.cn/tag/R1qiuqz-m/" class="tag">Linux</a>
       
     </span>
-    <h1>设计模式-享元模式</h1>
+    <h1>Linux解决Idea光标不跟随</h1>
     <span class="meta">
       Posted on
-      2020-10-10，6 min read
+      2021-03-12，2 min read
     </span>
   </div>
   
@@ -203,212 +201,88 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <h1 id="定义">定义</h1>
-<ul>
+          <ul>
 <li>
-<p>Use sharing to support large numbers of fine-grained objects efficiently.（使用共享对象可有效地支持大量的细粒度的对象。）</p>
-</li>
-<li>
-<p>享元模式提出了两个要求：细粒度的对象和共享对象。将对象的信息分为两个部分：内部状态（intrinsic）和外部状态（extrinsic）</p>
-<ul>
-<li>内部状态：对象可共享出来的信息，存储在享元对象内部并且不会随环境改变而改变。它们可以作为一个对象爱的动态附加信息，不必直接存储在具体的某个对象中，属于可以共享的部分</li>
-<li>外部状态：外部状态是对象得以依赖的一个标记，是随环境改变而改变的、不可共享的状态。它是一批对象的统一标识，是唯一的一个索引值。</li>
-</ul>
+<p>对于Linux下的Fcitx输入中文时，输入法候选框总是静止在 IDEA 的左下角，而不能跟随光标进行移动。</p>
 </li>
 <li>
-<p>组成：</p>
+<p>这是 <code>Idea</code> 的 <code>jre</code> 运行环境一个 bug，导致输入法无法定位到鼠标位置。因此，我们要解决该问题必须要修改 <code>JetBrainsRuntime</code> 的运行代码。</p>
+</li>
+<li>
+<p>对于Ibus的话，可能需要自己编译</p>
+</li>
+</ul>
+<h1 id="方法1">方法1</h1>
 <ul>
-<li>Flyweight（抽象享元对象）：简单的来说是一个产品的抽象类，同时定义出对象的外部状态和内部状态的接口或实现</li>
-<li>ConcreteFlyweight（具体享元对象）：具体的一个产品类。实现抽象角色定义的业务。该角色中需要注意的是内部状态处理应该与环境无关，<strong><u>不应该出现一个操作改变了内部状态，同时还修改了外部状态</u></strong>。</li>
-<li>unsharedConcreteFlyweight（不可共享的享元角色）：不存在外部状态或者安全要求（如线程安全）不能够使用共享技术的对象，该对象一般不会出现在享元工厂中。</li>
-<li>FlyweightFactory（享元工厂）：职责非常简单，构造一个池容器，同时提供从池中获得对象的方法。</li>
+<li>
+<p>下载已经修改好的 JRE 环境<a href="https://pan.baidu.com/s/1nUVPhXmgRqPBDe_8MeO-BQ">百度网盘 密码(rjg4)</a></p>
+</li>
+<li>
+<p>解压到任意目录（安装目录最好）</p>
+</li>
+<li>
+<p>更改IDEA的启动环境</p>
+<ul>
+<li>
+<p>修改文件:home/idea-2020.1/bin/idea.sh (找到你自己的idea的安装路径)在开头处添加（也可以安装插件<code>Choose Runtime</code>）</p>
+</li>
+<li>
+<pre><code class="language-sh">export IDEA_JDK=export IDEA_JDK=/home/vcjmhg/Application/java-11.0.7-jetbrain #（改成自己的JRE目录）
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="方法2">方法2</h1>
+<ul>
+<li>
+<p>从 GitHub 下载 JetBrainsRuntime</p>
+<ul>
+<li><code>git clone https://github.com/JetBrains/JetBrainsRuntime.git</code></li>
 </ul>
 </li>
 <li>
-<p>通用类图</p>
+<p>应用 patch</p>
+<ul>
+<li>
+<p><a href="https://github.com/prehonor/myJetBrainsRuntime">patch下载地址</a></p>
+</li>
+<li>
+<pre><code class="language-shell">#将Path放到JetBrainsRuntime的根目录下
+cd JetBrainsRuntime
+# 应用Patch
+git apply idea.patch
+</code></pre>
 </li>
 </ul>
-<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gjkfbzt78gj31gg0spah0.jpg" alt="享元模式通用类图" loading="lazy"></figure>
-<h1 id="优点">优点</h1>
-<ul>
-<li>大大减少应用程序创建的对象，降低程序内存占用，增强程序的性能。</li>
-</ul>
-<h1 id="缺点">缺点</h1>
-<ul>
-<li>提高了系统复杂性，需要分离出外部状态和内部状态，而且外部状态具有固化特性，不应该随内部状态改变而改变，否则将导致系统的逻辑混乱。</li>
-<li>一般享元模式在多线程环境下使用的多，在多线程情况下要注意同步问题。</li>
-</ul>
-<h1 id="使用场景">使用场景</h1>
-<ul>
-<li>场景：
-<ul>
-<li>系统中存在大量的相似对象</li>
-<li>细粒度的对象都具备接近的外部状态，而且内部状态与环境无关，也就是说对象没有特定身份。</li>
-<li>需要缓冲池的场景。</li>
-</ul>
 </li>
-</ul>
-<h1 id="代码">代码</h1>
-<h2 id="享元模式">享元模式</h2>
-<h3 id="类图">类图</h3>
-<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gjkfvnss0fj30aa0cut94.jpg" alt="本项目使用类图" loading="lazy"></figure>
-<h3 id="代码-2">代码</h3>
-<p>抽象享元角色（<strong>抽象类</strong>）</p>
-<pre><code class="language-Java">package com.pattern.flyweight;
-
-public abstract class Flyweight {
-    /**
-     * 内部状态，即多个实例可能拥有的共享数据
-     */
-    private String intrinsic;
-    /**
-     * 外部状态，具体来说就是对象依赖的一个标识
-     */
-    protected final String extrinsic;
-
-    /**
-     * 享元角色必须接受外部状态
-     * @param extrinsic
-     */
-    public Flyweight(String extrinsic) {
-        this.extrinsic = extrinsic;
-    }
-    // 享元角色可能拥有的业务操作
-    public abstract void operate();
-
-    /**
-     * 获取内部状态（共享变量）。注意多线程环境下的线程安全问题。
-     * @return
-     */
-    public String getIntrinsic() {
-        return intrinsic;
-    }
-
-    /**
-     * 设置内部状态（共享变量）。注意多线程环境下的线程安全问题。
-     * @param intrinsic
-     */
-    public void setIntrinsic(String intrinsic) {
-        this.intrinsic = intrinsic;
-    }
-}
-
-</code></pre>
-<p>具体享元角色（<strong>继承自抽象享元角色</strong>）</p>
-<pre><code class="language-Java">package com.pattern.flyweight;
-
-public class ConcreteFlyweight extends Flyweight {
-    /**
-     * 享元角色必须接受外部状态
-     *
-     * @param extrinsic
-     */
-    public ConcreteFlyweight(String extrinsic) {
-        super(extrinsic);
-    }
-
-    @Override
-    public void operate() {
-        System.out.println(&quot;具体享元角色自己有的业务&quot;);
-    }
-}
-
-</code></pre>
-<p>享元工厂（<strong>工厂类</strong>）</p>
-<pre><code class="language-Java">package com.pattern.flyweight;
-
-import java.util.HashMap;
-
-/**
- * 享元工厂
- */
-public class FlyweightFactory {
-    private static HashMap&lt;String, Flyweight&gt; pool = new HashMap&lt;&gt;(16);
-    public static Flyweight getFlyweight(String extrinsic){
-        Flyweight flyweight = null;
-        if(pool.containsKey(extrinsic)){
-            // 如果在池中有对象直接返回
-            flyweight = pool.get(extrinsic);
-        } else {
-            // 如果在池中没有对象就新创建
-            flyweight = new ConcreteFlyweight(extrinsic);
-            pool.put(extrinsic,flyweight);
-        }
-        return flyweight;
-    }
-}
-
-</code></pre>
-<h3 id="测试代码">测试代码</h3>
-<pre><code class="language-Java">package com.pattern;
-
-import com.pattern.flyweight.Flyweight;
-import com.pattern.flyweight.FlyweightFactory;
-import org.junit.Test;
-
-public class FlyweightTest {
-    @Test
-    public void test(){
-        FlyweightFactory.getFlyweight(&quot;共享变量1&quot;);
-        FlyweightFactory.getFlyweight(&quot;共享变量2&quot;);
-        FlyweightFactory.getFlyweight(&quot;共享变量3&quot;);
-        FlyweightFactory.getFlyweight(&quot;共享变量4&quot;);
-        FlyweightFactory.getFlyweight(&quot;共享变量1&quot;).operate();
-    }
-}
-
-</code></pre>
-<h3 id="结果">结果</h3>
-<pre><code class="language-shell">具体享元角色自己有的业务
-
-Process finished with exit code 0
-
-</code></pre>
-<h2 id="享元模式的线程安全问题">享元模式的线程安全问题</h2>
-<p>在上面的代码中存在多处线程不安全的问题，如：享元工厂的getFlyweight方法，以及抽象享元角色中的getter和setter方法，它们在多线程的环境下都会导致线程不安全的问题。具体根据实际情况来解决。如：享元工厂的getFlyweight就可以使用DCL单例模式类似的方法来解决。</p>
-<h1 id="注意">注意</h1>
-<ul>
-<li>在多线程的环境下需要注意享元模式多线程照成的线程不安全的问题</li>
-<li><strong><u>外部状态尽量使用基本类型</u></strong>，否则会带来性能的影响，如使用HashMap作为容器，那么作为使用自定义类作为外部状态，那么需要复写equals方法和hashCode方法（如果把一个对象作为Map类的键值，一定要确保重写了equal和hashCode方法，否则会出现通过键值搜索失败的情况。如：get、contains等方法会返回失败的结果），而且执行效率也不高。</li>
-<li>在Java API中大量使用了享元模式</li>
-<li>虽然享元模式可以实现对象池，但是两者之间还是有比较大的区别。对象池着重在对象的复用上，池中的每个对象是可替换的；而享元模式主要解决对象的共享问题，如何建立多个可共享的细粒度对象是其关注的重点。</li>
+<li>
+<p>编译 <code>JetBrainsRuntime</code>，<a href="https://github.com/JetBrains/JetBrainsRuntime">参考官方</a></p>
+</li>
+<li>
+<p>安装方法1设置</p>
+</li>
 </ul>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
-<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
-<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
-<li><a href="#%E7%BC%BA%E7%82%B9">缺点</a></li>
-<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
-<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
-<ul>
-<li><a href="#%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F">享元模式</a>
-<ul>
-<li><a href="#%E7%B1%BB%E5%9B%BE">类图</a></li>
-<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
-<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
-<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
-</ul>
-</li>
-<li><a href="#%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98">享元模式的线程安全问题</a></li>
-</ul>
-</li>
-<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+<li><a href="#%E6%96%B9%E6%B3%951">方法1</a></li>
+<li><a href="#%E6%96%B9%E6%B3%952">方法2</a></li>
 </ul>
 </div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://mxecy.cn/post/designpartten-observer/">
+            <a href="https://mxecy.cn/post/graalvm/">
               <span class="post-title">
-                设计模式-观察者模式&rarr;
+                Graalvm​虚拟机集成&rarr;
               </span>
             </a>
           </p>
           
           <div class="comment" style="text-align: center;">
             
-            <span id="/post/designpartten-flyweight/" class="leancloud_visitors"
-              data-flag-title="设计模式-享元模式">
+            <span id="/post/linux-deal-idea-cursor/" class="leancloud_visitors"
+              data-flag-title="Linux解决Idea光标不跟随">
               <em class="post-meta-item-text">阅读量 </em>
               <i class="leancloud-visitors-count">loading...</i>
             </span>
