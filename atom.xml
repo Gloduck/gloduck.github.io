@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://mxecy.cn</id>
     <title>Gloduck</title>
-    <updated>2021-05-22T09:55:11.683Z</updated>
+    <updated>2021-05-27T17:08:58.248Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://mxecy.cn"/>
     <link rel="self" href="https://mxecy.cn/atom.xml"/>
@@ -10,6 +10,26 @@
     <logo>https://mxecy.cn/images/avatar.png</logo>
     <icon>https://mxecy.cn/favicon.ico</icon>
     <rights>All rights reserved 2021, Gloduck</rights>
+    <entry>
+        <title type="html"><![CDATA[Windows To Go屏蔽本机硬盘]]></title>
+        <id>https://mxecy.cn/post/win-to-go-localstorage/</id>
+        <link href="https://mxecy.cn/post/win-to-go-localstorage/">
+        </link>
+        <updated>2021-05-27T16:51:48.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>如果在制作WTG优盘时没有勾选 屏蔽本机硬盘，可以用如下方法开启
+<ul>
+<li>进入WTG系统，Win+R 输入regedit 打开注册表编辑器</li>
+<li>定位到<code>HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\partmgr\Parameters</code></li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gqxh25jplkj316z0mndi5.jpg" alt="屏蔽本地硬盘" loading="lazy"></li>
+<li>打开计算机管理》磁盘管理</li>
+<li>右击本机磁盘，点离线</li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gqxh3vjag0j30qb0mjgn4.jpg" alt="脱机" loading="lazy"></li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Spring使用注解注入token的值]]></title>
         <id>https://mxecy.cn/post/spring-annotation-inject-token/</id>
@@ -2607,367 +2627,6 @@ final HashMap.Node&lt;K,V&gt; removeNode(int hash, Object key, Object value,
 </ul>
 </li>
 </ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[SpringCache支持模糊匹配]]></title>
-        <id>https://mxecy.cn/post/spring-cache-pattern/</id>
-        <link href="https://mxecy.cn/post/spring-cache-pattern/">
-        </link>
-        <updated>2021-01-24T03:35:09.000Z</updated>
-        <content type="html"><![CDATA[<ul>
-<li>
-<p>在开发中如果是使用SpringCache来控制缓存的话，经常会遇到需要清除缓存的情况。我们希望其清除缓存时能支持模糊匹配，但是Spring自带的CacheManage是不支持模糊匹配的。</p>
-</li>
-<li>
-<p>使用Redis为例。常用的缓存注解有：</p>
-<ul>
-<li><code>@CachePut</code></li>
-<li><code>@Cacheable</code></li>
-<li><code>@CacheEvict</code></li>
-</ul>
-</li>
-<li>
-<p>其中<code>@CacheEvict</code>是用于清除缓存的。但是其并不支持模糊匹配。这几个注解的功能是由类<code>RedisCache</code>提供的。而清除缓存的功能是由<code>evict</code>方法提供的。</p>
-</li>
-<li>
-<pre><code class="language-java">@Override
-public void evict(Object key) {
-    cacheWriter.remove(name, createAndConvertCacheKey(key));
-}
-</code></pre>
-</li>
-<li>
-<p>很明显这个并不支持模糊匹配。</p>
-</li>
-<li>
-<p>这时我们注意到了其中的<code>clear</code>方法</p>
-</li>
-<li>
-<pre><code class="language-java">@Override
-public void clear() {
-
-    byte[] pattern = conversionService.convert(createCacheKey(&quot;*&quot;), byte[].class);
-    cacheWriter.clean(name, pattern);
-}
-</code></pre>
-</li>
-<li>
-<p><code>clear</code>方法清除缓存的方法是通过模糊匹配清除的。这证明SpringCache是支持模糊匹配清除缓存的。而想调用<code>clear</code>方法需要使用注解<code>@CacheEvict(allEntries = true)</code></p>
-</li>
-<li>
-<p>我们可以通过重写<code>evict</code>方法来使得清除缓存支持模糊匹配。</p>
-</li>
-</ul>
-<h1 id="代码">代码</h1>
-<h2 id="重写rediscache">重写RedisCache</h2>
-<pre><code class="language-java">/**
-     * 重写RedisCache使其支持模糊匹配
-     */
-private static final class CustomizedRedisCache extends RedisCache{
-    private final String name;
-    private final RedisCacheWriter cacheWriter;
-    private final ConversionService conversionService;
-    protected CustomizedRedisCache(String name, RedisCacheWriter cacheWriter, RedisCacheConfiguration cacheConfig) {
-        super(name, cacheWriter, cacheConfig);
-        this.name = name;
-        this.cacheWriter = cacheWriter;
-        this.conversionService = cacheConfig.getConversionService();
-    }
-
-    @Override
-    public void evict(Object key) {
-        byte[] pattern = this.conversionService.convert(this.createCacheKey(key), byte[].class);
-        this.cacheWriter.clean(this.name, pattern);
-    }
-}
-</code></pre>
-<h2 id="重写rediscachemanager">重写RedisCacheManager</h2>
-<ul>
-<li>
-<p>由于<code>RedisCacheManage</code>中默认创建的是<code>RedisCache</code></p>
-</li>
-<li>
-<pre><code class="language-java">protected RedisCache createRedisCache(String name, @Nullable RedisCacheConfiguration cacheConfig) {
-    return new RedisCache(name, cacheWriter, cacheConfig != null ? cacheConfig : defaultCacheConfig);
-}
-</code></pre>
-</li>
-<li>
-<p>所以我们需要重写<code>RedisCacheManager</code>来注入我们自己的RedisCache</p>
-</li>
-<li>
-<p>在创建CacheManager的时候记得换成我们自己定义的CacheManager</p>
-</li>
-</ul>
-<pre><code class="language-java">/**
-     * 重写RedisCacheManager，使得CustomizedRedisCache能够替换RedisCache
-     */
-private static final class CustomizedRedisCacheManager extends RedisCacheManager{
-
-    private final RedisCacheWriter cacheWriter;
-    private final RedisCacheConfiguration defaultCacheConfig;
-    private final Map&lt;String, RedisCacheConfiguration&gt; initialCaches = new LinkedHashMap&lt;&gt;();
-    private boolean enableTransactions;
-
-
-    public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration) {
-        super(cacheWriter, defaultCacheConfiguration);
-        this.cacheWriter = cacheWriter;
-        this.defaultCacheConfig = defaultCacheConfiguration;
-    }
-
-    public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, String... initialCacheNames) {
-        super(cacheWriter, defaultCacheConfiguration, initialCacheNames);
-        this.cacheWriter = cacheWriter;
-        this.defaultCacheConfig = defaultCacheConfiguration;
-    }
-
-    public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, boolean allowInFlightCacheCreation, String... initialCacheNames) {
-        super(cacheWriter, defaultCacheConfiguration, allowInFlightCacheCreation, initialCacheNames);
-        this.cacheWriter = cacheWriter;
-        this.defaultCacheConfig = defaultCacheConfiguration;
-    }
-
-    public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, Map&lt;String, RedisCacheConfiguration&gt; initialCacheConfigurations) {
-        super(cacheWriter, defaultCacheConfiguration, initialCacheConfigurations);
-        this.cacheWriter = cacheWriter;
-        this.defaultCacheConfig = defaultCacheConfiguration;
-    }
-
-    public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, Map&lt;String, RedisCacheConfiguration&gt; initialCacheConfigurations, boolean allowInFlightCacheCreation) {
-        super(cacheWriter, defaultCacheConfiguration, initialCacheConfigurations, allowInFlightCacheCreation);
-        this.cacheWriter = cacheWriter;
-        this.defaultCacheConfig = defaultCacheConfiguration;
-    }
-
-    /**
-         * 这个构造方法最重要
-         **/
-    public CustomizedRedisCacheManager(RedisConnectionFactory redisConnectionFactory, RedisCacheConfiguration cacheConfiguration) {
-        this(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory),cacheConfiguration);
-    }
-
-    //覆盖父类创建RedisCache
-    @Override
-    protected RedisCache createRedisCache(String name, @Nullable RedisCacheConfiguration cacheConfig) {
-        return new CustomizedRedisCache(name, cacheWriter, cacheConfig != null ? cacheConfig : defaultCacheConfig);
-    }
-
-    @Override
-    public Map&lt;String, RedisCacheConfiguration&gt; getCacheConfigurations() {
-        Map&lt;String, RedisCacheConfiguration&gt; configurationMap = new HashMap&lt;&gt;(getCacheNames().size());
-        getCacheNames().forEach(it -&gt; {
-            RedisCache cache = CustomizedRedisCache.class.cast(lookupCache(it));
-            configurationMap.put(it, cache != null ? cache.getCacheConfiguration() : null);
-        });
-        return Collections.unmodifiableMap(configurationMap);
-    }
-}
-</code></pre>
-<h1 id="完整代码">完整代码</h1>
-<pre><code class="language-java">package cn.gloduck.onlinetest.config;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
-import org.springframework.cache.interceptor.*;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.data.redis.cache.RedisCache;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.cache.RedisCacheWriter;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.*;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.lang.Nullable;
-
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.*;
-
-public class CacheConfig extends CachingConfigurerSupport {
-    @Autowired
-    private RedisConnectionFactory factory;
-    @Autowired
-    private CacheManager cacheManager;
-
-    /**
-     * 初始化redis
-     *
-     * @param redisConnectionFactory
-     * @return
-     */
-    @Bean(name = &quot;redisTemplate&quot;)
-    public RedisTemplate&lt;String, Object&gt; redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate&lt;String, Object&gt; redisTemplate = new RedisTemplate&lt;&gt;();
-
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
-        redisTemplate.setKeySerializer(keySerializer());
-        redisTemplate.setHashKeySerializer(keySerializer());
-        redisTemplate.setValueSerializer(valueSerializer());
-        redisTemplate.setHashValueSerializer(valueSerializer());
-        return redisTemplate;
-    }
-
-
-    @Bean
-    @Override
-    public CacheErrorHandler errorHandler() {
-        // 用于捕获从Cache中进行CRUD时的异常的回调处理器。
-        return new SimpleCacheErrorHandler();
-    }
-
-
-    @Bean
-    @Override
-    public CacheManager cacheManager() {
-        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.
-                defaultCacheConfig()
-                .disableCachingNullValues()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()));
-        return new CustomizedRedisCacheManager(factory, cacheConfiguration);
-    }
-
-    @Bean
-    @Override
-    @DependsOn(&quot;cacheManager&quot;)
-    public CacheResolver cacheResolver() {
-        return new SimpleCacheResolver(cacheManager);
-    }
-
-    @Bean(&quot;customizedKeyGenerator&quot;)
-    public CustomizedKeyGenerator myKeyGenerator(){
-        return new CustomizedKeyGenerator();
-    }
-
-    /**
-     * Redis键序列化器
-     * @return
-     */
-    private RedisSerializer keySerializer(){
-        return new StringRedisSerializer();
-    }
-
-    /**
-     * Redis值序列化器
-     * @return
-     */
-    private RedisSerializer valueSerializer(){
-        return new Jackson2JsonRedisSerializer&lt;Serializable&gt;(Serializable.class);
-    }
-
-    /**
-     * 自定义Redis的KeyGenerator，取代自带的SimpleKeyGenerator
-     */
-    private static final class CustomizedKeyGenerator implements KeyGenerator{
-        @Override
-        public Object generate(Object target, Method method, Object... params) {
-            if(params.length == 0){
-                return &quot;defaultKey&quot;;
-            }
-            int length = params.length - 1;
-            StringBuilder keyBuilder = new StringBuilder();
-            for (int i = 0; i &lt; length; i++) {
-                keyBuilder.append(params[i]).append(&quot;-&quot;);
-            }
-            keyBuilder.append(params[length]);
-            return keyBuilder.toString();
-        }
-
-    }
-
-    /**
-     * 重写RedisCache使其支持模糊匹配
-     */
-    private static final class CustomizedRedisCache extends RedisCache{
-        private final String name;
-        private final RedisCacheWriter cacheWriter;
-        private final ConversionService conversionService;
-        protected CustomizedRedisCache(String name, RedisCacheWriter cacheWriter, RedisCacheConfiguration cacheConfig) {
-            super(name, cacheWriter, cacheConfig);
-            this.name = name;
-            this.cacheWriter = cacheWriter;
-            this.conversionService = cacheConfig.getConversionService();
-        }
-
-        @Override
-        public void evict(Object key) {
-            byte[] pattern = this.conversionService.convert(this.createCacheKey(key), byte[].class);
-            this.cacheWriter.clean(this.name, pattern);
-        }
-    }
-    /**
-     * 重写RedisCacheManager，使得CustomizedRedisCache能够替换RedisCache
-     */
-    private static final class CustomizedRedisCacheManager extends RedisCacheManager{
-
-        private final RedisCacheWriter cacheWriter;
-        private final RedisCacheConfiguration defaultCacheConfig;
-        private final Map&lt;String, RedisCacheConfiguration&gt; initialCaches = new LinkedHashMap&lt;&gt;();
-        private boolean enableTransactions;
-
-
-        public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration) {
-            super(cacheWriter, defaultCacheConfiguration);
-            this.cacheWriter = cacheWriter;
-            this.defaultCacheConfig = defaultCacheConfiguration;
-        }
-
-        public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, String... initialCacheNames) {
-            super(cacheWriter, defaultCacheConfiguration, initialCacheNames);
-            this.cacheWriter = cacheWriter;
-            this.defaultCacheConfig = defaultCacheConfiguration;
-        }
-
-        public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, boolean allowInFlightCacheCreation, String... initialCacheNames) {
-            super(cacheWriter, defaultCacheConfiguration, allowInFlightCacheCreation, initialCacheNames);
-            this.cacheWriter = cacheWriter;
-            this.defaultCacheConfig = defaultCacheConfiguration;
-        }
-
-        public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, Map&lt;String, RedisCacheConfiguration&gt; initialCacheConfigurations) {
-            super(cacheWriter, defaultCacheConfiguration, initialCacheConfigurations);
-            this.cacheWriter = cacheWriter;
-            this.defaultCacheConfig = defaultCacheConfiguration;
-        }
-
-        public CustomizedRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration, Map&lt;String, RedisCacheConfiguration&gt; initialCacheConfigurations, boolean allowInFlightCacheCreation) {
-            super(cacheWriter, defaultCacheConfiguration, initialCacheConfigurations, allowInFlightCacheCreation);
-            this.cacheWriter = cacheWriter;
-            this.defaultCacheConfig = defaultCacheConfiguration;
-        }
-
-        /**
-         * 这个构造方法最重要
-         **/
-        public CustomizedRedisCacheManager(RedisConnectionFactory redisConnectionFactory, RedisCacheConfiguration cacheConfiguration) {
-            this(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory),cacheConfiguration);
-        }
-
-        //覆盖父类创建RedisCache
-        @Override
-        protected RedisCache createRedisCache(String name, @Nullable RedisCacheConfiguration cacheConfig) {
-            return new CustomizedRedisCache(name, cacheWriter, cacheConfig != null ? cacheConfig : defaultCacheConfig);
-        }
-
-        @Override
-        public Map&lt;String, RedisCacheConfiguration&gt; getCacheConfigurations() {
-            Map&lt;String, RedisCacheConfiguration&gt; configurationMap = new HashMap&lt;&gt;(getCacheNames().size());
-            getCacheNames().forEach(it -&gt; {
-                RedisCache cache = CustomizedRedisCache.class.cast(lookupCache(it));
-                configurationMap.put(it, cache != null ? cache.getCacheConfiguration() : null);
-            });
-            return Collections.unmodifiableMap(configurationMap);
-        }
-    }
-}
-
-</code></pre>
 ]]></content>
     </entry>
 </feed>
