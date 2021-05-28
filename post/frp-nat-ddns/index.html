@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[Gloduck]的个人博客">
 <meta name="author" content="kveln">
-<title>WPS政府版 | Gloduck</title>
+<title>Frp内网穿透 | Gloduck</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="WPS政府版 | Gloduck » Feed"
+<link rel="alternate" type="application/rss+xml" title="Frp内网穿透 | Gloduck » Feed"
   href="https://mxecy.cn/atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="WPS政府版" />
-  <meta property="og:url" content="https://mxecy.cn/post/wps-government/" />
+  <meta property="og:description" content="Frp内网穿透" />
+  <meta property="og:url" content="https://mxecy.cn/post/frp-nat-ddns/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Gloduck" />
@@ -178,13 +178,17 @@
   <div class="post-heading">
     <span class="tags">
       
-      <a href="https://mxecy.cn/tag/EndumAuhT/" class="tag">Software</a>
+      <a href="https://mxecy.cn/tag/Vd4_ZepGF/" class="tag">Network</a>
+      
+      <a href="https://mxecy.cn/tag/wL9byrkd0/" class="tag">Windows</a>
+      
+      <a href="https://mxecy.cn/tag/R1qiuqz-m/" class="tag">Linux</a>
       
     </span>
-    <h1>WPS政府版</h1>
+    <h1>Frp内网穿透</h1>
     <span class="meta">
       Posted on
-      2020-06-01，1 min read
+      2021-05-28，2 min read
     </span>
   </div>
   
@@ -199,30 +203,96 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <p>政府版是WPS 的专业版，相对于专业版可以省去设置激活码的步骤。<br>
-链接：http://ts.wps.cn/gov/guangdong/zhuhai/installation/WPS Office 2019 珠海市政府专业版(11.8.2.8506).exe</p>
-<p>附（取消部门显示）：</p>
-<ol>
-<li>安装完成后右键快捷方式，打开文件位置</li>
-<li>在打开的目录下找到&quot;cfgs&quot;文件夹，进入目录，修改名为&quot;oeminfo&quot;的文件夹名称（任意），或者直接删除</li>
-<li>进入wps根目录（类似：\Kingsoft\WPS Office\11.8.2.8506\），找到&quot;oem&quot;文件夹，改成其他名称或者直接删除。</li>
-</ol>
+          <ul>
+<li>
+<p>一般大部分的网络运营商都不会给公网IP地址，有些可以自己打电话去要，有些则不行（比如垃圾移动）。这时候可以使用内网穿透来解决。由于花生壳太贵了，所以一般不如自己买服务器搭建内网穿透。</p>
+</li>
+<li>
+<p>如果没有服务器也可以通过p2p打洞进行内网穿透，常见的软件是：zerotier，但是会有一些限制，比如如果想作为服务器那就无能为力了。</p>
+</li>
+<li>
+<p>本文使用的软件是FRP，下载地址为：<a href="https://github.com/fatedier/frp">下载地址</a></p>
+</li>
+<li>
+<p>具体使用方法参考：<a href="https://gofrp.org/docs/">FRP文档</a></p>
+</li>
+</ul>
+<h1 id="远程桌面">远程桌面</h1>
+<ul>
+<li>
+<p>windows远程桌面的端口是3389，Linux ssh的端口是22。所以在配置的端口地方写上对应的端口</p>
+</li>
+<li>
+<pre><code class="language-ini">[common]
+server_addr = 远程IP
+server_port = 远程端口
 
-          <div class="toc-container"></div>
+[ssh]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 3389
+remote_port = 6000
+</code></pre>
+</li>
+<li>
+<p>然后启动<code>frpc.exe</code>，并在服务端启动<code>frps.exe</code>就能运行了。</p>
+</li>
+<li>
+<p>win10设置里开启远程桌面</p>
+</li>
+<li>
+<figure data-type="image" tabindex="1"><img src="https://tvax1.sinaimg.cn/large/006ZFECEgy1gqy545wfxsj313y0pawfr.jpg" alt="开启远程桌面" loading="lazy"></figure>
+</li>
+<li>
+<p>然后就可以登录了</p>
+</li>
+</ul>
+<h2 id="常见问题">常见问题</h2>
+<h3 id="没有远程桌面">没有远程桌面</h3>
+<ul>
+<li><a href="https://github.com/stascorp/rdpwrap">开启远程桌面脚本</a></li>
+<li>点击install安装即可。</li>
+</ul>
+<h3 id="设置密码">设置密码</h3>
+<ul>
+<li>win10开启远程桌面是需要给电脑设置密码的。但是如果想不每次登录的时候都输入密码的话可以开启win10的自动登录。</li>
+<li><code>win + r</code>输入 <code>netplwiz</code></li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gqy53gnf2pj30pu0tjtac.jpg" alt="自动登录" loading="lazy"></li>
+<li>取消√即可。</li>
+<li>新版的系统可能没有上面的选项。</li>
+<li><code>win + r</code>输入<code>regedit</code>进入注册表</li>
+<li>进入到<code>计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device</code>中。修改<code>DevicePasswordLessBuildVersion</code>为0</li>
+<li><img src="https://tvax1.sinaimg.cn/large/006ZFECEgy1gqy57qt1qcj30hs0bx0vv.jpg" alt="修改配置" loading="lazy"></li>
+<li>然后就可以出现上面的选框了。</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2">远程桌面</a>
+<ul>
+<li><a href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">常见问题</a>
+<ul>
+<li><a href="#%E6%B2%A1%E6%9C%89%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2">没有远程桌面</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E5%AF%86%E7%A0%81">设置密码</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://mxecy.cn/post/baidupan-regex/">
+            <a href="https://mxecy.cn/post/win-to-go-localstorage/">
               <span class="post-title">
-                百度网盘链接正则表达式&rarr;
+                Windows To Go屏蔽本机硬盘&rarr;
               </span>
             </a>
           </p>
           
           <div class="comment" style="text-align: center;">
             
-            <span id="/post/wps-government/" class="leancloud_visitors"
-              data-flag-title="WPS政府版">
+            <span id="/post/frp-nat-ddns/" class="leancloud_visitors"
+              data-flag-title="Frp内网穿透">
               <em class="post-meta-item-text">阅读量 </em>
               <i class="leancloud-visitors-count">loading...</i>
             </span>
