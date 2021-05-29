@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[Gloduck]的个人博客">
 <meta name="author" content="kveln">
-<title>虚拟主机绑定多个域名 | Gloduck</title>
+<title>Win10各种配置 | Gloduck</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="虚拟主机绑定多个域名 | Gloduck » Feed"
+<link rel="alternate" type="application/rss+xml" title="Win10各种配置 | Gloduck » Feed"
   href="https://mxecy.cn/atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="虚拟主机绑定多个域名" />
-  <meta property="og:url" content="https://mxecy.cn/post/virtual-php-space-bind-domain/" />
+  <meta property="og:description" content="Win10各种配置" />
+  <meta property="og:url" content="https://mxecy.cn/post/win10-configuration/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Gloduck" />
@@ -178,13 +178,13 @@
   <div class="post-heading">
     <span class="tags">
       
-      <a href="https://mxecy.cn/tag/R1qiuqz-m/" class="tag">Linux</a>
+      <a href="https://mxecy.cn/tag/wL9byrkd0/" class="tag">Windows</a>
       
     </span>
-    <h1>虚拟主机绑定多个域名</h1>
+    <h1>Win10各种配置</h1>
     <span class="meta">
       Posted on
-      2020-09-28，3 min read
+      2021-05-29，2 min read
     </span>
   </div>
   
@@ -200,93 +200,87 @@
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
           <ul>
-<li>一般大部分便宜的虚拟主机都不支持多个子目录，但是可以通过设置重写的方法来设置。</li>
+<li>记录一些win10的配置，方便以后查询。</li>
 </ul>
-<h1 id="iis">IIS</h1>
+<h1 id="关闭自动更新">关闭自动更新</h1>
 <ul>
-<li>
-<p>修改<code>web.config</code></p>
+<li>通常情况下关闭更新会叫你在<code>services.msc</code>中找到<code>Windows Update</code>这个服务，然后将其改成禁用。但是事实上，win10为了防止用户禁用自动更新还搞了一些骚操作，所以导致这个并不能完全禁用win10的自动更新。具体的话我们还需要把另外一个服务<code>Windows Update Medic Service</code>也禁用掉，但是这个服务禁用的时候会显示拒绝。（此教程对应win10专业版，其他版本可能会有些出入）</li>
+<li>首先，<code>win + r</code>进入运行，输入<code>regedit</code>进入注册表编辑器。</li>
+<li>定位到路径：<code>计算机\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\WaaSMedicSvc</code></li>
+<li>将<code>Start</code>项修改为16进制的4（注，也可以<code>win + x</code>点开<code>Windows powershell 管理员</code>，然后输入命令<code>REG add HKLM\SYSTEM\CurrentControlSet\Services\WaaSMedicSvc /v Start /t REG_DWORD /d 4 /f</code>可以直接修改注册表）
 <ul>
-<li>
-<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
-&lt;configuration&gt;
-    &lt;system.webServer&gt;
-        &lt;handlers&gt;
-            &lt;remove name=&quot;PHP-7.4-7i24.com&quot; /&gt;
-            &lt;remove name=&quot;PHP-7.3-7i24.com&quot; /&gt;
-            &lt;remove name=&quot;PHP-7.2-7i24.com&quot; /&gt;
-            &lt;remove name=&quot;PHP-7.1-7i24.com&quot; /&gt;
-            &lt;remove name=&quot;PHP-7.0-7i24.com&quot; /&gt;
-            &lt;remove name=&quot;PHP-5.6-7i24.com&quot; /&gt;
-            &lt;remove name=&quot;PHP-5.5-7i24.com&quot; /&gt;
-            &lt;remove name=&quot;PHP-5.4-7i24.com&quot; /&gt;
-            &lt;remove name=&quot;PHP-5.3-7i24.com&quot; /&gt;
-            &lt;remove name=&quot;PHP-5.2-7i24.com&quot; /&gt;
-            &lt;add name=&quot;PHP-5.6-7i24.com&quot; path=&quot;*.php&quot; verb=&quot;*&quot; modules=&quot;FastCgiModule&quot; scriptProcessor=&quot;c:\php\5.6\php-cgi.exe&quot; resourceType=&quot;Either&quot; /&gt;
-        &lt;/handlers&gt;
-        &lt;rewrite&gt;
-            &lt;rules&gt;
-                &lt;rule name=&quot;名称&quot;&gt;
-                    &lt;match url=&quot;^.*$&quot; ignoreCase=&quot;false&quot; /&gt;
-                    &lt;conditions&gt;
-                        &lt;add input=&quot;{HTTP_HOST}&quot; pattern=&quot;^子域名$&quot; /&gt;
-                    &lt;/conditions&gt;
-                    &lt;action type=&quot;Rewrite&quot; url=&quot;子目录路径/{R:0}&quot; appendQueryString=&quot;true&quot; /&gt;
-                &lt;/rule&gt;
-            &lt;/rules&gt;
-        &lt;/rewrite&gt;
-    &lt;/system.webServer&gt;
-    &lt;system.web&gt;
-        &lt;customErrors mode=&quot;Off&quot; /&gt;
-        &lt;compilation debug=&quot;true&quot; /&gt;
-        &lt;identity impersonate=&quot;false&quot; /&gt;
-    &lt;/system.web&gt;
-&lt;/configuration&gt;
-</code></pre>
-</li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gqzqe5p1sej31rw12j441.jpg" alt="修改注册表" loading="lazy"></li>
 </ul>
-<h1 id="apache">Apache</h1>
-<ul>
-<li>
-<p>修改<code>.htaccess</code></p>
-<ul>
-<li>
-<pre><code class="language-htacess">&lt;IfModule mod_rewrite.c&gt;
-RewriteEngine On
-RewriteBase /
-# 绑定www.xxx.com到子目录htaccess
-RewriteCond %{HTTP_HOST} ^www\.xxx\.com$ [NC]
-RewriteCond %{REQUEST_URI} !^/htaccess/
-RewriteRule ^(.*)$ htaccess/$1?Rewrite [L,QSA]
-#可以绑定多个，只需重复上三行代码并更改一下域名、目录名就行了
-&lt;/IfModule&gt;
-</code></pre>
 </li>
+<li>这时候再打开<code>services.msc</code>就会发现<code>Windows Update Medic Service</code>也被禁用掉了。此时再将<code>Windows Update</code>也禁用掉，这样就完全关闭win10自动更新了。
+<ul>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gqzqh2zl7pj31tp14dqa0.jpg" alt="禁用服务" loading="lazy"></li>
+</ul>
+</li>
+<li>右键此电脑 -&gt; 管理 -&gt; 系统工具 -&gt; 任务计划程序 -&gt; 任务计划程序库 -&gt; Microsoft -&gt; Windows -&gt; WindowsUpdate -&gt; 禁用里面的触发器
+<ul>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gqzqvpo7h0j328014kahv.jpg" alt="禁用触发器" loading="lazy"></li>
+</ul>
+</li>
+<li>然后删除Win10下载的更新文件
+<ul>
+<li><code>C:\Windows10Upgrade</code></li>
+<li><code>C:\Windows\UpdateAssistant</code></li>
+<li><code>C:\Windows\UpdateAssistantv2</code></li>
+<li><code>C:\Windows\SoftwareDistribution\Download</code></li>
+<li><code>C:\Windows\SoftwareDistribution\DataStore</code></li>
 </ul>
 </li>
 </ul>
+<h1 id="关闭权限提示">关闭权限提示</h1>
+<ul>
+<li>对于带有如下图标的，进行操作的时候可能会弹出一个弹窗确认。
+<ul>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gqzqnpykq8j30du0a1dfy.jpg" alt="提示框" loading="lazy"></li>
+</ul>
 </li>
+<li>禁用方法：
+<ul>
+<li>右键 -&gt; 此电脑 -&gt; 安全和维护 -&gt; 更改用户账户控制设置 -&gt; 拉到最低，然后点击确定。</li>
+</ul>
+</li>
+</ul>
+<h1 id="关闭快速访问">关闭快速访问</h1>
+<ul>
+<li>快速访问会记录最近访问的文件历史，但是这属于隐私，所以需要禁用。</li>
+<li><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gqzqy6f25sj31r415sq8v.jpg" alt="关闭快速访问" loading="lazy"></li>
+</ul>
+<h1 id="关闭安全中心">关闭安全中心</h1>
+<ul>
+<li>待更新</li>
+</ul>
+<h1 id="关闭小娜">关闭小娜</h1>
+<ul>
+<li>待更新</li>
 </ul>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
-<li><a href="#iis">IIS</a></li>
-<li><a href="#apache">Apache</a></li>
+<li><a href="#%E5%85%B3%E9%97%AD%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0">关闭自动更新</a></li>
+<li><a href="#%E5%85%B3%E9%97%AD%E6%9D%83%E9%99%90%E6%8F%90%E7%A4%BA">关闭权限提示</a></li>
+<li><a href="#%E5%85%B3%E9%97%AD%E5%BF%AB%E9%80%9F%E8%AE%BF%E9%97%AE">关闭快速访问</a></li>
+<li><a href="#%E5%85%B3%E9%97%AD%E5%AE%89%E5%85%A8%E4%B8%AD%E5%BF%83">关闭安全中心</a></li>
+<li><a href="#%E5%85%B3%E9%97%AD%E5%B0%8F%E5%A8%9C">关闭小娜</a></li>
 </ul>
 </div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://mxecy.cn/post/designpartten-adapter/">
+            <a href="https://mxecy.cn/post/frp-nat-ddns/">
               <span class="post-title">
-                设计模式-适配器模式&rarr;
+                Frp内网穿透&rarr;
               </span>
             </a>
           </p>
           
           <div class="comment" style="text-align: center;">
             
-            <span id="/post/virtual-php-space-bind-domain/" class="leancloud_visitors"
-              data-flag-title="虚拟主机绑定多个域名">
+            <span id="/post/win10-configuration/" class="leancloud_visitors"
+              data-flag-title="Win10各种配置">
               <em class="post-meta-item-text">阅读量 </em>
               <i class="leancloud-visitors-count">loading...</i>
             </span>
