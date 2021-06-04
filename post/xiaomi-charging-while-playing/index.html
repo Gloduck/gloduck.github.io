@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[Gloduck]的个人博客">
 <meta name="author" content="kveln">
-<title>设计模式-责任链模式 | Gloduck</title>
+<title>小米平板2魔改边充电边玩 | Gloduck</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="设计模式-责任链模式 | Gloduck » Feed"
+<link rel="alternate" type="application/rss+xml" title="小米平板2魔改边充电边玩 | Gloduck » Feed"
   href="https://mxecy.cn/atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="设计模式-责任链模式" />
-  <meta property="og:url" content="https://mxecy.cn/post/designpartten-Chain-of-Responsibility/" />
+  <meta property="og:description" content="小米平板2魔改边充电边玩" />
+  <meta property="og:url" content="https://mxecy.cn/post/xiaomi-charging-while-playing/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Gloduck" />
@@ -178,17 +178,15 @@
   <div class="post-heading">
     <span class="tags">
       
-      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
+      <a href="https://mxecy.cn/tag/Ic5iaBY-8/" class="tag">XiaoMi</a>
       
-      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
-      
-      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      <a href="https://mxecy.cn/tag/KkAHc_aHW/" class="tag">Other</a>
       
     </span>
-    <h1>设计模式-责任链模式</h1>
+    <h1>小米平板2魔改边充电边玩</h1>
     <span class="meta">
       Posted on
-      2020-09-21，5 min read
+      2021-06-04，1 min read
     </span>
   </div>
   
@@ -203,226 +201,85 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <h1 id="定义">定义</h1>
-<ul>
-<li>Avoid coupling the sender of a request to its receiver by giving more than one object an chance to handle the request.Chain the receiving objects and pass the request along the chain until an object handles it.（使多个对象都有机会处理请求，从而避免了请求的发送者和接收者之间的耦合关系。将这些对象连成一条链，并沿着这条链传递该请求，直到有对象处理它为止）</li>
-<li>责任链模式的重点是在&quot;链&quot;上，由一条链去处理相似的请求，在链中决定谁来处理这个请求，并返回相应的结果。</li>
+          <ul>
+<li>魔改一个能边充电边玩Hub。</li>
 </ul>
-<h1 id="优点">优点</h1>
+<h1 id="改装过程">改装过程</h1>
 <ul>
-<li>将请求和处理分开：请求者可以不用知道是谁处理的，处理者可以不用知道请求的全貌（例如：J2EE中，可以剥离出无状态Bean由责任链处理），两者解耦他，提高系统灵活性</li>
-</ul>
-<h1 id="缺点">缺点</h1>
-<ul>
-<li>性能问题：每个请求都是从链头遍历到链尾，特别是在链比较长的时候，性能是一个非常大的问题</li>
-<li>调试不方便：当链表比较长比较多的时候，由于采用了类似递归的方式，调试的时候逻辑可能比较复杂</li>
-</ul>
-<h1 id="使用场景">使用场景</h1>
-<ul>
-<li>场景：
-<ul>
-<li>作为补救模式：如付款功能，后台处理收款。一开始只用处理人民币，但是随着业务的发展，需要处理美金等其他币种。就可以在第一个处理者后面建一条链（责任链）来处理请求，这样不会对原有的业务逻辑产生很大的改变，通过扩展实现类就可以很好的解决这些需求变更的问题</li>
-<li>多个if...else或者switch的情况（也可以使用工厂策略模式）</li>
-</ul>
+<li>
+<p>首先买一个Hub，某宝搜索<code>USB 1分3转接头</code>就行了。</p>
+</li>
+<li>
+<p>然后拆开。</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6bpzbl8gj31811gcqpn.jpg" alt="拆开图" loading="lazy"></figure>
+</li>
+<li>
+<p>然后拆掉公头，方便焊接。</p>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6br1qbwcj311p1a4tms.jpg" alt="拆掉头" loading="lazy"></figure>
+</li>
+<li>
+<p>然后切开D+ D-，然后D+连D+，D-连D1.</p>
 </li>
 </ul>
-<h1 id="代码">代码</h1>
-<h2 id="责任链模式">责任链模式</h2>
-<h3 id="通用类图">通用类图</h3>
-<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0ll1n8txj310u0lowhl.jpg" alt="责任链模式通用类图" loading="lazy"></figure>
-<p>责任链模式还能在下面的代码基础上进行改进。如：对于response对象，由责任链的各个组成部分进行一步步的包装，最后返回一个完整的response对象（参考SpringMVC）</p>
-<h3 id="类图">类图</h3>
-<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1giy7t3dt3oj30l80by3yv.jpg" alt="本项目用到的类图" loading="lazy"></figure>
-<h3 id="代码-2">代码</h3>
-<p>Handler（<strong>抽象类</strong>）</p>
-<pre><code class="language-Java">package com.pattern.chainofresponsibili.Handler;
-
-
-import com.pattern.chainofresponsibili.Request;
-import com.pattern.chainofresponsibili.Response;
-
-public abstract class Handler {
-    private Handler nextHandler;
-
-    public final Response handleMessage(Request request){
-        Response response = null;
-        // 判断是否是自己的处理等级
-        if(this.getHandlerLevel() == request.getRequestLevel()){
-            // 如果是自己的处理等级就处理请求
-            response = this.execute(request);
-        } else {
-            if(this.nextHandler != null){
-                // 如果还有下一个处理者
-                response = this.nextHandler.handleMessage(request);
-            } else {
-                // 没有下一个处理者，自行处理
-                response = new Response(&quot;默认Handler处理&quot;);
-            }
-        }
-        return response;
-    }
-
-    /**
-     * 设置下一个处理者对象
-     * @param nextHandler
-     */
-    public void setNextHandler(Handler nextHandler) {
-        this.nextHandler = nextHandler;
-    }
-
-    /**
-     * 获取每个处理者的处理等级
-     * @return
-     */
-    protected abstract int getHandlerLevel();
-
-    /**
-     * 每个处理者对请求进行处理
-     * @return
-     */
-    protected abstract Response execute(Request request);
-}
-
-</code></pre>
-<p>具体Handler（<strong>继承自Handler</strong>）[减少重复代码，只列出一个Handler实现类，其他类似]</p>
-<pre><code class="language-Java">package com.pattern.chainofresponsibili.Handler;
-
-import com.pattern.chainofresponsibili.Request;
-import com.pattern.chainofresponsibili.Response;
-
-public class Handler1 extends Handler {
-    @Override
-    protected int getHandlerLevel() {
-        return 1;
-    }
-
-    @Override
-    protected Response execute(Request request) {
-        System.out.println(&quot;由Handler1处理了请求&quot;);
-        return new Response(&quot;Handler1执行的请求&quot;);
-    }
-}
-
-</code></pre>
-<p>Request（<strong>普通类</strong>）</p>
-<pre><code class="language-Java">package com.pattern.chainofresponsibili;
-
-/**
- * 模拟一个请求
- */
-public class Request {
-    private int level;
-    public Request(int level){
-        this.level = level;
-    }
-    /**
-     * 设置请求等级
-     * @param level
-     */
-    public void setRequestLevel(int level){
-        this.level = level;
-    }
-    /**
-     * 返回请求等级
-     * @return
-     */
-    public int getRequestLevel(){
-        return this.level;
-    }
-
-}
-
-</code></pre>
-<p>响应类（<strong>普通类</strong>）</p>
-<pre><code class="language-Java">package com.pattern.chainofresponsibili;
-
-public class Response {
-    private String content;
-    public Response(String content){
-        this.content = content;
-    }
-
-    public String getContent() {
-        return content;
-    }
-}
-
-</code></pre>
-<h3 id="测试代码">测试代码</h3>
-<pre><code class="language-Java">package com.pattern;
-
-import com.pattern.chainofresponsibili.Handler.Handler;
-import com.pattern.chainofresponsibili.Handler.Handler1;
-import com.pattern.chainofresponsibili.Handler.Handler2;
-import com.pattern.chainofresponsibili.Handler.Handler3;
-import com.pattern.chainofresponsibili.Request;
-import com.pattern.chainofresponsibili.Response;
-import org.junit.Test;
-
-public class ChainOfResponsibiliTest {
-    @Test
-    public void Test(){
-        System.out.println(&quot;--------模拟一个请求--------&quot;);
-        Request request = new Request(2);
-        System.out.println(&quot;--------创建Handler对象--------&quot;);
-        Handler handler1 = new Handler1();
-        Handler handler2 = new Handler2();
-        Handler handler3 = new Handler3();
-        System.out.println(&quot;--------将Handler组成责任链--------&quot;);
-        handler1.setNextHandler(handler2);
-        handler3.setNextHandler(handler3);
-        System.out.println(&quot;--------测试结果--------&quot;);
-        Response response = handler1.handleMessage(request);
-        System.out.println(response.getContent());
-    }
-}
-
-</code></pre>
-<h3 id="结果">结果</h3>
-<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1giy7t37qqej30hp0763yr.jpg" alt="责任连模式结果" loading="lazy"></figure>
-<h1 id="注意">注意</h1>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6buce9o9j30wo0ud0ww.jpg" alt="修改教程" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6bwzljr9j318v0xx13u.jpg" alt="飞好线后" loading="lazy"></figure>
 <ul>
-<li>在责任链模式中一个请求发送到链中后，前一节点消费部分消息，然后由后续节点进行处理，最终可以有处理结果，也可以没有处理结果。</li>
-<li>handlerMessage（处理请求相关的方法）前要添加final关键字</li>
-<li>实际应用中一般会有一个封装类对责任模式进行封装，直接返回链中的第一个处理者，具体链的设置不需要高层模块关系</li>
-<li>链中节点数量要控制，避免出现超长链的情况，一般做法是在Handler中设置一个节点数量，并在setNext方法中判断是否已经超过其阀值</li>
+<li>最后喊装上USB接头，然后装上盖子。可以拿点热熔胶固定。</li>
+</ul>
+<h1 id="改装平板">改装平板</h1>
+<ul>
+<li>
+<p>可选，如果不改平板的话使用稍微麻烦点。</p>
+</li>
+<li>
+<p>拆出主板。</p>
+<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6c662ejcj318g0v2kjl.jpg" alt="拆出主板" loading="lazy"></figure>
+</li>
+<li>
+<p>短接。</p>
+<figure data-type="image" tabindex="6"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6c7tvgxuj30xb173b2a.jpg" alt="短接线路" loading="lazy"></figure>
+</li>
+<li>
+<p>这里是短接的第二个地方</p>
+<figure data-type="image" tabindex="7"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6c7u8x8aj30fe0ehwqu.jpg" alt="修改完成" loading="lazy"></figure>
+</li>
+</ul>
+<h1 id="原理图">原理图</h1>
+<figure data-type="image" tabindex="8"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6c4ducabj30t20eyap0.jpg" alt="原理图" loading="lazy"></figure>
+<h1 id="使用">使用</h1>
+<ul>
+<li>
+<figure data-type="image" tabindex="9"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6bxperkkj31k028zx26.jpg" alt="测试" loading="lazy"></figure>
+</li>
+<li>
+<p>注意：像图上插就行了。注意最左边那个不能拿来插U盘和数据线。只能用来干别的。</p>
+</li>
+<li>
+<p>如果没有改装平板的话，需要在Win10系统下，插入转接头到充电器，充电数据线连接转接头与平板，插入USB，重启进入Win10。这样才能读出硬盘。U盘可以随便拔插，但是如果数据线拔插了的话需要重复以上步骤。</p>
+</li>
 </ul>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
-<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
-<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
-<li><a href="#%E7%BC%BA%E7%82%B9">缺点</a></li>
-<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
-<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
-<ul>
-<li><a href="#%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F">责任链模式</a>
-<ul>
-<li><a href="#%E9%80%9A%E7%94%A8%E7%B1%BB%E5%9B%BE">通用类图</a></li>
-<li><a href="#%E7%B1%BB%E5%9B%BE">类图</a></li>
-<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
-<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
-<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+<li><a href="#%E6%94%B9%E8%A3%85%E8%BF%87%E7%A8%8B">改装过程</a></li>
+<li><a href="#%E6%94%B9%E8%A3%85%E5%B9%B3%E6%9D%BF">改装平板</a></li>
+<li><a href="#%E5%8E%9F%E7%90%86%E5%9B%BE">原理图</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8">使用</a></li>
 </ul>
 </div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://mxecy.cn/post/designpartten-decorator/">
+            <a href="https://mxecy.cn/post/win10-configuration/">
               <span class="post-title">
-                设计模式-装饰者模式&rarr;
+                Win10各种配置&rarr;
               </span>
             </a>
           </p>
           
           <div class="comment" style="text-align: center;">
             
-            <span id="/post/designpartten-Chain-of-Responsibility/" class="leancloud_visitors"
-              data-flag-title="设计模式-责任链模式">
+            <span id="/post/xiaomi-charging-while-playing/" class="leancloud_visitors"
+              data-flag-title="小米平板2魔改边充电边玩">
               <em class="post-meta-item-text">阅读量 </em>
               <i class="leancloud-visitors-count">loading...</i>
             </span>

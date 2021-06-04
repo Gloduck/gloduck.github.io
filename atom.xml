@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://mxecy.cn</id>
     <title>Gloduck</title>
-    <updated>2021-06-03T11:44:44.693Z</updated>
+    <updated>2021-06-04T09:01:07.076Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://mxecy.cn"/>
     <link rel="self" href="https://mxecy.cn/atom.xml"/>
@@ -10,6 +10,71 @@
     <logo>https://mxecy.cn/images/avatar.png</logo>
     <icon>https://mxecy.cn/favicon.ico</icon>
     <rights>All rights reserved 2021, Gloduck</rights>
+    <entry>
+        <title type="html"><![CDATA[小米平板2魔改边充电边玩]]></title>
+        <id>https://mxecy.cn/post/xiaomi-charging-while-playing/</id>
+        <link href="https://mxecy.cn/post/xiaomi-charging-while-playing/">
+        </link>
+        <updated>2021-06-04T08:32:35.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>魔改一个能边充电边玩Hub。</li>
+</ul>
+<h1 id="改装过程">改装过程</h1>
+<ul>
+<li>
+<p>首先买一个Hub，某宝搜索<code>USB 1分3转接头</code>就行了。</p>
+</li>
+<li>
+<p>然后拆开。</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6bpzbl8gj31811gcqpn.jpg" alt="拆开图" loading="lazy"></figure>
+</li>
+<li>
+<p>然后拆掉公头，方便焊接。</p>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6br1qbwcj311p1a4tms.jpg" alt="拆掉头" loading="lazy"></figure>
+</li>
+<li>
+<p>然后切开D+ D-，然后D+连D+，D-连D1.</p>
+</li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6buce9o9j30wo0ud0ww.jpg" alt="修改教程" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6bwzljr9j318v0xx13u.jpg" alt="飞好线后" loading="lazy"></figure>
+<ul>
+<li>最后喊装上USB接头，然后装上盖子。可以拿点热熔胶固定。</li>
+</ul>
+<h1 id="改装平板">改装平板</h1>
+<ul>
+<li>
+<p>可选，如果不改平板的话使用稍微麻烦点。</p>
+</li>
+<li>
+<p>拆出主板。</p>
+<figure data-type="image" tabindex="5"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6c662ejcj318g0v2kjl.jpg" alt="拆出主板" loading="lazy"></figure>
+</li>
+<li>
+<p>短接。</p>
+<figure data-type="image" tabindex="6"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6c7tvgxuj30xb173b2a.jpg" alt="短接线路" loading="lazy"></figure>
+</li>
+<li>
+<p>这里是短接的第二个地方</p>
+<figure data-type="image" tabindex="7"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6c7u8x8aj30fe0ehwqu.jpg" alt="修改完成" loading="lazy"></figure>
+</li>
+</ul>
+<h1 id="原理图">原理图</h1>
+<figure data-type="image" tabindex="8"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6c4ducabj30t20eyap0.jpg" alt="原理图" loading="lazy"></figure>
+<h1 id="使用">使用</h1>
+<ul>
+<li>
+<figure data-type="image" tabindex="9"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gr6bxperkkj31k028zx26.jpg" alt="测试" loading="lazy"></figure>
+</li>
+<li>
+<p>注意：像图上插就行了。注意最左边那个不能拿来插U盘和数据线。只能用来干别的。</p>
+</li>
+<li>
+<p>如果没有改装平板的话，需要在Win10系统下，插入转接头到充电器，充电数据线连接转接头与平板，插入USB，重启进入Win10。这样才能读出硬盘。U盘可以随便拔插，但是如果数据线拔插了的话需要重复以上步骤。</p>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Win10各种配置]]></title>
         <id>https://mxecy.cn/post/win10-configuration/</id>
@@ -1269,76 +1334,6 @@ public class App {
     }
 }
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Linux解决Idea光标不跟随]]></title>
-        <id>https://mxecy.cn/post/linux-deal-idea-cursor/</id>
-        <link href="https://mxecy.cn/post/linux-deal-idea-cursor/">
-        </link>
-        <updated>2021-03-12T01:12:12.000Z</updated>
-        <content type="html"><![CDATA[<ul>
-<li>
-<p>对于Linux下的Fcitx输入中文时，输入法候选框总是静止在 IDEA 的左下角，而不能跟随光标进行移动。</p>
-</li>
-<li>
-<p>这是 <code>Idea</code> 的 <code>jre</code> 运行环境一个 bug，导致输入法无法定位到鼠标位置。因此，我们要解决该问题必须要修改 <code>JetBrainsRuntime</code> 的运行代码。</p>
-</li>
-<li>
-<p>对于Ibus的话，可能需要自己编译</p>
-</li>
-</ul>
-<h1 id="方法1">方法1</h1>
-<ul>
-<li>
-<p>下载已经修改好的 JRE 环境<a href="https://pan.baidu.com/s/1nUVPhXmgRqPBDe_8MeO-BQ">百度网盘 密码(rjg4)</a></p>
-</li>
-<li>
-<p>解压到任意目录（安装目录最好）</p>
-</li>
-<li>
-<p>更改IDEA的启动环境</p>
-<ul>
-<li>
-<p>修改文件:home/idea-2020.1/bin/idea.sh (找到你自己的idea的安装路径)在开头处添加（也可以安装插件<code>Choose Runtime</code>）</p>
-</li>
-<li>
-<pre><code class="language-sh">export IDEA_JDK=export IDEA_JDK=/home/vcjmhg/Application/java-11.0.7-jetbrain #（改成自己的JRE目录）
-</code></pre>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="方法2">方法2</h1>
-<ul>
-<li>
-<p>从 GitHub 下载 JetBrainsRuntime</p>
-<ul>
-<li><code>git clone https://github.com/JetBrains/JetBrainsRuntime.git</code></li>
-</ul>
-</li>
-<li>
-<p>应用 patch</p>
-<ul>
-<li>
-<p><a href="https://github.com/prehonor/myJetBrainsRuntime">patch下载地址</a></p>
-</li>
-<li>
-<pre><code class="language-shell">#将Path放到JetBrainsRuntime的根目录下
-cd JetBrainsRuntime
-# 应用Patch
-git apply idea.patch
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p>编译 <code>JetBrainsRuntime</code>，<a href="https://github.com/JetBrains/JetBrainsRuntime">参考官方</a></p>
-</li>
-<li>
-<p>安装方法1设置</p>
-</li>
-</ul>
 ]]></content>
     </entry>
 </feed>
