@@ -90,7 +90,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1622797260599"
+            <form id="gridea-search-form" style="position: relative" data-update="1624440681625"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -152,7 +152,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1622797260599"
+            <form id="gridea-search-form" style="position: relative" data-update="1624440681625"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -360,6 +360,19 @@ sudo service mysql start
 <pre><code class="language-shell">sudo apt install redis-server
 </code></pre>
 <p>通过<code>redis-cli</code>进入</p>
+<h2 id="docker">Docker</h2>
+<p>终端输入命令：</p>
+<pre><code class="language-shell">sudo apt install docker.io
+</code></pre>
+<h3 id="docker每次都要输入sudo">Docker每次都要输入sudo</h3>
+<ul>
+<li>
+<pre><code class="language-shell">sudo groupadd docker
+sudo gpasswd -a 用户名 docker
+docker sudo service docker restart
+</code></pre>
+</li>
+</ul>
 <h1 id="常用软件">常用软件</h1>
 <h2 id="v2ray">v2ray</h2>
 <p>v2核心：https://github.com/v2fly/v2ray-core<br>
@@ -402,6 +415,16 @@ sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1
 接着<a href="https://extensions.gnome.org/extension/1674/topiconsfix/">跳转</a>到此网页<br>
 将右上角的off按钮切换为on<br>
 在Installed extensions页面应用该扩展</p>
+<h3 id="修改dpi">修改DPI</h3>
+<ul>
+<li>deepin的wine是没有分辨率缩放自适应的，所以需要修改。这里以tim为例。</li>
+<li>输入
+<ul>
+<li><code>env WINEPREFIX=&quot;$HOME/.deepinwine/Deepin-TIM&quot; /usr/bin/deepin-wine winecfg</code></li>
+</ul>
+</li>
+<li>进入winecfg，然后在显示中的屏幕分辨率中可以修改。</li>
+</ul>
 <h3 id="小技巧">小技巧</h3>
 <ul>
 <li>如果想要同时安装多个deepin封装的程序的话。deepin默认会为每一个创建一个隔离的环境。实际上只用安装一个就行了。</li>
@@ -438,6 +461,17 @@ sudo apt-get install typora
 </code></pre>
 </li>
 </ul>
+<h2 id="视频播放器">视频播放器</h2>
+<ul>
+<li>Ubuntu下直接使用VLC，如果觉得太难看的话可以修改外观。</li>
+<li>github上搜索vlc skin就可以了。推荐<a href="https://github.com/xjxckk/slimbean">这个</a>皮肤。但是使用了皮肤过后可能会导致dpi缩放。</li>
+</ul>
+<h2 id="清理软件">清理软件</h2>
+<ul>
+<li>强烈推荐Stacer，虽然没有中文，但是真的好用。</li>
+</ul>
+<h1 id="美化篇">美化篇</h1>
+<p><a href="https://www.gnome-look.org/browse/cat/">主题下载网站</a></p>
 <h1 id="常用操作">常用操作</h1>
 <h2 id="root打开文件夹">root打开文件夹：</h2>
 <pre><code class="language-shell">sudo nautilus
@@ -488,6 +522,11 @@ sudo gedit 图标名称.desktop
 </ul>
 </li>
 <li><a href="#redis">Redis</a></li>
+<li><a href="#docker">Docker</a>
+<ul>
+<li><a href="#docker%E6%AF%8F%E6%AC%A1%E9%83%BD%E8%A6%81%E8%BE%93%E5%85%A5sudo">Docker每次都要输入sudo</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6">常用软件</a>
@@ -499,6 +538,7 @@ sudo gedit 图标名称.desktop
 <li><a href="#%E6%9B%B4%E6%96%B0">更新</a></li>
 <li><a href="#tim%E6%97%A0%E6%B3%95%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87">Tim无法加载图片</a></li>
 <li><a href="#%E6%B7%BB%E5%8A%A0%E5%B0%8F%E5%9B%BE%E6%A0%87">添加小图标</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9dpi">修改DPI</a></li>
 <li><a href="#%E5%B0%8F%E6%8A%80%E5%B7%A7">小技巧</a></li>
 </ul>
 </li>
@@ -508,8 +548,11 @@ sudo gedit 图标名称.desktop
 </ul>
 </li>
 <li><a href="#typora">typora</a></li>
+<li><a href="#%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E5%99%A8">视频播放器</a></li>
+<li><a href="#%E6%B8%85%E7%90%86%E8%BD%AF%E4%BB%B6">清理软件</a></li>
 </ul>
 </li>
+<li><a href="#%E7%BE%8E%E5%8C%96%E7%AF%87">美化篇</a></li>
 <li><a href="#%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C">常用操作</a>
 <ul>
 <li><a href="#root%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E5%A4%B9">root打开文件夹：</a></li>
