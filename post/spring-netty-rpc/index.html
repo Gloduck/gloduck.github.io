@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[Gloduck]的个人博客">
+<meta name="author" content="kveln">
+<title>基于Netty的RPC框架 | Gloduck</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="基于Netty的RPC框架 | Gloduck » Feed"
+  href="https://mxecy.cn/atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://mxecy.cn/styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="基于Netty的RPC框架" />
+  <meta property="og:url" content="https://mxecy.cn/post/spring-netty-rpc/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Gloduck" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1625020084120"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://mxecy.cn">Gloduck</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/friends">邻居</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="http://note.mxecy.cn" target="_blank">笔记</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="https://5omaq4tgqemj.leanapp.cn/" target="_blank">管理</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/post/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1625020084120"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+    <header class="masthead" style="background-image: url('https://tvax1.sinaimg.cn/large/006ZFECEgy1gr52zio34wj33y71d9e3w.jpg')">
+
+  
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+  <!-- 没Title为其他页面Header -->
+  
+  <!-- 没Title并且有headerType为Post：文章Header -->
+  <div class="post-heading">
+    <span class="tags">
+      
+      <a href="https://mxecy.cn/tag/bjoaF63sZ/" class="tag">Netty</a>
+      
+      <a href="https://mxecy.cn/tag/U_mymfwxFs/" class="tag">Zookeeper</a>
+      
+      <a href="https://mxecy.cn/tag/iEER33cgr/" class="tag">SpringBoot</a>
+      
+      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
+      
+      <a href="https://mxecy.cn/tag/04MVO5Em0y/" class="tag">SourceCode</a>
+      
+    </span>
+    <h1>基于Netty的RPC框架</h1>
+    <span class="meta">
+      Posted on
+      2021-06-30，28 min read
+    </span>
+  </div>
+  
+  
+  </div>
+  </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="简介">简介</h1>
+<ul>
+<li>具体参考<a href="https://github.com/Gloduck/NettyRpc">项目地址</a></li>
+<li>本文代码非最新代码，最新代码将在Github上同步。</li>
+</ul>
+<h1 id="入门">入门</h1>
+<h2 id="rpc简介">RPC简介</h2>
+<p>RPC（Remote Procedure Call）— 远程过程调用，是一个计算机通信协议。该协议允许运行于一台计算机的程序调用另一台计算机的子程序，而程序员无需额外地为这个交互作用编程。</p>
+<h2 id="rpc实现">RPC实现</h2>
+<ul>
+<li>基本功能、简单的RPC，需要实现以下功能：
+<ul>
+<li>动态代理，为客户端生成实现类，远程调用。</li>
+<li>序列化，反序列化，用于传输对象。</li>
+<li>服务发现和注册。</li>
+<li>心跳与链路检测</li>
+<li>...</li>
+</ul>
+</li>
+</ul>
+<h1 id="消息序列化与反序列化">消息序列化与反序列化</h1>
+<ul>
+<li>
+<p>RPC对于传输的对象需要进行序列化，进行序列化和反序列化。Netty中序列化通过<code>ByteToMessageDecoder</code>解码，<code>MessageToByteEncoder</code>编码。他们也是Netty中的handler，需要被注册到pipline中。</p>
+</li>
+<li>
+<p>首先定义一个RPC消息的总接口。<code>RpcMessage</code></p>
+<pre><code class="language-java">/**
+ * 消息总接口，和MessageType双向绑定
+ * @author Gloduck
+ */
+public interface RpcMessage extends Serializable {
+    /**
+     * 获取消息类型枚举
+     * @return
+     */
+    MessageType getMessageType();
+}
+</code></pre>
+</li>
+<li>
+<p>然后定义三种消息类型，这里有<code>RpcResponse</code>（RPC响应）、<code>RpcResult</code>（PRC请求结果）、<code>RpcBeat</code>（RPC心跳）。</p>
+</li>
+<li>
+<p>然后自定义序列化器，为了支持不同的序列化器，我们定义一个接口。<code>RpcSerializer</code>。具体的实例化方法由子类实现。</p>
+<pre><code class="language-java">public interface RpcSerializer {
+    /**
+     * 解码
+     */
+    &lt;T extends Serializable&gt; byte[] encode(T obj) throws  SerializationException;
+
+    /**
+     * 转码
+     */
+    &lt;T extends Serializable&gt; T decode(byte[] bytes, Class&lt;T&gt; classz) throws SerializationException;
+
+
+     byte serializerTypeCode();
+}
+
+</code></pre>
+</li>
+<li>
+<p>然后定义一个序列化工厂，用于创建序列化器。序列化工厂通过传进来的Class对象反射创建序列化器。这个工厂会调用无参构造器进行对象的创建。因此所有的序列化器的实现类必须要有无参构造器。</p>
+<pre><code class="language-java">/**
+ * 序列化器工厂
+ * @author Gloduck
+ */
+public class SerializerFactory&lt;T extends RpcSerializer&gt; {
+    private final Constructor&lt;? extends T&gt; constructor;
+
+    public SerializerFactory(Class&lt;? extends T&gt; serializerClass) {
+        ObjectUtil.checkNotNull(serializerClass, &quot;serializerClass&quot;);
+        try {
+            this.constructor = serializerClass.getConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(&quot;Class &quot; + serializerClass.getSimpleName() + &quot;does not have a public non-arg constructor&quot;, e);
+        }
+    }
+    public T newInstance(){
+        try {
+            return constructor.newInstance();
+        } catch (Throwable t) {
+            throw new IllegalArgumentException(&quot;Unable to create serializer from class &quot; + constructor.getDeclaringClass(), t);
+        }
+    }
+}
+
+</code></pre>
+</li>
+<li>
+<p>有了序列化器后，就需要编写Netty的消息编解码器。</p>
+</li>
+<li>
+<p>我们定义RPC的协议为：协议魔数，序列化器ID（用于校验通信双方的序列化器是否一样），消息类型，数据长度，数据</p>
+</li>
+<li>
+<p>编码器需要继承：<code>MessageToByteEncoder</code>。然后传入一个指定一个泛型。这里我们指定消息的总接口<code>RpcMessage</code>。（注意：这里有一个小坑，<code>MessageToByteEncoder&lt;&gt;</code>，这个尖括号里不能传入泛型。即解码器解析的类型必须是一个具体的类型。否则Netty会抛异常，具体参考这个<a href="https://github.com/netty/netty/issues/1247">Issues</a>）。</p>
+<pre><code class="language-java">/**
+ * 编码器
+ * 协议格式：magic（协议魔数），序列化器，消息类型，数据长度，数据
+ * @author Gloduck
+ */
+public class RpcEncoder extends MessageToByteEncoder&lt;RpcMessage&gt; {
+    private final static Logger logger = LoggerFactory.getLogger(RpcEncoder.class);
+    private final RpcSerializer serializer;
+
+    public RpcEncoder(RpcSerializer serializer) {
+        this.serializer = serializer;
+    }
+
+    @Override
+    protected void encode(ChannelHandlerContext ctx, RpcMessage msg, ByteBuf out) throws Exception {
+        // 写文件魔数
+        out.writeBytes(RpcConstant.MAGIC_NUMBER);
+        // 写序列化器
+        byte serializerTypeCode = serializer.serializerTypeCode();
+        out.writeByte(serializerTypeCode);
+        // 写消息类型
+        byte messageTypeCode = msg.getMessageType().getTypeCode();
+        out.writeByte(messageTypeCode);
+        // 编码数据
+        byte[] data = serializer.encode(msg);
+        // 写数据长度
+        out.writeInt(data.length);
+        // 写数据
+        out.writeBytes(data);
+    }
+}
+</code></pre>
+</li>
+<li>
+<p>解码器需要继承<code>ByteToMessageDecoder</code></p>
+<pre><code class="language-java">/**
+ * 解码器
+ * @author Gloduck
+ */
+public class RpcDecoder extends ByteToMessageDecoder {
+    /**
+     * 基本大小，必须大于这个大小才接收。大小为：魔数 + 序列化类型 + 消息类型 + 长度（int 4个字节）
+     */
+    private static final int BASE_SIZE = RpcConstant.MAGIC_NUMBER.length + 1 + 1 + 4;
+    private static final Logger logger = LoggerFactory.getLogger(RpcDecoder.class);
+    private final RpcSerializer serializer;
+
+    public RpcDecoder( RpcSerializer serializer) {
+        this.serializer = serializer;
+    }
+
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List&lt;Object&gt; out) throws Exception {
+        byte[] magic = new byte[RpcConstant.MAGIC_NUMBER.length];
+        // 读取魔数
+        in.readBytes(magic);
+        if(!Arrays.equals(magic, RpcConstant.MAGIC_NUMBER)){
+            final String msg = &quot;错误的魔数&quot;;
+            logger.error(msg);
+            throw new SerializationException(msg);
+        }
+        // 读取序列化器
+        byte serializerTypeCode = in.readByte();
+        if(serializerTypeCode != serializer.serializerTypeCode()){
+            final String msg = &quot;错误的序列化器类型，或序列化器不匹配&quot;;
+            logger.error(msg);
+            throw new SerializationException(msg);
+        }
+        // 读取消息类型
+        byte messageTypeCode = in.readByte();
+        MessageType messageTypeByTypeCode = MessageType.getMessageTypeByTypeCode(messageTypeCode);
+        if(messageTypeByTypeCode == null){
+            final String msg = &quot;错误的消息类型&quot;;
+            logger.error(msg);
+            throw new SerializationException(msg);
+        }
+        // 读取消息长度
+        int length = in.readInt();
+        if(length &lt;= 0){
+            final String msg = &quot;错误的消息长度&quot;;
+            logger.error(msg);
+            throw new SerializationException(msg);
+        }
+        Class&lt;? extends RpcMessage&gt; bindingClassType = messageTypeByTypeCode.getBindingClassType();
+        // 读取消息具体内容
+        byte[] data = new byte[length];
+        in.readBytes(data);
+        RpcMessage decode = serializer.decode(data, bindingClassType);
+        out.add(decode);
+    }
+}
+
+</code></pre>
+</li>
+<li>
+<p>无论是编码器还是解码器，我们都需要传入一个序列化器的对象。这个对象来完成具体的对象转byte数组以及byte数组转对象的过程。</p>
+</li>
+<li>
+<p>然后我们需要在pipline中添加编码器和解码器。</p>
+</li>
+</ul>
+<h1 id="序列化器比较">序列化器比较</h1>
+<ul>
+<li>
+<p>我们对JDK、FastJson、Protobuf、Kryo进行测试，包括编解码耗时测试，以及生成大小测试。</p>
+</li>
+<li>
+<p>测试类：</p>
+<pre><code class="language-java">    @Test
+    public void serializerTest() throws SerializationException {
+        int loop = 200000;
+        RpcResponse response = RpcResponse.success(&quot;hello&quot;, &quot;123&quot;);
+
+        RpcSerializer serializer = new SerializerFactory&lt;&gt;(JdKSerializer.class).newInstance();
+        long start = System.currentTimeMillis();
+        for (int i = 0; i &lt; loop; i++) {
+            byte[] hellos = serializer.encode(RpcResponse.success(&quot;hello&quot;, &quot;123&quot;));
+            RpcResponse decode = serializer.decode(hellos, RpcResponse.class);
+        }
+        long end = System.currentTimeMillis();
+        System.out.printf(&quot;JDK序列化%d次耗时为：%d\n&quot;, loop, end - start);
+        System.out.printf(&quot;JDK编码对象 %s 后大小为：%d字节\n&quot;,response, serializer.encode(response).length);
+        serializer = new SerializerFactory&lt;&gt;(FastJsonSerializer.class).newInstance();
+        start = System.currentTimeMillis();
+        for (int i = 0; i &lt; loop; i++) {
+            byte[] hellos = serializer.encode(RpcResponse.success(&quot;hello&quot;, &quot;123&quot;));
+            RpcResponse decode = serializer.decode(hellos, RpcResponse.class);
+        }
+         end = System.currentTimeMillis();
+        System.out.printf(&quot;FastJson序列化%d次耗时为：%d\n&quot;, loop, end - start);
+        System.out.printf(&quot;FastJson编码对象 %s 后大小为：%d字节\n&quot;,response, serializer.encode(response).length);
+
+        serializer = new SerializerFactory&lt;&gt;(ProtostuffSerializer.class).newInstance();
+        start = System.currentTimeMillis();
+        for (int i = 0; i &lt; loop; i++) {
+            byte[] hellos = serializer.encode(RpcResponse.success(&quot;hello&quot;, &quot;123&quot;));
+            RpcResponse decode = serializer.decode(hellos, RpcResponse.class);
+        }
+        end = System.currentTimeMillis();
+        System.out.printf(&quot;Protobuf序列化%d次耗时为：%d\n&quot;, loop, end - start);
+        System.out.printf(&quot;Protobuf编码对象 %s 后大小为：%d字节\n&quot;,response, serializer.encode(response).length);
+
+        serializer = new SerializerFactory&lt;&gt;(KryoSerializer.class).newInstance();
+        start = System.currentTimeMillis();
+        for (int i = 0; i &lt; loop; i++) {
+            byte[] hellos = serializer.encode(RpcResponse.success(&quot;hello&quot;, &quot;123&quot;));
+            RpcResponse decode = serializer.decode(hellos, RpcResponse.class);
+        }
+        end = System.currentTimeMillis();
+        System.out.printf(&quot;Kryo序列化%d次耗时为：%d\n&quot;, loop, end - start);
+        System.out.printf(&quot;Kryo编码对象 %s 后大小为：%d字节\n&quot;,response, serializer.encode(response).length);
+
+    }
+</code></pre>
+</li>
+<li>
+<p>测试结果：</p>
+<ul>
+<li>2000次</li>
+</ul>
+<pre><code class="language-shell">JDK序列化2000次耗时为：199
+JDK编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：256字节
+FastJson序列化2000次耗时为：272
+FastJson编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：121字节
+Protobuf序列化2000次耗时为：102
+Protobuf编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：16字节
+Kryo序列化2000次耗时为：113
+Kryo编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：12字节
+</code></pre>
+<ul>
+<li>20000次</li>
+</ul>
+<pre><code class="language-shell">JDK序列化20000次耗时为：635
+JDK编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：256字节
+FastJson序列化20000次耗时为：506
+FastJson编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：121字节
+Protobuf序列化20000次耗时为：111
+Protobuf编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：16字节
+Kryo序列化20000次耗时为：126
+Kryo编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：12字节
+</code></pre>
+<ul>
+<li>200000次</li>
+</ul>
+<pre><code class="language-shell">JDK序列化200000次耗时为：2432
+JDK编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：256字节
+FastJson序列化200000次耗时为：690
+FastJson编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：121字节
+Protobuf序列化200000次耗时为：171
+Protobuf编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：16字节
+Kryo序列化200000次耗时为：274
+Kryo编码对象 RpcResponse{requestId='hello', code=0, message='null', data=123} 后大小为：12字节
+</code></pre>
+</li>
+</ul>
+<h1 id="解决tcp粘包拆包">解决tcp粘包拆包</h1>
+<ul>
+<li>
+<p>由于我们使用的是自定义协议，所以解决粘包拆包使用<code>LengthFieldBasedFrameDecoder</code>。</p>
+</li>
+<li>
+<pre><code class="language-java">@Override
+protected void initChannel(SocketChannel ch) throws Exception {
+    ChannelPipeline pipeline = ch.pipeline();
+    pipeline.addLast(new LengthFieldBasedFrameDecoder(MAX_FRAME_LENGTH, RpcConstant.MAGIC_NUMBER.length + 2, 4))
+        .addLast(new RpcDecoder(new JdKSerializer()))
+        .addLast(new RpcEncoder(new JdKSerializer()));
+}
+</code></pre>
+</li>
+<li>
+<p>测试可以通过指定<code>Bootstrap</code>的<code>option</code>调小接收窗口来测试</p>
+</li>
+<li>
+<pre><code class="language-java">b.option(ChannelOption.SO_RCVBUF,10);
+</code></pre>
+</li>
+</ul>
+<h1 id="实现接口代理">实现接口代理</h1>
+<ul>
+<li>
+<p>对于客户端，RPC需要为接口生成代理类，以支持RPC，但是对于接口无法通过<code>BeanPostProcessor</code>来进行AOP代理，因为接口无法被注册成Bean，所以这里需要类似Mybatis的<code>@Mapper</code>注解类似的操作。</p>
+</li>
+<li>
+<p>这里我们通过Spring提供的接口<code>BeanDefinitionRegistryPostProcessor</code>来实现相应的功能。</p>
+</li>
+</ul>
+<pre><code class="language-java">package cn.gloduck.netty.rpc.scan;
+
+import cn.gloduck.netty.rpc.annotation.RpcClient;
+import cn.hutool.core.util.ClassUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.stereotype.Component;
+
+import java.util.Set;
+
+/**
+ * https://blog.csdn.net/lichuangcsdn/article/details/89694363
+ * 此处可以扫描带有RpcClient注解的类，然后通过工厂模式创建一个代理，并且注册到Bean容器中。
+ */
+@Component
+public class RpcProxyBeanDefinitionRegistryPostProcessor implements  BeanDefinitionRegistryPostProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(RpcProxyBeanDefinitionRegistryPostProcessor.class);
+
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    }
+
+    /**
+     * 扫描bean并为带有RpcClient注解的接口创建实现类，然后注入到容器
+     * @param registry
+     * @throws BeansException
+     */
+    @Override
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+        Set&lt;Class&lt;?&gt;&gt; classes = ClassUtil.scanPackage();
+        for (Class&lt;?&gt; beanClass : classes) {
+            RpcClient annotation = beanClass.getAnnotation(RpcClient.class);
+            if(annotation != null){
+                BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(beanClass);
+                GenericBeanDefinition definition = (GenericBeanDefinition) builder.getRawBeanDefinition();
+                //在这里，我们可以给该对象的属性注入对应的实例。
+                //比如mybatis，就在这里注入了dataSource和sqlSessionFactory，
+                // 注意，如果采用definition.getPropertyValues()方式的话，
+                // 类似definition.getPropertyValues().add(&quot;interfaceType&quot;, beanClazz);
+                // 则要求在FactoryBean（本应用中即ServiceFactory）提供setter方法，否则会注入失败
+                // 如果采用definition.getConstructorArgumentValues()，
+                // 则FactoryBean中需要提供包含该属性的构造方法，否则会注入失败
+                definition.getConstructorArgumentValues().addGenericArgumentValue(beanClass);
+
+                //注意，这里的BeanClass是生成Bean实例的工厂，不是Bean本身。
+                // FactoryBean是一种特殊的Bean，其返回的对象不是指定类的一个实例，
+                // 其返回的是该工厂Bean的getObject方法所返回的对象。
+                definition.setBeanClass(RpcServiceFactory.class);
+
+                //这里采用的是byType方式注入，类似的还有byName等
+                definition.setAutowireMode(GenericBeanDefinition.AUTOWIRE_BY_TYPE);
+                registry.registerBeanDefinition(beanClass.getSimpleName(), definition);
+
+            }
+        }
+
+    }
+}
+
+</code></pre>
+<ul>
+<li>工厂模式，用于对接口创建代理。返回的类将会被上面的<code>RpcProxyBeanDefinitionRegistryPostProcessor</code>注册到Spring容器中。</li>
+</ul>
+<pre><code class="language-java">package cn.gloduck.netty.rpc.scan;
+
+import cn.gloduck.netty.rpc.proxy.RpcProxy;
+import org.springframework.beans.factory.FactoryBean;
+
+import java.lang.reflect.Proxy;
+
+/**
+ * 自定义的FactoryBean，使用工厂模式为带有RpcClient的类创建实现类。
+ * @param &lt;T&gt;
+ */
+public class RpcServiceFactory&lt;T&gt; implements FactoryBean&lt;T&gt; {
+    private Class&lt;T&gt; interfaceType;
+
+    public RpcServiceFactory(Class&lt;T&gt; interfaceType) {
+        this.interfaceType = interfaceType;
+    }
+
+
+    @Override
+    public T getObject() throws Exception {
+        return (T)Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class&lt;?&gt;[]{interfaceType}, new RpcProxy());
+    }
+
+    @Override
+    public Class&lt;?&gt; getObjectType() {
+        return interfaceType;
+    }
+}
+
+</code></pre>
+<h1 id="netty关闭服务下线netty启动服务上线">Netty关闭，服务下线；Netty启动，服务上线</h1>
+<ul>
+<li>
+<p>为了方便解耦，我们使用观察者模式。</p>
+</li>
+<li>
+<p>首先定义一个监听器接口。</p>
+</li>
+<li>
+<pre><code class="language-java">package cn.gloduck.netty.rpc.listener;
+
+import cn.gloduck.netty.rpc.transport.NettyConfig;
+
+/**
+ * netty状态改变的监听器
+ * @author Gloduck
+ */
+public interface NettyStateListener {
+    /**
+     * Netty启动事件
+     * @param config
+     */
+    void onNettyStart(NettyConfig config);
+
+    /**
+     * Netty停止事件
+     * @param config
+     */
+    void onNettyStop(NettyConfig config);
+
+    /**
+     * Netty启动出错事件
+     * @param e
+     */
+    void onException(Throwable e);
+}
+
+</code></pre>
+</li>
+<li>
+<p>然后在Netty的各个流程发布各种事件。位于：<code>AbstractNettyServer</code></p>
+<ul>
+<li>
+<p>Netty启动：</p>
+<ul>
+<li>
+<pre><code class="language-java">@Override
+public final void start() {
+    boolean flag = false;
+    try {
+        this.initNettyServer();
+        flag = true;
+    } catch (Exception e) {
+        logger.warn(&quot;Netty启动失败 , {}&quot;, e.getMessage());
+        if(!CollectionUtil.isEmptyCollection(listeners)){
+            // 发布启动失败时间
+            for (NettyStateListener listener : listeners) {
+                listener.onException(e);
+            }
+        }
+    }
+    if(flag){
+        if(!CollectionUtil.isEmptyCollection(listeners)){
+            for (NettyStateListener listener : listeners) {
+                // 发布Netty启动事件
+                listener.onNettyStart(nettyConfig);
+            }
+        }
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>Netty关闭：</p>
+<ul>
+<li>
+<pre><code class="language-java">@Override
+public final void stop() {
+    this.destroyNettyServer();
+    if(!CollectionUtil.isEmptyCollection(listeners)){
+        for (NettyStateListener listener : listeners) {
+            // 发布Netty关闭事件
+            listener.onNettyStop(nettyConfig);
+        }
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>添加监听器事件：</p>
+<ul>
+<li>
+<pre><code class="language-java">/**
+     * 添加Netty的监听器
+     * @param listener
+     */
+public void addListener(NettyStateListener listener){
+    if(this.listeners == null){
+        this.listeners = new LinkedList&lt;&gt;();
+    }
+    this.listeners.add(listener);
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>创建一个注册中心对于Netty的监听器</p>
+</li>
+<li>
+<pre><code class="language-java">package cn.gloduck.netty.rpc.listener.impl;
+
+import cn.gloduck.netty.rpc.listener.NettyStateListener;
+import cn.gloduck.netty.rpc.registry.Registry;
+import cn.gloduck.netty.rpc.transport.NettyConfig;
+
+/**
+ * @author Gloduck
+ */
+public class NettyRegistryListener implements NettyStateListener {
+    private Registry registry;
+
+    public NettyRegistryListener(Registry registry) {
+        this.registry = registry;
+    }
+
+    @Override
+    public void onNettyStart(NettyConfig config) {
+        // 在netty启动时，同时上线所有注册过的服务
+        registry.registry();
+    }
+
+    @Override
+    public void onNettyStop(NettyConfig config) {
+        // 在netty关闭时，下线所有已经注册的服务
+        registry.unRegistry();
+    }
+
+    @Override
+    public void onException(Throwable e) {
+
+    }
+}
+
+</code></pre>
+</li>
+<li>
+<p>最后在引导中将监听器注册上去就行了。</p>
+</li>
+</ul>
+<h1 id="心跳检测">心跳检测</h1>
+<ul>
+<li>
+<p>由于服务端需要感知客户端是否还在线，如果不在线就关闭连接。客户端也需要检测服务端是否还在线，如果不在线就关闭连接。</p>
+</li>
+<li>
+<p>为了实现心跳，我们需要在pipline中添加一个<code>IdleStateHandler</code>，它能帮我们处理连接空闲。</p>
+<ul>
+<li>读空闲</li>
+<li>写空闲</li>
+<li>读写空闲</li>
+</ul>
+</li>
+<li>
+<p>对于服务端，我们检测心跳<code>RpcBeat</code></p>
+<pre><code class="language-java">package cn.gloduck.netty.rpc.codec;
+
+import cn.gloduck.netty.rpc.enums.MessageType;
+
+/**
+ * rpc心跳包
+ * @author Gloduck
+ */
+public final class RpcBeat implements RpcMessage {
+    private RpcBeat(){}
+    private static final RpcBeat instance = new RpcBeat();
+    public static RpcBeat instance(){
+        return instance;
+    }
+    @Override
+    public MessageType getMessageType() {
+        return MessageType.RPC_BEAT;
+    }
+}
+
+</code></pre>
+</li>
+<li>
+<p>创建一个专门的Handler来接收心跳包，并且在里面设置一个计数器，收到心跳后就重置计数器。否则在<code>userEventTriggered</code>中就会调用<code>ctx.disconnect();</code>关闭连接。（注意，此处我是把心跳区分开了的，客户端必须发送心跳，RPC请求并不作为检测心跳的条件，即如果客户端没有发送心跳包的话，即使在请求也会关闭连接）。代码位于：<code>RpcServerHeartBeatHandler</code></p>
+<pre><code class="language-java">package cn.gloduck.netty.rpc.transport.server;
+
+import cn.gloduck.netty.rpc.codec.RpcBeat;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleStateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 服务端心跳处理器
+ * @author Gloduck
+ */
+public class RpcServerHeartBeatHandler extends SimpleChannelInboundHandler&lt;RpcBeat&gt; {
+    private static final Logger logger = LoggerFactory.getLogger(RpcServerHeartBeatHandler.class);
+    private int counter;
+    private int limit;
+
+    public RpcServerHeartBeatHandler(int limit) {
+        this.counter = 0;
+        this.limit = limit;
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, RpcBeat msg) throws Exception {
+        // 收到心跳后重置心跳计数器
+        this.counter = 0;
+        logger.info(&quot;收到心跳，重置计数器&quot;);
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if(evt instanceof IdleStateEvent){
+            counter++;
+        }
+        if(counter &gt;= limit){
+            logger.warn(&quot;连接超时[长时间未收到心跳]，连接关闭&quot;);
+            ctx.disconnect();
+        }
+    }
+}
+
+</code></pre>
+</li>
+<li>
+<p>对于客户端，我们需要定时发送心跳。而且我们并不需要单独创建一个Handler来发送心跳包。代码位于：<code>RpcResponseHandler#userEventTriggered</code></p>
+<pre><code class="language-java">    /**
+     * 自定义心跳，每到一定时间{@link NettyConfig#getHeartBeatInterval()}，就会触发时间，然后发送间隔。
+     *
+     * @param ctx
+     * @param evt
+     * @throws Exception
+     */
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if(evt instanceof IdleStateEvent){
+            Channel channel = ctx.channel();
+            channel.writeAndFlush(RpcBeat.instance());
+            logger.info(&quot;向服务器：{} 发送心跳&quot;,remoteAddress);
+        } else {
+            super.userEventTriggered(ctx, evt);
+        }
+    }
+</code></pre>
+</li>
+<li>
+<p>无论是客户端和服务端都需要在pipline中添加一个<code>IdleStateHandler</code>，并且其指定了<code>userEventTriggered</code>调用的间隔。</p>
+</li>
+</ul>
+<h1 id="断线处理">断线处理</h1>
+<ul>
+<li>
+<p>注：目前没有添加断线重连，因为断线重连也可能无法获取到还未完成任务的结果，加大了编程的复杂性，以后有时间再处理。</p>
+</li>
+<li>
+<p>Netty断线会调用<code>channelInactive</code>方法，对于服务端来说，客户端断线了并不需要额外的处理。</p>
+</li>
+<li>
+<p>但是对于客户端来说</p>
+<ul>
+<li>在<code>ConnectionManager</code>中维护了这个连接，所以断线的时候需要把这个连接移除，防止下一次请求使用到这个已经断开的连接</li>
+<li>可能断开连接的时候还有未完成的任务，这时候需要把任务全部取消了。</li>
+</ul>
+</li>
+<li>
+<p>代码位于：<code>RpcResponseHandler#channelInactive</code>：</p>
+<pre><code class="language-java">    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        // 删除连接
+        ConnectionManager.instance().removeTransporter(remoteAddress);
+        // 取消所有任务
+        if(!this.processingRpcRequest.isEmpty()){
+            Set&lt;Map.Entry&lt;String, ResponseFuture&gt;&gt; entries =
+                    this.processingRpcRequest.entrySet();
+            Iterator&lt;Map.Entry&lt;String, ResponseFuture&gt;&gt; iterator = entries.iterator();
+            while (iterator.hasNext()){
+                Map.Entry&lt;String, ResponseFuture&gt; next = iterator.next();
+                ResponseFuture value = next.getValue();
+                value.cancel(false);
+                logger.warn(&quot;因为连接关闭，任务被取消，请求ID为：{}&quot;,next.getKey());
+                iterator.remove();
+            }
+        }
+        logger.warn(&quot;关闭连接：{}&quot;,remoteAddress);
+    }
+</code></pre>
+</li>
+</ul>
+<h1 id="负载均衡算法">负载均衡算法</h1>
+<ul>
+<li>
+<p>由于注册中心可能能获取到一个服务的多个实例，我们使用负载均衡算法来进行分流。</p>
+</li>
+<li>
+<p>常见的负载均衡算法有如下几种：</p>
+<ul>
+<li>随机</li>
+<li>加权随机</li>
+<li>轮询</li>
+<li>加权轮询</li>
+<li>源地址IP</li>
+<li>最小连接数</li>
+</ul>
+</li>
+<li>
+<p>由于我们在注解中需要指定响应的负载均衡算法，所以我们使用枚举来实现负载均衡算法（Java枚举实际上是一个枚举类的子类，所以对于不同的枚举我们可以重写里面的方法）。</p>
+</li>
+<li>
+<p>这里只实现了三种负载均衡算法。其中IP_HASH待修改。</p>
+<pre><code class="language-java">package cn.gloduck.netty.rpc.loadbance;
+
+
+import cn.gloduck.netty.rpc.ref.client.Instance;
+import cn.gloduck.netty.rpc.ref.client.ServiceInstance;
+import cn.gloduck.netty.rpc.utils.CollectionUtil;
+import cn.gloduck.netty.rpc.utils.NetUtil;
+
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+public enum LoadBlance {
+    /**
+     * 随机
+     */
+    RANDOM {
+        @Override
+        public Instance chooseHandler(List&lt;Instance&gt; instances) {
+            ThreadLocalRandom random = ThreadLocalRandom.current();
+            return instances.get(random.nextInt(instances.size()));
+        }
+    },
+    /**
+     * 加权随机
+     */
+    WEIGHT_RANDOM() {
+        @Override
+        public Instance chooseHandler(List&lt;Instance&gt; instances) {
+            // 总权重
+            int wightSum = 0;
+            for (Instance instance : instances) {
+                wightSum += instance.getWeight();
+            }
+            //获取总权值之间任意一随机数
+            ThreadLocalRandom random = ThreadLocalRandom.current();
+            int randomWeight = random.nextInt(wightSum);
+            //{.},{..},{...},{....}...根据权值概率区间，获得加权随机对象
+            for (Instance instance : instances) {
+                randomWeight -= instance.getWeight();
+                if(randomWeight &lt; 0){
+                    return instance;
+                }
+            }
+            return null;
+        }
+    },
+    /**
+     * 源地址Hash
+     */
+    IP_HASH {
+        @java.lang.Override
+        public Instance chooseHandler(List&lt;Instance&gt; instances) {
+            int size = instances.size();
+            String localHost = NetUtil.getLocalHost();
+            long ipv4ToLong = NetUtil.ipv4ToLong(localHost);
+            int index = (int) (ipv4ToLong % size);
+            return instances.get(index);
+        }
+    },
+    ;
+
+
+    public Instance chooseHandler(List&lt;Instance&gt; instances) {
+        throw new AbstractMethodError();
+    }
+}
+
+</code></pre>
+</li>
+</ul>
+<h1 id="注册中心监听节点更改">注册中心监听节点更改</h1>
+<ul>
+<li>
+<p>由于注册中心一般会有一个本地缓存，一般可以直接从本地缓存中获取服务的远程调用地址，但是服务端的服务器是需要上线和下线的，这时候就需要监听这个变化，然后做出更改。</p>
+</li>
+<li>
+<p>如nacos，是每次获取服务的时候，使用一个后台线程维护节点的变化。这里我们使用的注册中心是zookeeper，zookeeper本身是基于观察者模式的，这使得我们能够在zookeeper上注册监听器来维护节点的变化。相比自己维护方便多了。</p>
+</li>
+<li>
+<p>代码位于：<code>ZookeeperRegistry#doDiscover</code></p>
+<ul>
+<li>
+<pre><code class="language-java">/**
+     * 添加监听器
+     * 监听器介绍：https://blog.csdn.net/sqh201030412/article/details/51446434
+     *
+     * @param path
+     * @param listener
+     */
+private void addListener(String path, PathChildrenCacheListener listener) throws Exception {
+    PathChildrenCache cache = new PathChildrenCache(client, path, true);
+    cache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
+    cache.getListenable().addListener(listener);
+}
+
+
+addListener(path, (client1, event) -&gt; {
+    logger.debug(&quot;收到zookeeper事件，{}&quot;, event.getType());
+    ChildData data = event.getData();
+    String dataPath = data.getPath();
+    if(dataPath == null){
+        return;
+    }
+    String address = getAddressFromChildrenPath(dataPath);
+    if (address == null) {
+        logger.error(&quot;服务：{} 的提供者发生变化，但是解析其地址失败，解析失败的地址为：{}&quot;, serviceName, dataPath);
+        return;
+    }
+    switch (event.getType()) {
+        case CHILD_ADDED: // 添加了一个提供者
+            int weight = NumberUtil.byteArrayToInt(data.getData());
+            handleAdd(serviceName, address, weight);
+            break;
+        case CHILD_REMOVED: // 删除了一个提供者
+            handleDelete(serviceName, address);
+            break;
+        case CHILD_UPDATED: // 更新了一个提供者
+            weight = NumberUtil.byteArrayToInt(data.getData());
+            handleUpdate(serviceName, address, weight);
+            break;
+        default:
+            break;
+
+    }
+});
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>同时，我们还需要监听zookeeper连接的变化，防止与注册中心失去连接，此时我们就直接从本地缓存中获取，而非是注册中心。</p>
+</li>
+<li>
+<p>代码位于：<code>ZookeeperRegistry#start</code></p>
+<pre><code class="language-java">try {
+    addListener(NetUtil.buildPath(registryConfig.getNamespace()), (client1, event) -&gt; {
+        // 添加监听器，监听zookeeper的节点变化
+        switch (event.getType()){
+            case CONNECTION_RECONNECTED: // zookeeper重连后
+                this.loseConnectionMode = false;
+                logger.warn(&quot;zookeeper重连&quot;);
+                break;
+            case CONNECTION_SUSPENDED: // zookeeper挂了后
+                this.loseConnectionMode = true;
+                logger.warn(&quot;zookeeper失去连接&quot;);
+                break;
+            default:
+                break;
+        }
+    });
+} catch (Exception e) {
+    logger.error(&quot;添加zookeeper监听器失败，可能无法感知zookeeper的短线&quot;);
+}
+</code></pre>
+</li>
+</ul>
+<h1 id="集成springboot">集成SpringBoot</h1>
+<ul>
+<li>为了方便使用，我们可以将其集成到SpringBoot，方便使用。</li>
+</ul>
+<h2 id="服务端实现引导">服务端实现引导</h2>
+<ul>
+<li>为了方便集成SpringBoot，我们需要自动扫描服务，并且添加到注册中心。代码位于：<code>RpcServerBootstrap</code></li>
+<li>这个类实现了<code>ApplicationListener&lt;WebServerInitializedEvent&gt;, ApplicationContextAware, DisposableBean</code>三个接口。
+<ul>
+<li><code>ApplicationListener&lt;WebServerInitializedEvent&gt;</code>会在Spring完成初始化的时候发布初始化事件。
+<ul>
+<li>通过这个接口，我们用来：
+<ul>
+<li>初始化注册中心</li>
+<li>启动注册中心</li>
+<li>启动Netty服务器</li>
+<li>给Netty服务器创建监听器</li>
+<li>扫描RPC服务</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>ApplicationContextAware</code>会在初始化当前Bean的时候调用，主要是用于感知当前bean在容器中的属性。
+<ul>
+<li>通过这个接口，我们用来获取<code>applicationContext</code>，用于后期的扫描。</li>
+</ul>
+</li>
+<li><code>DisposableBean</code>会在容器销毁的时候调用。
+<ul>
+<li>通过这个接口，我们用来：
+<ul>
+<li>关闭Netty服务器</li>
+<li>关闭注册中心。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="客户端实现引导">客户端实现引导</h2>
+<ul>
+<li>代码位于：<code>RpcClientBootstrap</code>同上。</li>
+</ul>
+<h1 id="注意点">注意点</h1>
+<h2 id="netty发送和接收消息的坑">Netty发送和接收消息的坑</h2>
+<ul>
+<li>Netty发送消息的时候是不会直接抛出异常的。如果发送消息过程中出现了异常，需要添加一个监听器，用于感知异常。</li>
+<li>Netty接收消息的时候，异常会沿着pipline传播，所以需要在pipline的末尾，注册一个用于处理异常的handler（重写了<code>exceptionCaught</code>的handler）。</li>
+<li>对于客户端来说，发送失败需要将请求从当前正在执行的请求中移除，对于服务端来说，发送失败则需要尝试向客户端发送一个失败的消息。</li>
+</ul>
+<h2 id="rpc调用超时">RPC调用超时</h2>
+<ul>
+<li>如果客户端发送请求的时候超时或者服务端返回请求的时候超时一定要做好回调。</li>
+</ul>
+<h2 id="序列化的坑">序列化的坑</h2>
+<h3 id="fastjson序列化">FastJson序列化</h3>
+<ul>
+<li>
+<p>问题复现：</p>
+<ul>
+<li>
+<p>RpcResponse其中有一个属性：data是Object类型的。Fastjson序列化后并不知道这个泛型，导致在反序列化的时候使用RpcResponse的class反序列化的时候，我们传进去的是<code>RpcResponse.class</code>，由于并不知道Object类型的data的具体类型，所以不会将这个类型转换为具体对象。则会抛出异常。</p>
+<ul>
+<li>
+<pre><code class="language-java">java.lang.ClassCastException: class com.alibaba.fastjson.JSONObject cannot be cast to class cn.gloduck.netty.rpc.entity.User (com.alibaba.fastjson.JSONObject and cn.gloduck.netty.rpc.entity.User are in unnamed module of loader 'app')
+	at com.sun.proxy.$Proxy53.getUser(Unknown Source) ~[na:na]
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>解决方案：</p>
+<ul>
+<li>既然我们是Object类型的，fastjson并不知道实际类型，所以我们需要将类型给记录下来，FastJson提供了<code>SerializerFeature.WriteClassName</code>来记录具体的类型。这样在反序列化的时候就可以使用<code>Feature.SupportAutoType</code>准确的反序列化了。</li>
+<li>注：FastJson的<code>AutoType</code>频繁爆出问题，使用的时候注意。</li>
+</ul>
+</li>
+</ul>
+<h3 id="jdk序列化">JDK序列化</h3>
+<ul>
+<li>
+<p>问题复现：</p>
+<ul>
+<li>在使用JDK进行序列化的时候，一直接口超时，起初以为是Netty的问题，但是后面发现是JDK序列化的时候抛出了一个异常。但是由于当时我并没有在Netty中处理这个异常。导致一直没有报错消息。后面在<code>wirteAndFlush</code>中添加了一个listener才发现这个异常。</li>
+</ul>
+</li>
+<li>
+<p>问题原因：</p>
+<ul>
+<li>使用JDK序列化的时，不管是外部类还是内部类都需要实现<code>Serializable</code>接口，否则无法完成序列化。具体可以运行下面一段代码。</li>
+</ul>
+</li>
+<li>
+<p>问题原因描述代码：</p>
+<ul>
+<li>
+<pre><code class="language-java">import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Arrays;
+
+public class SimpleTest {
+    public static void main(String[] args) throws IOException {
+        Outter outter = new Outter();
+        outter.setInner(new Inner());
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        objectOutputStream.writeObject(outter);
+        byte[] bytes = outputStream.toByteArray();
+        System.out.println(Arrays.toString(bytes));
+    }
+    public static class Outter implements Serializable {
+        private Inner inner;
+
+        public void setInner(Inner inner) {
+            this.inner = inner;
+        }
+
+        public Inner getInner() {
+            return inner;
+        }
+    }
+    public static class Inner{
+
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>解决方法：</p>
+<ul>
+<li>给所有RPC调用的都实现序列化接口。</li>
+</ul>
+</li>
+</ul>
+<h3 id="kryo的坑">Kryo的坑</h3>
+<ul>
+<li>
+<pre><code class="language-java">Kryo kryo = new Kryo();
+RpcResponse response = RpcResponse.success(&quot;123&quot;,new Inner(&quot;key&quot;,&quot;value&quot;));
+try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); Output output = new Output(outputStream)){
+    kryo.writeObject(output, response);
+    byte[] bytes = outputStream.toByteArray();
+    System.out.println(Arrays.toString(bytes));
+} catch (Exception e){
+
+}
+</code></pre>
+</li>
+<li>
+<p>使用kryo进行序列化，但是却写不出来数据。</p>
+</li>
+<li>
+<p>问题原因：</p>
+<ul>
+<li>
+<p>对于output，需要调用<code>output#flush</code>才会将数据写入到<code>outputStream</code></p>
+<ul>
+<li>
+<pre><code class="language-java">public void flush() throws KryoException {
+    if (this.outputStream != null) {
+        try {
+            this.outputStream.write(this.buffer, 0, this.position);
+            this.outputStream.flush();
+        } catch (IOException var2) {
+            throw new KryoException(var2);
+        }
+
+        this.total += (long)this.position;
+        this.position = 0;
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>默认情况下，调用<code>output#close</code>会同时调用<code>output#flush</code>方法，但是由于我使用的是jdk1.7的try自动关闭，导致在try里面没有实际将数据写入到outputstream，所以读出来的byte数组实际上是一个空数组。</p>
+</li>
+<li>
+<p>解决方法：</p>
+<ul>
+<li>try里手动调用<code>output#flush</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="zookeeper-ephemeral节点的坑">zookeeper EPHEMERAL节点的坑</h2>
+<ul>
+<li>
+<p>问题复现：</p>
+<ul>
+<li>在idea点击关闭服务端，然后马上重启服务端的时候提示服务注册失败，当前节点已经存在。</li>
+</ul>
+</li>
+<li>
+<p>问题原因：对于zookeeper的临时节点，如果应用程序不主动关闭zk客户端，可能会导致服务器包含失效的服务器节点。因为zookeeper中维护了一个session timeout，<strong>EPHEMERAL节点在sessiontimeout之前都存在</strong>，为了使得zookeeper可以断线重连。但是如果不手动关闭zookeeper会导致zookeeper以为服务器是断线了。</p>
+</li>
+<li>
+<p>解决方案：</p>
+<ul>
+<li>
+<p>使用<code>checkExists</code>判断以下节点的状态，zookeeper中节点有<code>ephemeralOwner</code>属性，如果为临时节点，那么就会拥有这个拥有者的ID，否则为0。</p>
+</li>
+<li>
+<p>代码位于<code>ZookeeperRegistry#registrySingle</code>：</p>
+<pre><code class="language-java">// 获取节点状态
+Stat stat = zkClient.checkExists().forPath(path);
+if (stat != null) {
+    // 如果节点状态不为null，则证明当前节点在zookeeper中存在
+    long ephemeralOwner = stat.getEphemeralOwner();
+    if (ephemeralOwner != 0) {
+        // 如果不为0，则代表当前节点为临时节点。由于路径存在，则大概率是因为当前服务非正常关闭，但是由于还没过timeout，zookeeper认为是服务器断线了，还没删除节点信息
+        // 则手动删除节点信息，然后执行注册。
+        zkClient.delete().deletingChildrenIfNeeded().forPath(path);
+        logger.info(&quot;服务器非正常退出，从zookeeper中删除临时节点：{}&quot;,path);
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E7%AE%80%E4%BB%8B">简介</a></li>
+<li><a href="#%E5%85%A5%E9%97%A8">入门</a>
+<ul>
+<li><a href="#rpc%E7%AE%80%E4%BB%8B">RPC简介</a></li>
+<li><a href="#rpc%E5%AE%9E%E7%8E%B0">RPC实现</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B6%88%E6%81%AF%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96">消息序列化与反序列化</a></li>
+<li><a href="#%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%E6%AF%94%E8%BE%83">序列化器比较</a></li>
+<li><a href="#%E8%A7%A3%E5%86%B3tcp%E7%B2%98%E5%8C%85%E6%8B%86%E5%8C%85">解决tcp粘包拆包</a></li>
+<li><a href="#%E5%AE%9E%E7%8E%B0%E6%8E%A5%E5%8F%A3%E4%BB%A3%E7%90%86">实现接口代理</a></li>
+<li><a href="#netty%E5%85%B3%E9%97%AD%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%BA%BFnetty%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1%E4%B8%8A%E7%BA%BF">Netty关闭，服务下线；Netty启动，服务上线</a></li>
+<li><a href="#%E5%BF%83%E8%B7%B3%E6%A3%80%E6%B5%8B">心跳检测</a></li>
+<li><a href="#%E6%96%AD%E7%BA%BF%E5%A4%84%E7%90%86">断线处理</a></li>
+<li><a href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95">负载均衡算法</a></li>
+<li><a href="#%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E7%9B%91%E5%90%AC%E8%8A%82%E7%82%B9%E6%9B%B4%E6%94%B9">注册中心监听节点更改</a></li>
+<li><a href="#%E9%9B%86%E6%88%90springboot">集成SpringBoot</a>
+<ul>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%AE%9E%E7%8E%B0%E5%BC%95%E5%AF%BC">服务端实现引导</a></li>
+<li><a href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%AE%9E%E7%8E%B0%E5%BC%95%E5%AF%BC">客户端实现引导</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F%E7%82%B9">注意点</a>
+<ul>
+<li><a href="#netty%E5%8F%91%E9%80%81%E5%92%8C%E6%8E%A5%E6%94%B6%E6%B6%88%E6%81%AF%E7%9A%84%E5%9D%91">Netty发送和接收消息的坑</a></li>
+<li><a href="#rpc%E8%B0%83%E7%94%A8%E8%B6%85%E6%97%B6">RPC调用超时</a></li>
+<li><a href="#%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%9D%91">序列化的坑</a>
+<ul>
+<li><a href="#fastjson%E5%BA%8F%E5%88%97%E5%8C%96">FastJson序列化</a></li>
+<li><a href="#jdk%E5%BA%8F%E5%88%97%E5%8C%96">JDK序列化</a></li>
+<li><a href="#kryo%E7%9A%84%E5%9D%91">Kryo的坑</a></li>
+</ul>
+</li>
+<li><a href="#zookeeper-ephemeral%E8%8A%82%E7%82%B9%E7%9A%84%E5%9D%91">zookeeper EPHEMERAL节点的坑</a></li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://mxecy.cn/post/xiaomi-charging-while-playing/">
+              <span class="post-title">
+                小米平板2魔改边充电边玩&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+            <span id="/post/spring-netty-rpc/" class="leancloud_visitors"
+              data-flag-title="基于Netty的RPC框架">
+              <em class="post-meta-item-text">阅读量 </em>
+              <i class="leancloud-visitors-count">loading...</i>
+            </span>
+            
+
+            
+            
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: '5omaQ4TG9GrqwlRC8F5kdp8K-gzGzoHsz',
+		appKey: '3GBC7J0vBSYkmgI3PMOXMJKB',
+		avatar: '',
+		pageSize: 5,
+		recordIp: true,
+		placeholder: '骚年（烧酒），来发评论吧！',
+		visitor: true,
+	});
+</script>
+
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://mxecy.cn/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>Gloduck</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://mxecy.cn/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://mxecy.cn/media/scripts/tocScript.js"></script>
+</body>
+
+</html>
