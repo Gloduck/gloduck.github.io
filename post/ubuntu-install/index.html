@@ -90,7 +90,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1625020084120"
+            <form id="gridea-search-form" style="position: relative" data-update="1625682216314"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -152,7 +152,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1625020084120"
+            <form id="gridea-search-form" style="position: relative" data-update="1625682216314"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -188,7 +188,7 @@
     <h1>Ubuntu调教日志</h1>
     <span class="meta">
       Posted on
-      2021-01-14，9 min read
+      2021-01-14，10 min read
     </span>
   </div>
   
@@ -504,6 +504,17 @@ sudo gedit 图标名称.desktop
 <h2 id="隐藏dock的驱动器">隐藏Dock的驱动器</h2>
 <pre><code class="language-shell">gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
 </code></pre>
+<h2 id="双系统下时间不正确">双系统下时间不正确</h2>
+<ul>
+<li>
+<p>win10和ubuntu使用的时间格式不一样，所以会导致在win10和ubuntu双系统的情况下两者时间相差8小时。</p>
+</li>
+<li>
+<p>win10上可以直接修改注册表，这里推荐直接修改ubuntu。</p>
+<pre><code class="language-shell">timedatectl set-local-rtc 1 --adjust-system-clock
+</code></pre>
+</li>
+</ul>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
 <li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
@@ -560,6 +571,7 @@ sudo gedit 图标名称.desktop
 <li><a href="#%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8%E8%BE%93%E5%85%A5%E8%B7%AF%E5%BE%84">文件管理器输入路径</a></li>
 <li><a href="#root%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E5%A4%B9-2">root打开文件夹</a></li>
 <li><a href="#%E9%9A%90%E8%97%8Fdock%E7%9A%84%E9%A9%B1%E5%8A%A8%E5%99%A8">隐藏Dock的驱动器</a></li>
+<li><a href="#%E5%8F%8C%E7%B3%BB%E7%BB%9F%E4%B8%8B%E6%97%B6%E9%97%B4%E4%B8%8D%E6%AD%A3%E7%A1%AE">双系统下时间不正确</a></li>
 </ul>
 </li>
 </ul>
