@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://mxecy.cn</id>
     <title>Gloduck</title>
-    <updated>2021-07-07T18:29:52.093Z</updated>
+    <updated>2021-07-18T14:53:04.351Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://mxecy.cn"/>
     <link rel="self" href="https://mxecy.cn/atom.xml"/>
@@ -1222,6 +1222,36 @@ if (stat != null) {
 ]]></content>
     </entry>
     <entry>
+        <title type="html"><![CDATA[CVTE实习日记]]></title>
+        <id>https://mxecy.cn/post/cvte-internship/</id>
+        <link href="https://mxecy.cn/post/cvte-internship/">
+        </link>
+        <updated>2021-06-02T14:31:08.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>记录一下在CVTE的实习。</li>
+</ul>
+<h1 id="初到">初到</h1>
+<ul>
+<li>
+<p>由于CVTE这里是包吃包住的，所以东西没有待多少，只带了一些衣服和电脑之类的东西。</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gslhfjb5qkj31k0340kjm.jpg" alt="行李" loading="lazy"></figure>
+</li>
+<li>
+<p>公司的位置是属于那种有点偏的地方，里市区有点远。然后附近的话基本上是一些公司的工厂之类的。</p>
+</li>
+<li>
+<p>由于公司里面没有空的宿舍了，所以在外面给我们租了公寓住。我的话在逸米精选酒店（不用给钱）。</p>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gslhiz3pv7j30tp0j7jvm.jpg" alt="住宿" loading="lazy"></figure>
+</li>
+<li>
+<p>酒店的环境还是挺好的，然后是两个人一间，就酒店的房间来说还算可以。但是，由于主要是酒店不是专门的宿舍，导致房间里面没有额外的办公桌，只有一个小柜子勉强放的下一台电脑。由于我是轻薄本，所以勉强能放在电视机柜下面。</p>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gslhndz9y1j31k0340u0x.jpg" alt="酒店" loading="lazy"></figure>
+</li>
+</ul>
+<h1 id="入园">入园</h1>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[Win10各种配置]]></title>
         <id>https://mxecy.cn/post/win10-configuration/</id>
         <link href="https://mxecy.cn/post/win10-configuration/">
@@ -2165,64 +2195,6 @@ public final void signal() {
 <li>next：后节点的引用，后节点为空并不一定表示在队尾。</li>
 <li>thread：当前节点绑定的线程</li>
 <li>nextWaiter：下一个等待节点的链接，用于共享或者条件队列的时候。</li>
-</ul>
-</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Spring解决循环依赖]]></title>
-        <id>https://mxecy.cn/post/spring-circular-dependencies/</id>
-        <link href="https://mxecy.cn/post/spring-circular-dependencies/">
-        </link>
-        <updated>2021-03-15T12:52:54.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="图解">图解</h1>
-<p><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gokvwa9ye0j314m0vk0wy.jpg" alt="Spring解决循环依赖" loading="lazy"><br>
-<img src="https://tva1.sinaimg.cn/large/006ZFECEly1gokvwaucszj30u40z4dj4.jpg" alt="Spring循环依赖" loading="lazy"></p>
-<h1 id="解决方式">解决方式</h1>
-<ul>
-<li>Spring使用了三级缓存 + 提前暴露对象的方式来解决循环依赖的问题。</li>
-<li>相关的重要属性：位于<code>DefaultSingletonBeanRegistry</code>类中
-<ul>
-<li>Spring内部维护了三个Map，所谓的三重缓存。
-<ul>
-<li><code>Map&lt;String, Object&gt; singletonObjects</code>：单例池容器，用于缓存单例Bean的地方。一级缓存。
-<ul>
-<li>这里的bean是已经创建完成的，该bean经历过实例化-&gt;属性填充-&gt;初始化以及各类的后置处理。因此，一旦需要获取bean时，我们第一时间就会寻找一级缓存</li>
-</ul>
-</li>
-<li><code>Map&lt;String, Object&gt; earlySingletonObjects</code>：早期的单例Bean。二级缓存。
-<ul>
-<li>这里跟一级缓存的区别在于，该缓存所获取到的bean是提前曝光出来的，是还没创建完成的。也就是说获取到的bean只能确保已经进行了实例化，但是属性填充跟初始化肯定还没有做完，因此该bean还没创建完成，仅仅能作为指针提前曝光，被其他bean所引用</li>
-</ul>
-</li>
-<li><code>Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories</code>：创建中单例Bean的原始工厂。三级缓存。
-<ul>
-<li>在bean实例化完之后，属性填充以及初始化之前，如果允许提前曝光，spring会将实例化后的bean提前曝光，也就是把该bean转换成beanFactory并加入到三级缓存。在需要引用提前曝光对象时再通过singletonFactory.getObject()获取。</li>
-<li><strong>在三级缓存中的Bean（提前暴露的Bean），如果被其他的Bean引用，就会从三级缓存中移动到二级缓存中。使得Spring能够感知到当前的Bean被其他引用了</strong>。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>Set&lt;String&gt; singletonsCurrentlyInCreation</code>：保存了当前正在创建的单例对象的名称。</li>
-<li><code>Map&lt;String, Set&lt;String&gt;&gt; dependentBeanMap</code>：保存了一个bean对其他的bean的依赖。</li>
-</ul>
-</li>
-<li>问题：
-<ul>
-<li>如何解决循环依赖的：
-<ul>
-<li>通过提前曝光解决循环依赖，当AB循环依赖的时候，先将A的半成品曝光出去，让B先完成初始化，然后在使得初始化完成后的B注入到A中。</li>
-</ul>
-</li>
-<li>为什么要三级缓存：
-<ul>
-<li>当某个 bean 进入到 2 级缓存的时候，说明这个 bean 的早期对象被其他 bean 注入了，也就是说，这个 bean 还是半成品，还未完全创建好的时候，已经被别人拿去使用了，所以必须要有 3 级缓存，2 级缓存中存放的是早期的被别人使用的对象，如果没有 2 级缓存，是无法判断这个对象在创建的过程中，是否被别人拿去使用了。</li>
-<li><strong>三级缓存是为了判断循环依赖的时候，早期暴露出去已经被别人使用的 bean 和最终的 bean 是否是同一个 bean，如果不是同一个则弹出异常，如果早期的对象没有被其他 bean 使用，而后期被修改了，不会产生异常，如果没有三级缓存，是无法判断是否有循环依赖，且早期的 bean 被循环依赖中的 bean 使用了</strong>。</li>
-<li>Spring解决循环依赖的时候通过对象提前暴露来解决循环依赖，但是考虑到AOP和后置处理器的影响，此时暴露给其他Bean的当前对象可能不是最新的版本，因为通过AOP和后置处理器，此Bean的实际地址和其他Bean引用的地址不一样。这样就会导致其他Bean中引用的当前Bean不是最新版本。三级缓存的存在就是为了使得当前的Bean知道其他的Bean引用的不是自己的新版本。以便抛出异常。如下图，在调用<code>InstantiationBean</code>（使用了动态代理）之后实际上对象已经不一样了。</li>
-<li><img src="https://tva1.sinaimg.cn/large/006ZFECEly1gokvxgggalj30mh042dg3.jpg" alt="在InstantiationBean中改变了Bean" loading="lazy"></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>

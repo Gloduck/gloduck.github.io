@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[Gloduck]的个人博客">
 <meta name="author" content="kveln">
-<title>设计模式-策略模式 | Gloduck</title>
+<title>CVTE实习日记 | Gloduck</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="设计模式-策略模式 | Gloduck » Feed"
+<link rel="alternate" type="application/rss+xml" title="CVTE实习日记 | Gloduck » Feed"
   href="https://mxecy.cn/atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="设计模式-策略模式" />
-  <meta property="og:url" content="https://mxecy.cn/post/designpartten-strategy/" />
+  <meta property="og:description" content="CVTE实习日记" />
+  <meta property="og:url" content="https://mxecy.cn/post/cvte-internship/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Gloduck" />
@@ -178,17 +178,13 @@
   <div class="post-heading">
     <span class="tags">
       
-      <a href="https://mxecy.cn/tag/BRlUo4JPS/" class="tag">Java</a>
-      
-      <a href="https://mxecy.cn/tag/QC2477ut6/" class="tag">Code</a>
-      
-      <a href="https://mxecy.cn/tag/vmfHQoS5u/" class="tag">DesignPartten</a>
+      <a href="https://mxecy.cn/tag/other/" class="tag">其他</a>
       
     </span>
-    <h1>设计模式-策略模式</h1>
+    <h1>CVTE实习日记</h1>
     <span class="meta">
       Posted on
-      2020-08-07，5 min read
+      2021-06-02，1 min read
     </span>
   </div>
   
@@ -203,216 +199,48 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <p>策略模式是一种行为模式，之所以放在工厂模式的后面来讲，是因为这个模式比较简单，而且和工厂模式混用起来很方便也很常用。</p>
-<h1 id="定义">定义</h1>
-<ul>
-<li>Define a family of algorithms,encapsulate each one,and make them interchangeable.（定义一组算法，将每个算法都封装起来，并且使他们可以互换）</li>
+          <ul>
+<li>记录一下在CVTE的实习。</li>
 </ul>
-<h1 id="优点">优点</h1>
+<h1 id="初到">初到</h1>
 <ul>
-<li>算法可以自由切换：只要实现了抽象策略，那么就成为了一个策略，通过封装角色对其封装，保证对外提供“可自由变换”的策略</li>
-<li>避免多重条件判断：简单来说就是可以减少你代码里面的if else。</li>
-<li>扩展良好：简单来说就是要增加一个if else的条件，只需要增加一个策略</li>
-</ul>
-<h1 id="缺点">缺点</h1>
-<ul>
-<li>策略类的数量多：每一个策略对应一个类，复用的可能小。</li>
-<li>所有的策略类都要对外暴露：上层模块必须知道有那些策略，然后才能决定使用哪一个策略。不符合迪米特法则。（<strong>可以通过工厂模式，代理模式，享元模式来解决这个问题</strong>）</li>
-</ul>
-<h1 id="使用场景">使用场景</h1>
-<ul>
-<li>需求：使用场景有多个
-<ul>
-<li>多个类只有在算法或行为上稍有不同的场景</li>
-<li>算法需要自由切换的场景：如银行业务。</li>
-<li>需要屏蔽算法规则的场景：只需要知道输入就会给你相应的输出。</li>
-</ul>
+<li>
+<p>由于CVTE这里是包吃包住的，所以东西没有待多少，只带了一些衣服和电脑之类的东西。</p>
+<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gslhfjb5qkj31k0340kjm.jpg" alt="行李" loading="lazy"></figure>
+</li>
+<li>
+<p>公司的位置是属于那种有点偏的地方，里市区有点远。然后附近的话基本上是一些公司的工厂之类的。</p>
+</li>
+<li>
+<p>由于公司里面没有空的宿舍了，所以在外面给我们租了公寓住。我的话在逸米精选酒店（不用给钱）。</p>
+<figure data-type="image" tabindex="2"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gslhiz3pv7j30tp0j7jvm.jpg" alt="住宿" loading="lazy"></figure>
+</li>
+<li>
+<p>酒店的环境还是挺好的，然后是两个人一间，就酒店的房间来说还算可以。但是，由于主要是酒店不是专门的宿舍，导致房间里面没有额外的办公桌，只有一个小柜子勉强放的下一台电脑。由于我是轻薄本，所以勉强能放在电视机柜下面。</p>
+<figure data-type="image" tabindex="3"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gslhndz9y1j31k0340u0x.jpg" alt="酒店" loading="lazy"></figure>
 </li>
 </ul>
-<h1 id="代码">代码</h1>
-<h2 id="通用类图">通用类图</h2>
-<figure data-type="image" tabindex="1"><img src="https://tva1.sinaimg.cn/large/006ZFECEgy1gj0lmy6qbtj31e80oxn3v.jpg" alt="策略模式通用类图" loading="lazy"></figure>
-<h2 id="基本的代码">基本的代码</h2>
-<h3 id="类图">类图</h3>
-<figure data-type="image" tabindex="2"><img src="https://tvax3.sinaimg.cn/large/006ZFECEgy1ghiavfkbe6j30he076q35.jpg" alt="通用模板类图" loading="lazy"></figure>
-<h3 id="代码-2">代码</h3>
-<p>策略模式基本的代码很简单，而且某种程度上你会发现你甚至用过这段代码。<br>
-策略接口类（<strong>接口</strong>）</p>
-<pre><code class="language-Java">package com.pattern.strategy.template;
-/**
- * 策略的接口，只要实现了这个接口，那么就是一个策略
- */
-public interface Strategy {
-    
-    void doSomething();
-}
-</code></pre>
-<p>具体策略类（<strong>继承自策略接口类</strong>）</p>
-<pre><code class="language-Java">package com.pattern.strategy.template.impl;
-
-import com.pattern.strategy.template.Strategy;
-
-public class StrategyImpl1 implements Strategy {
-    @Override
-    public void doSomething() {
-        System.out.println(&quot;执行了策略1&quot;);
-    }
-}
-</code></pre>
-<pre><code class="language-Java">package com.pattern.strategy.template.impl;
-
-import com.pattern.strategy.template.Strategy;
-
-public class StrategyImpl2 implements Strategy {
-    @Override
-    public void doSomething() {
-        System.out.println(&quot;执行了策略2&quot;);
-    }
-}
-</code></pre>
-<p>封装类（<strong>类</strong>）</p>
-<pre><code class="language-Java">package com.pattern.strategy.template;
-/**
- * 具体的封装类，用于封装算法
- */
-public class Context {
-    private Strategy strategy;
-    public Context(Strategy strategy){
-        this.strategy = strategy;
-    }
-    public void doSomething(){
-        this.strategy.doSomething();
-    }
-}
-</code></pre>
-<h3 id="测试代码">测试代码</h3>
-<pre><code class="language-Java">package com.pattern;
-
-import com.pattern.strategy.template.Context;
-import com.pattern.strategy.template.Strategy;
-import com.pattern.strategy.template.impl.StrategyImpl1;
-import org.junit.Test;
-
-public class StrategyTest {
-    @Test
-    public void StrategyTemplateTest(){
-        // 选择一个具体的策略
-        Strategy strategy = new StrategyImpl1();
-        Context context = new Context(strategy);
-        context.doSomething();
-    }
-}
-</code></pre>
-<h3 id="结果">结果</h3>
-<figure data-type="image" tabindex="3"><img src="https://tvax2.sinaimg.cn/large/006ZFECEgy1ghiawqqlzwj30ay03yaa2.jpg" alt="执行结果" loading="lazy"></figure>
-<h2 id="策略枚举">策略枚举</h2>
-<p>策略枚举是策略模式的一种扩展，为方便解释，这里采用加减法计算的场景。</p>
-<h3 id="代码-3">代码</h3>
-<p>策略枚举代码</p>
-<pre><code class="language-Java">package com.pattern.strategy.strategyenum;
-
-/**
- * 策略枚举：策略模式的一种变种，将枚举和策略结合在一起。可以有效的减少类的数量
- * 相当于一个封装类
- * 当然，我们也能创建一个类，然后将不同的策略类内置到封装类里面，但是会降低可读性，不推荐
- */
-public enum Calculator {
-    ADD(&quot;+&quot;) {
-        @Override
-        public int exec(int a, int b) {
-            // TODO Auto-generated method stub
-            return a + b;
-        }
-    },
-    SUB(&quot;-&quot;) {
-        @Override
-        public int exec(int a, int b) {
-            // TODO Auto-generated method stub
-            return a - b;
-        }
-    };
-    public abstract int exec(int a, int b);
-    //运算符
-    private String value = &quot;&quot;;
-    private Calculator(String value) {
-        this.value = value;
-    }
-    public String getValue() {
-        return value;
-    }
-}
-</code></pre>
-<h3 id="测试代码-2">测试代码</h3>
-<pre><code class="language-Java">package com.pattern;
-
-import com.pattern.strategy.strategyenum.Calculator;
-import com.pattern.strategy.template.Context;
-import com.pattern.strategy.template.Strategy;
-import com.pattern.strategy.template.impl.StrategyImpl1;
-import org.junit.Test;
-
-public class StrategyTest {
-    @Test
-    public void StrategyEnumTest(){
-        // 执行加法运算
-        System.out.println(&quot;执行加法运算：&quot;);
-        System.out.println(&quot;1+3 = &quot; + Calculator.ADD.exec(1,3));
-        // 执行减法运算
-        System.out.println(&quot;执行减法运算：&quot;);
-        System.out.println(&quot;5-3 = &quot; + Calculator.SUB.exec(5,3));
-    }
-}
-</code></pre>
-<h3 id="运行结果">运行结果</h3>
-<figure data-type="image" tabindex="4"><img src="https://tvax3.sinaimg.cn/large/006ZFECEgy1ghib8o4hngj30a504l74f.jpg" alt="运行结果" loading="lazy"></figure>
-<h1 id="注意">注意</h1>
-<ul>
-<li>如果一个策略家族的具体策略数量超过了4个，就要考虑使用混合模式，来解决对外暴露的问题，否则会降低代码的可维护性。</li>
-<li>策略枚举是一个优秀的模式，但是受枚举类型的限制，每个枚举都是public、final、static的，所以扩展性会有一定的约束，在实际开发中，策略枚举一般担当不经常发生变化的角色。</li>
-</ul>
+<h1 id="入园">入园</h1>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
-<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
-<li><a href="#%E4%BC%98%E7%82%B9">优点</a></li>
-<li><a href="#%E7%BC%BA%E7%82%B9">缺点</a></li>
-<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a></li>
-<li><a href="#%E4%BB%A3%E7%A0%81">代码</a>
-<ul>
-<li><a href="#%E9%80%9A%E7%94%A8%E7%B1%BB%E5%9B%BE">通用类图</a></li>
-<li><a href="#%E5%9F%BA%E6%9C%AC%E7%9A%84%E4%BB%A3%E7%A0%81">基本的代码</a>
-<ul>
-<li><a href="#%E7%B1%BB%E5%9B%BE">类图</a></li>
-<li><a href="#%E4%BB%A3%E7%A0%81-2">代码</a></li>
-<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
-<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
-</ul>
-</li>
-<li><a href="#%E7%AD%96%E7%95%A5%E6%9E%9A%E4%B8%BE">策略枚举</a>
-<ul>
-<li><a href="#%E4%BB%A3%E7%A0%81-3">代码</a></li>
-<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-2">测试代码</a></li>
-<li><a href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C">运行结果</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
+<li><a href="#%E5%88%9D%E5%88%B0">初到</a></li>
+<li><a href="#%E5%85%A5%E5%9B%AD">入园</a></li>
 </ul>
 </div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://mxecy.cn/post/designpartten-abstractfactory/">
+            <a href="https://mxecy.cn/post/win10-configuration/">
               <span class="post-title">
-                设计模式-抽象工厂模式&rarr;
+                Win10各种配置&rarr;
               </span>
             </a>
           </p>
           
           <div class="comment" style="text-align: center;">
             
-            <span id="/post/designpartten-strategy/" class="leancloud_visitors"
-              data-flag-title="设计模式-策略模式">
+            <span id="/post/cvte-internship/" class="leancloud_visitors"
+              data-flag-title="CVTE实习日记">
               <em class="post-meta-item-text">阅读量 </em>
               <i class="leancloud-visitors-count">loading...</i>
             </span>
