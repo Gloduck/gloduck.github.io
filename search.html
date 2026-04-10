@@ -1,0 +1,491 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="X-UA-Compatible" content="ie=edge"><meta name="theme-color" content="#3367D6"><link rel="apple-touch-icon" href="/avatar.png"><link rel="manifest" href="/manifest.json"><meta name="generator" content="Hexo 6.3.0"><meta name="description" content="Gloduck的个人博客"><meta name="keywords" content="一个菜鸡Java后端的博客"><meta name="author" content="Gloduck"><title>搜索 | Gloduck</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@1.1.3/index.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs@9.16.2/styles/monokai.css"><link rel="stylesheet" href="/css/style.css"></head><body><div class="root-container"><header class="header-container"><div class="post-image" style="background-image:url(/banner.jpg)"></div><nav class="navbar"><div class="navbar-content"><div class="navbar-logo"><a href="/">Gloduck</a></div><div class="navbar-link"><div class="navbar-btn"><div></div><div></div><div></div></div><ul class="navbar-list"><li class="navbar-list-item"><a href="/">首页</a></li><li class="navbar-list-item"><a href="/search">搜索</a></li><li class="navbar-list-item"><a target="_blank" rel="noopener" href="//note.mxecy.cn/">笔记</a></li><li class="navbar-list-item"><a href="/links">友链</a></li><li class="navbar-list-item"><a href="//mxecy.cn/aria2ng/">Aria2</a></li></ul></div></div></nav><div class="header-content"><div class="post-text layout-block layout-padding"><h1 class="title-wrap">搜索</h1></div></div></header><div id="loading-overlay" class="loading-overlay" style="display:none"><div id="loading-spinner" class="loading-spinner"></div><div id="loading-text" class="loading-text"></div></div><div class="body-container"><div class="layout-block search-page-shell"><section class="search-panel card-container content-padding--large soft-size--large soft-style--box"><div class="search-panel-header"><h1 class="search-panel-title">站内搜索</h1><p id="search-summary" class="search-panel-summary"></p></div><form id="search-form" class="search-panel-form" action="/search.html" method="get"><input id="search-page-input" class="search-panel-input" name="q" type="search" placeholder="搜索文章标题、标签和内容" autocomplete="off"> <button class="search-panel-button" type="submit">搜索</button></form></section></div><div id="search-result-container" class="content-container layout-block article-list"></div></div><nav id="search-page-container" class="page-container"></nav><script>const searchResult = [];
+    let currentKeyword = "";
+    doSearch();
+
+    function handleSearchDisplay(curPage) {
+        const pageSize = 10;
+        const maxSize = searchResult.length !== 0 ? Math.ceil(searchResult.length / pageSize) : 0;
+        const resultContainer = document.getElementById("search-result-container");
+        const pageContainer = document.getElementById("search-page-container");
+        removeChildElements(pageContainer);
+        removeChildElements(resultContainer);
+
+        if (maxSize === 0) {
+            resultContainer.appendChild(generateEmptyState(currentKeyword));
+            return;
+        }
+
+        if (curPage > maxSize) {
+            return;
+        }
+        // 添加分页按钮到页面上
+        const pageButtons = generatePageNavigation(curPage, maxSize);
+        pageButtons.forEach(t => {
+            pageContainer.appendChild(t);
+        });
+        // 获取当前页面应该展示的数据
+        const pageDatas = getPageData(searchResult, curPage, pageSize);
+        pageDatas.forEach(t => {
+            resultContainer.appendChild(generateArticleCard(t));
+        });
+    }
+
+    /**
+     * 移除元素的所有子元素
+     * @param element 目标元素
+     */
+    function removeChildElements(element) {
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+    }
+
+    /**
+     * 获取分页后的数据
+     * @param target 待拆分数组
+     * @param curPage 当前页面
+     * @param pageSize 页面大小
+     * @returns {*}
+     */
+    function getPageData(target, curPage, pageSize) {
+        const startIndex = (curPage - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        return target.slice(startIndex, endIndex);
+    }
+
+    /**
+     * 创建搜索结果节点
+     * @param resultObj 搜索对象
+     * @returns {HTMLElement}
+     */
+    function generateArticleCard(resultObj) {
+        const articleDiv = document.createElement('div');
+        articleDiv.classList.add("article-item", "layout-padding");
+        const article = document.createElement("article");
+        article.classList.add("card-container", "article-card", "content-padding--large", "soft-size--large", "soft-style--box");
+
+        const cardText = document.createElement("div");
+        cardText.classList.add("card-text");
+        article.appendChild(cardText);
+
+        const link = document.createElement("a");
+        link.href = resultObj.url;
+        link.setAttribute("itemprop", "url");
+        cardText.appendChild(link);
+
+        const title = document.createElement("h2");
+        title.classList.add("card-text--title");
+        title.textContent = resultObj.title;
+        link.appendChild(title);
+
+        if (resultObj.excerpt) {
+            const summary = document.createElement("p");
+            summary.classList.add("card-text--row", "search-result-excerpt");
+            summary.textContent = resultObj.excerpt;
+            cardText.appendChild(summary);
+        }
+
+        const ul = document.createElement("ul");
+        ul.classList.add("wrap-list", "light");
+        cardText.appendChild(ul);
+
+        for (let tag of resultObj.tags) {
+            const li = document.createElement("li");
+            ul.appendChild(li);
+
+            const tagLink = document.createElement("a");
+            tagLink.href = `/tags/${tag}/`;
+            li.appendChild(tagLink);
+
+            const tagIcon = document.createTextNode("🏷️ ");
+            tagLink.appendChild(tagIcon);
+
+            const tagText = document.createTextNode(tag);
+            tagLink.appendChild(tagText);
+        }
+
+        articleDiv.appendChild(article);
+        return articleDiv;
+    }
+
+    function generateEmptyState(keyword) {
+        const emptyWrapper = document.createElement('div');
+        emptyWrapper.classList.add('article-item', 'layout-padding');
+
+        const emptyCard = document.createElement('div');
+        emptyCard.classList.add('card-container', 'content-padding--large', 'soft-size--large', 'soft-style--box', 'search-empty-state');
+
+        const title = document.createElement('h2');
+        title.classList.add('card-text--title');
+        title.textContent = keyword ? '没有找到匹配结果' : '输入关键词开始搜索';
+        emptyCard.appendChild(title);
+
+        const description = document.createElement('p');
+        description.classList.add('card-text--row');
+        description.textContent = keyword ? `没有找到与“${keyword}”相关的文章，可以换个关键词试试。` : '支持按标题、标签和文章内容搜索。';
+        emptyCard.appendChild(description);
+
+        emptyWrapper.appendChild(emptyCard);
+        return emptyWrapper;
+    }
+
+    /**
+     * 执行搜索
+     */
+    function doSearch() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let keyword = (urlParams.get('q')) ? urlParams.get('q').trim() : "";
+        currentKeyword = keyword;
+        syncSearchInputs(keyword);
+        requestSearch(keyword, function (results, error) {
+            searchResult.length = 0;
+            if (error) {
+                console.error(error);
+                renderSearchSummary(keyword, 0, true);
+                handleSearchDisplay(1);
+            } else {
+                const filterResults = handleSearchResult(keyword, results);
+                filterResults.forEach(t => {
+                    searchResult.push(t);
+                });
+                renderSearchSummary(keyword, filterResults.length, false);
+                // 第一次搜索展示第一页
+                handleSearchDisplay(1);
+            }
+        });
+    }
+
+    /**
+     * 处理搜索结果
+     * @param keyword 关键词
+     * @param datas 请求返回的数据
+     */
+    function handleSearchResult(keyword, datas) {
+        if (!keyword) {
+            return [];
+        }
+        // 简单的分词处理
+        const tokens = tokenize(keyword);
+        if (tokens.length === 0) {
+            return [];
+        }
+
+        // 过滤出所有包含关键词的数据对象
+        return datas.filter(data => {
+            // 将标题、内容和标签字段合并为一个字符串进行搜索
+            const text = `${data.title} ${data.content} ${data.tags.join(' ')}`;
+            // 使用正则表达式进行匹配
+            const regex = new RegExp(tokens.map(escapeRegExp).join('|'), 'i');
+            if (!regex.test(text)) {
+                return false;
+            }
+
+            data.excerpt = buildExcerpt(data, tokens);
+            return true;
+        }).sort((prev, next) => scoreResult(next, tokens) - scoreResult(prev, tokens));
+    }
+
+    /**
+     * 简单的分词
+     * @param keyword 待分词的关键字
+     * @returns {*[]}
+     */
+    function tokenize(keyword) {
+        return keyword
+            .split(/[\s,.;!?，。！？、]+/)
+            .map(token => token.trim())
+            .filter(Boolean);
+    }
+
+    function escapeRegExp(value) {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function normalizeText(value) {
+        return (value || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+
+    function buildExcerpt(data, tokens) {
+        const text = normalizeText(data.content) || normalizeText(data.title);
+        if (!text) {
+            return '';
+        }
+
+        const lowerText = text.toLowerCase();
+        const firstIndex = tokens.reduce((result, token) => {
+            const index = lowerText.indexOf(token.toLowerCase());
+            if (index === -1) {
+                return result;
+            }
+            return result === -1 ? index : Math.min(result, index);
+        }, -1);
+
+        const start = firstIndex === -1 ? 0 : Math.max(firstIndex - 36, 0);
+        const end = Math.min(start + 120, text.length);
+        const excerpt = text.slice(start, end).trim();
+        const prefix = start > 0 ? '...' : '';
+        const suffix = end < text.length ? '...' : '';
+        return `${prefix}${excerpt}${suffix}`;
+    }
+
+    function scoreResult(data, tokens) {
+        const title = normalizeText(data.title).toLowerCase();
+        const content = normalizeText(data.content).toLowerCase();
+        const tags = data.tags.join(' ').toLowerCase();
+        return tokens.reduce((score, token) => {
+            const normalizedToken = token.toLowerCase();
+            if (title.includes(normalizedToken)) {
+                score += 5;
+            }
+            if (tags.includes(normalizedToken)) {
+                score += 3;
+            }
+            if (content.includes(normalizedToken)) {
+                score += 1;
+            }
+            return score;
+        }, 0);
+    }
+
+    function renderSearchSummary(keyword, count, hasError) {
+        const summary = document.getElementById('search-summary');
+        if (!summary) {
+            return;
+        }
+
+        if (hasError) {
+            summary.textContent = '搜索索引加载失败，请稍后重试。';
+            return;
+        }
+
+        if (!keyword) {
+            summary.textContent = '支持按标题、标签和正文关键词搜索。';
+            return;
+        }
+
+        summary.textContent = `关键词“${keyword}”共找到 ${count} 条结果`;
+    }
+
+    function syncSearchInputs(keyword) {
+        const navbarInput = document.getElementById('searchInput');
+        const pageInput = document.getElementById('search-page-input');
+        if (navbarInput) {
+            navbarInput.value = keyword;
+        }
+        if (pageInput) {
+            pageInput.value = keyword;
+        }
+    }
+
+
+    /**
+     * 初始话分页按钮
+     * @param currentPage 当前页数
+     * @param totalPages 总页数
+     * @returns {*[]}
+     */
+    function generatePageNavigation(currentPage, totalPages) {
+        const pageButtons = [];
+
+        if (totalPages <= 1) {
+            const currentPageLink = document.createElement('span');
+            currentPageLink.classList.add('page-number', 'current');
+            currentPageLink.innerText = '1';
+            pageButtons.push(currentPageLink);
+            return pageButtons;
+        }
+
+        // Add the "previous page" link
+        const prevLink = document.createElement('a');
+        prevLink.classList.add('extend', 'prev');
+        if (currentPage === 1) {
+            prevLink.classList.add('disabled');
+        }
+        prevLink.innerText = 'ʚ';
+        prevLink.href = '#';
+        prevLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            if (currentPage > 1) {
+                handleSearchDisplay(currentPage - 1);
+            }
+        });
+        pageButtons.push(prevLink);
+
+        // Add the first page link
+        const firstPageLink = document.createElement('a');
+        firstPageLink.classList.add('page-number');
+        firstPageLink.innerText = '1';
+        firstPageLink.href = '#';
+        firstPageLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            handleSearchDisplay(1);
+        });
+        pageButtons.push(firstPageLink);
+
+        // Add the "..." separator if necessary
+        if (currentPage > 4) {
+            const separator = document.createElement('span');
+            separator.classList.add('space');
+            separator.innerText = '…';
+            pageButtons.push(separator);
+        }
+
+        // Add the page number links for the current and adjacent pages
+        for (let i = Math.max(2, currentPage - 2); i <= Math.min(totalPages - 1, currentPage + 2); i++) {
+            const pageLink = document.createElement('a');
+            pageLink.classList.add('page-number');
+            pageLink.innerText = i.toString();
+            pageLink.href = '#';
+            pageLink.addEventListener('click', (event) => {
+                event.preventDefault();
+                handleSearchDisplay(i);
+            });
+            pageButtons.push(pageLink);
+        }
+
+        // Add the "..." separator if necessary
+        if (currentPage < totalPages - 3) {
+            const separator = document.createElement('span');
+            separator.classList.add('space');
+            separator.innerText = '…';
+            pageButtons.push(separator);
+        }
+
+        // Add the last page link
+        const lastPageLink = document.createElement('a');
+        lastPageLink.classList.add('page-number');
+        lastPageLink.innerText = totalPages.toString();
+        lastPageLink.href = '#';
+        lastPageLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            handleSearchDisplay(totalPages);
+        });
+        pageButtons.push(lastPageLink);
+
+        // Add the "next page" link
+        const nextLink = document.createElement('a');
+        nextLink.classList.add('extend', 'next');
+        if (currentPage === totalPages) {
+            nextLink.classList.add('disabled');
+        }
+        nextLink.innerText = 'ɞ';
+        nextLink.href = '#';
+        nextLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            if (currentPage < totalPages) {
+                handleSearchDisplay(currentPage + 1);
+            }
+        });
+        pageButtons.push(nextLink);
+        // 添加当前页
+        pageButtons.forEach(t => {
+            if(t.innerText === currentPage.toString()){
+                t.classList.add('current');
+            }
+        })
+
+        return pageButtons;
+    }
+
+    // 创建分页按钮
+    function createPageButton(pageNumber, label, className, isDisabled) {
+        let button = document.createElement("span");
+        button.classList.add("page-number");
+        if (className) {
+            button.classList.add(className);
+        }
+        if (isDisabled) {
+            button.classList.add("disabled");
+        } else {
+            button.addEventListener("click", function () {
+                handleSearchDisplay(pageNumber);
+            });
+        }
+        button.textContent = label;
+        return button;
+    }
+
+    /**
+     * 展示加载动画
+     * @param showContent 加载动画的提示语
+     */
+    function showLoadingOverlay(showContent) {
+        const overlay = document.getElementById('loading-overlay');
+        overlay.style.display = 'flex';
+
+        let loadingText = document.getElementById("loading-text");
+        if (loadingText) {
+            showContent = showContent ? showContent.toString() : "";
+            loadingText.textContent = showContent;
+        }
+    }
+
+    /**
+     * 隐藏加载动画
+     */
+    function hideLoadingOverlay() {
+        const overlay = document.getElementById('loading-overlay');
+        overlay.style.display = 'none';
+        let loadingText = document.getElementById("loading-text");
+        if (loadingText) {
+            loadingText.textContent = "";
+        }
+    }
+
+    /**
+     * 执行搜索请求
+     * @param keyword 关键字
+     * @param callback 回调
+     */
+    function requestSearch(keyword, callback) {
+        const url = "search.xml";
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    callback(parseSearchXml(xhr.responseXML));
+                } else {
+                    callback(null, new Error("请求失败，错误码：" + xhr.status));
+                }
+            }
+        };
+        xhr.ontimeout = function () {
+            callback(null, new Error("请求超时"));
+        };
+        xhr.timeout = 5000;
+        xhr.open("GET", url);
+        xhr.send();
+    }
+
+    /**
+     * 解析搜索的xml结果
+     * @param xmlDoc xml文档
+     * @returns {*[]}
+     */
+    function parseSearchXml(xmlDoc) {
+        if (!xmlDoc) {
+            return [];
+        }
+        const entries = xmlDoc.getElementsByTagName("entry");
+        const result = [];
+        for (let i = 0; i < entries.length; i++) {
+            const entry = entries[i];
+            const title = entry.getElementsByTagName("title")[0]?.textContent || "未命名文章";
+            const url = entry.getElementsByTagName("url")[0]?.textContent || "#";
+            const content = entry.getElementsByTagName("content")[0]?.textContent || "";
+            const tags = [];
+            const tagElems = entry.getElementsByTagName("tags")[0]?.getElementsByTagName("tag");
+            if (tagElems) {
+                for (let j = 0; j < tagElems.length; j++) {
+                    const tagName = tagElems[j].textContent;
+                    if (tagName) {
+                        tags.push(tagName);
+                    }
+                }
+            }
+            const obj = {title, url, content, tags};
+            result.push(obj);
+        }
+
+        return result;
+    }</script><style>.search-page-shell{padding:0 var(--layout-padding) var(--layout-padding)}.search-panel{color:var(--theme-text-primary)}.search-panel-header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}.search-panel-title{color:var(--theme-text-stress);font-size:calc(var(--font-stress-size) + 6px)}.search-panel-summary{color:var(--theme-text-low)}.search-panel-form{display:flex;gap:12px}.search-panel-input{flex:1;min-width:0;padding:14px 18px;border:1px solid rgba(127,132,156,.25);border-radius:999px;background:rgba(255,255,255,.72);color:var(--theme-text-stress);outline:0}.search-panel-input:focus{border-color:rgba(22,27,61,.45);box-shadow:0 0 0 4px rgba(22,27,61,.08)}.search-panel-button{border:0;border-radius:999px;padding:0 22px;font-weight:700;color:#fff;background:linear-gradient(135deg,#161b3d,#48558c);cursor:pointer}.search-result-excerpt{color:var(--theme-text-low);margin-top:14px}.search-empty-state{color:var(--theme-text-primary);text-align:center}.page-container .disabled{opacity:.35;pointer-events:none}.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(255,255,255,.8);z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center}.loading-spinner{width:50px;height:50px;border:5px solid rgba(0,0,0,.1);border-top-color:#333;border-radius:50%;animation:spin 1s ease-in-out infinite}.loading-text{margin-top:10px;font-size:18px;color:#333}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}@media (max-width:768px){.search-panel-form,.search-panel-header{flex-direction:column;align-items:stretch}.search-panel-button{min-height:46px}}</style><footer id="footer" class="footer"><div class="footer-container"><div class="social-icons"><a href="https://github.com/Gloduck" class="soft-size--primary soft-style--box" target="_blank" rel="noopener noreferrer"><svg class="icon icon-github" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M64.6 512c0 195.6 125.4 361.9 300.1 422.9 23.5 5.9 19.9-10.8 19.9-22.2v-77.6c-135.8 15.9-141.3-74-150.5-89-18.5-31.5-61.9-39.5-49-54.5 31-15.9 62.5 4 98.9 58 26.4 39.1 77.9 32.5 104.1 26 5.7-23.5 17.9-44.5 34.7-60.9-140.7-25.2-199.4-111.1-199.4-213.3 0-49.5 16.4-95.1 48.4-131.8-20.4-60.6 1.9-112.4 4.9-120.1 58.2-5.2 118.5 41.6 123.3 45.3 33.1-8.9 70.8-13.7 112.9-13.7 42.4 0 80.3 4.9 113.5 13.9 11.3-8.6 67.3-48.8 121.4-43.9 2.9 7.7 24.7 58.3 5.5 118.1 32.5 36.8 49 82.8 49 132.4 0 102.3-59 188.3-200.2 213.2 23.5 23.3 38.1 55.5 38.1 91.1v112.7c0.8 9 0 17.9 15.1 17.9C832.7 877 960.4 709.4 960.4 512.1c0-247.5-200.6-447.9-447.9-447.9C265 64.1 64.6 264.5 64.6 512z"></path></svg></a></div><p>&copy; 2026 <a href="/" target="_blank">Gloduck</a></p><p>Powered by <a href="https://hexo.io" target="_blank" rel="noopener noreferrer">Hexo</a> Theme - <a href="https://github.com/miiiku/flex-block" target="_blank" rel="noopener noreferrer author">flex-block</a></p><p><a href="javascript:;" id="theme-light">🌞 浅色</a> <a href="javascript:;" id="theme-dark">🌛 深色</a> <a href="javascript:;" id="theme-auto">🤖️ 自动</a></p></div></footer></div><div class="back-to-top-fixed soft-size--round soft-style--box"><svg class="icon icon-back-to-top" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M725.333333 426.666667c-12.8 0-21.333333-4.266667-29.866667-12.8l-213.333333-213.333333c-17.066667-17.066667-17.066667-42.666667 0-59.733333s42.666667-17.066667 59.733333 0l213.333333 213.333333c17.066667 17.066667 17.066667 42.666667 0 59.733333C746.666667 422.4 738.133333 426.666667 725.333333 426.666667z"></path><path d="M298.666667 426.666667c-12.8 0-21.333333-4.266667-29.866667-12.8-17.066667-17.066667-17.066667-42.666667 0-59.733333l213.333333-213.333333c17.066667-17.066667 42.666667-17.066667 59.733333 0s17.066667 42.666667 0 59.733333l-213.333333 213.333333C320 422.4 311.466667 426.666667 298.666667 426.666667z"></path><path d="M512 896c-25.6 0-42.666667-17.066667-42.666667-42.666667L469.333333 170.666667c0-25.6 17.066667-42.666667 42.666667-42.666667s42.666667 17.066667 42.666667 42.666667l0 682.666667C554.666667 878.933333 537.6 896 512 896z"></path></svg></div><script src="/js/script.js"></script></body></html>
